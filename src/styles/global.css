@@ -1,1 +1,155 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
+
+@theme {
+	--font-display: 'Outfit', sans-serif;
+	--font-mono: 'JetBrains Mono', monospace;
+
+	--color-void: #06080c;
+	--color-abyss: #0a0e17;
+	--color-slate-dark: #111827;
+	--color-slate-mid: #1e293b;
+	--color-slate-light: #334155;
+	--color-ghost: #64748b;
+	--color-mist: #94a3b8;
+	--color-cloud: #cbd5e1;
+	--color-white: #f1f5f9;
+
+	--color-neon-cyan: #00f0ff;
+	--color-neon-cyan-dim: #00f0ff33;
+	--color-neon-cyan-glow: #00f0ff1a;
+	--color-neon-green: #00ff88;
+	--color-neon-violet: #a855f7;
+	--color-neon-amber: #fbbf24;
+
+	--color-surface: #0f1420;
+	--color-surface-raised: #161d2e;
+	--color-surface-hover: #1c2540;
+	--color-border: #1e293b;
+	--color-border-glow: #00f0ff22;
+}
+
+/* ── Base reset + atmosphere ────────────────────────────── */
+
+html {
+	scroll-behavior: smooth;
+	scrollbar-color: var(--color-slate-mid) var(--color-void);
+}
+
+body {
+	font-family: var(--font-display);
+	background-color: var(--color-void);
+	color: var(--color-cloud);
+	overflow-x: hidden;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Noise texture overlay ──────────────────────────────── */
+
+body::before {
+	content: '';
+	position: fixed;
+	inset: 0;
+	z-index: 9999;
+	pointer-events: none;
+	opacity: 0.025;
+	background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+	background-repeat: repeat;
+	background-size: 200px 200px;
+}
+
+/* ── Grid background ────────────────────────────────────── */
+
+body::after {
+	content: '';
+	position: fixed;
+	inset: 0;
+	z-index: -1;
+	pointer-events: none;
+	background-image:
+		linear-gradient(var(--color-neon-cyan-glow) 1px, transparent 1px),
+		linear-gradient(90deg, var(--color-neon-cyan-glow) 1px, transparent 1px);
+	background-size: 80px 80px;
+	mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black, transparent);
+}
+
+/* ── Section reveal animation ───────────────────────────── */
+
+@keyframes reveal-up {
+	from {
+		opacity: 0;
+		transform: translateY(40px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.reveal {
+	animation: reveal-up 0.8s ease-out both;
+}
+
+.reveal-delay-1 { animation-delay: 0.1s; }
+.reveal-delay-2 { animation-delay: 0.2s; }
+.reveal-delay-3 { animation-delay: 0.3s; }
+.reveal-delay-4 { animation-delay: 0.4s; }
+.reveal-delay-5 { animation-delay: 0.5s; }
+.reveal-delay-6 { animation-delay: 0.6s; }
+
+/* ── Marquee ────────────────────────────────────────────── */
+
+@keyframes marquee {
+	0% { transform: translateX(0); }
+	100% { transform: translateX(-50%); }
+}
+
+.marquee-track {
+	animation: marquee 40s linear infinite;
+}
+
+.marquee-track:hover {
+	animation-play-state: paused;
+}
+
+/* ── Glow pulse ─────────────────────────────────────────── */
+
+@keyframes glow-pulse {
+	0%, 100% { opacity: 0.4; }
+	50% { opacity: 1; }
+}
+
+.glow-pulse {
+	animation: glow-pulse 3s ease-in-out infinite;
+}
+
+/* ── Neon text ──────────────────────────────────────────── */
+
+.text-neon {
+	color: var(--color-neon-cyan);
+	text-shadow:
+		0 0 7px var(--color-neon-cyan-dim),
+		0 0 20px var(--color-neon-cyan-dim),
+		0 0 42px var(--color-neon-cyan-glow);
+}
+
+/* ── Card hover glow border ─────────────────────────────── */
+
+.card-glow {
+	position: relative;
+	border: 1px solid var(--color-border);
+	transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-glow:hover {
+	border-color: var(--color-neon-cyan-dim);
+	box-shadow: 0 0 30px var(--color-neon-cyan-glow), inset 0 0 30px var(--color-neon-cyan-glow);
+}
+
+/* ── Selection ──────────────────────────────────────────── */
+
+::selection {
+	background: var(--color-neon-cyan-dim);
+	color: var(--color-white);
+}

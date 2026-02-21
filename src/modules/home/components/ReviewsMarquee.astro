@@ -1,0 +1,64 @@
+---
+import { getCollection } from 'astro:content';
+import { render } from 'astro:content';
+
+const reviews = (await getCollection('reviews')).sort((a, b) => a.data.order - b.data.order);
+
+const renderedReviews = await Promise.all(
+	reviews.map(async (review) => {
+		const { Content } = await render(review);
+		return { ...review, Content };
+	})
+);
+---
+
+<section class="relative py-24 overflow-hidden">
+	<!-- Top/bottom fade edges -->
+	<div class="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-neon-cyan-dim to-transparent"></div>
+	<div class="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-neon-cyan-dim to-transparent"></div>
+
+	<!-- Section label -->
+	<div class="text-center mb-16 px-6">
+		<p class="reveal font-mono text-xs text-neon-cyan tracking-[0.3em] uppercase mb-4">Wall of Proof</p>
+		<h2 class="reveal reveal-delay-1 font-display text-4xl sm:text-5xl font-800 text-white tracking-tight">
+			Builders Love It
+		</h2>
+	</div>
+
+	<!-- Marquee container -->
+	<div class="relative">
+		<!-- Left/right fade masks -->
+		<div class="absolute left-0 top-0 bottom-0 w-32 z-10 bg-gradient-to-r from-void to-transparent pointer-events-none"></div>
+		<div class="absolute right-0 top-0 bottom-0 w-32 z-10 bg-gradient-to-l from-void to-transparent pointer-events-none"></div>
+
+		<!-- Track (doubled for seamless loop) -->
+		<div class="marquee-track flex gap-6 w-max">
+			{[...renderedReviews, ...renderedReviews].map((review) => (
+				<div class="flex-shrink-0 w-[380px] rounded-xl border border-border bg-surface p-6 hover:border-neon-cyan-dim transition-colors">
+					<!-- Stars -->
+					<div class="flex gap-1 mb-4 text-neon-amber text-sm">
+						{Array.from({ length: review.data.rating }).map(() => (
+							<span>&#9733;</span>
+						))}
+					</div>
+
+					<!-- Quote -->
+					<div class="text-sm text-cloud leading-relaxed mb-6">
+						<review.Content />
+					</div>
+
+					<!-- Author -->
+					<div class="flex items-center gap-3">
+						<div class="size-8 rounded-full bg-neon-cyan-glow border border-neon-cyan-dim flex items-center justify-center font-mono text-xs text-neon-cyan font-600">
+							{review.data.name.charAt(0)}
+						</div>
+						<div>
+							<p class="text-sm font-600 text-white">{review.data.name}</p>
+							<p class="text-xs text-ghost">{review.data.role}</p>
+						</div>
+					</div>
+				</div>
+			))}
+		</div>
+	</div>
+</section>

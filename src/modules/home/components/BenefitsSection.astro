@@ -1,0 +1,46 @@
+---
+import { getCollection } from 'astro:content';
+
+const benefits = (await getCollection('benefits')).sort((a, b) => a.data.order - b.data.order);
+---
+
+<section class="relative py-32 px-6">
+	<!-- Ambient glow -->
+	<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-[600px] rounded-full bg-neon-violet/5 blur-[140px] pointer-events-none"></div>
+
+	<div class="relative max-w-5xl mx-auto">
+		<!-- Section header -->
+		<div class="text-center mb-20">
+			<p class="reveal font-mono text-xs text-neon-cyan tracking-[0.3em] uppercase mb-4">Why Elite</p>
+			<h2 class="reveal reveal-delay-1 font-display text-4xl sm:text-5xl md:text-6xl font-800 text-white tracking-tight">
+				Not Just Another Prompt Pack
+			</h2>
+			<p class="reveal reveal-delay-2 mt-4 max-w-xl mx-auto text-mist">
+				Every skill is precision-engineered with constraints that matter.
+			</p>
+		</div>
+
+		<!-- Benefits cards -->
+		<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+			{benefits.map((benefit, i) => (
+				<div class={`reveal reveal-delay-${i + 1} group relative rounded-2xl border border-border bg-surface p-10 text-center transition-all hover:border-neon-cyan-dim hover:bg-surface-hover`}>
+					<!-- Icon circle -->
+					<div class="mx-auto mb-6 flex items-center justify-center size-16 rounded-full bg-neon-cyan-glow border border-neon-cyan-dim text-neon-cyan text-2xl transition-shadow group-hover:shadow-[0_0_30px_var(--color-neon-cyan-glow)]" set:html={benefit.data.icon} />
+
+					<!-- Title -->
+					<h3 class="font-display text-xl font-700 text-white mb-3">
+						{benefit.data.title}
+					</h3>
+
+					<!-- Description -->
+					<p class="text-sm text-mist leading-relaxed">
+						{benefit.data.description}
+					</p>
+
+					<!-- Bottom accent line -->
+					<div class="absolute bottom-0 inset-x-6 h-px bg-gradient-to-r from-transparent via-neon-cyan-dim to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+				</div>
+			))}
+		</div>
+	</div>
+</section>

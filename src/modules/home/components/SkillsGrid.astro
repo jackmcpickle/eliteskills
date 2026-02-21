@@ -1,7 +1,10 @@
 ---
 import { getCollection } from 'astro:content';
+import { Database, Layers, Palette, Rocket, ShieldCheck, Sparkles } from 'lucide-astro';
 
 const skills = (await getCollection('skills')).sort((a, b) => a.data.order - b.data.order);
+
+const iconMap = { Database, Layers, Palette, Rocket, ShieldCheck, Sparkles };
 ---
 
 <section id="skills" class="relative py-32 px-6">
@@ -19,10 +22,15 @@ const skills = (await getCollection('skills')).sort((a, b) => a.data.order - b.d
 
 		<!-- Grid -->
 		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-			{skills.map((skill, i) => (
+			{skills.map((skill, i) => {
+				const Icon = iconMap[skill.data.icon as keyof typeof iconMap] ?? Sparkles;
+
+				return (
 				<div class={`reveal reveal-delay-${i + 1} card-glow group rounded-xl bg-surface p-8 transition-all hover:bg-surface-hover`}>
 					<!-- Icon -->
-					<div class="flex items-center justify-center size-12 mb-6 rounded-lg bg-neon-cyan-glow border border-neon-cyan-dim text-neon-cyan text-xl" set:html={skill.data.icon} />
+					<div class="flex items-center justify-center size-12 mb-6 rounded-lg bg-neon-cyan-glow border border-neon-cyan-dim text-neon-cyan">
+						<Icon class="size-5" aria-hidden="true" />
+					</div>
 
 					<!-- Title -->
 					<h3 class="font-display text-xl font-700 text-white mb-3 group-hover:text-neon-cyan transition-colors">
@@ -36,10 +44,11 @@ const skills = (await getCollection('skills')).sort((a, b) => a.data.order - b.d
 
 					<!-- Corner accent -->
 					<div class="absolute top-0 right-0 size-16 opacity-0 group-hover:opacity-100 transition-opacity">
-						<div class="absolute top-3 right-3 size-1 rounded-full bg-neon-cyan"></div>
+						<div class="absolute top-3 right-3 size-1 rounded-full bg-neon-amber"></div>
 					</div>
 				</div>
-			))}
+				);
+			})}
 		</div>
 	</div>
 </section>

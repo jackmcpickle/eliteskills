@@ -19,6 +19,8 @@
     "@astrojs/cloudflare": "^12.6.12",
     "@tailwindcss/vite": "^4.2.0",
     "astro": "^5.17.1",
+    "lucide-astro": "^0.556.0",
+    "mailgun.js": "^12.7.0",
     "tailwindcss": "^4.2.0"
   },
   "devDependencies": {

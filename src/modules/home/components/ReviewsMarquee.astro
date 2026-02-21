@@ -34,7 +34,7 @@ const renderedReviews = await Promise.all(
 		<!-- Track (doubled for seamless loop) -->
 		<div class="marquee-track flex gap-6 w-max">
 			{[...renderedReviews, ...renderedReviews].map((review) => (
-				<div class="flex-shrink-0 w-[380px] rounded-xl border border-border bg-surface p-6 hover:border-neon-cyan-dim transition-colors">
+				<div class="flex-shrink-0 w-[min(85vw,380px)] rounded-xl border border-border bg-surface p-6 hover:border-neon-cyan-dim transition-colors">
 					<!-- Stars -->
 					<div class="flex gap-1 mb-4 text-neon-amber text-sm">
 						{Array.from({ length: review.data.rating }).map(() => (
@@ -49,7 +49,7 @@ const renderedReviews = await Promise.all(
 
 					<!-- Author -->
 					<div class="flex items-center gap-3">
-						<div class="size-8 rounded-full bg-neon-cyan-glow border border-neon-cyan-dim flex items-center justify-center font-mono text-xs text-neon-cyan font-600">
+						<div class="size-8 rounded-full bg-neon-cyan-glow border border-neon-cyan-dim flex items-center justify-center font-mono text-xs text-neon-cyan font-600 shadow-[0_0_16px_var(--color-neon-cyan-glow)]">
 							{review.data.name.charAt(0)}
 						</div>
 						<div>

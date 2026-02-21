@@ -1,8 +1,7 @@
 import { defineCollection, z } from 'astro:content';
-import { glob } from 'astro/loaders';
 
 const skills = defineCollection({
-	loader: glob({ pattern: '**/*.md', base: './src/content/skills' }),
+	type: 'content',
 	schema: z.object({
 		title: z.string(),
 		description: z.string(),
@@ -12,7 +11,7 @@ const skills = defineCollection({
 });
 
 const reviews = defineCollection({
-	loader: glob({ pattern: '**/*.md', base: './src/content/reviews' }),
+	type: 'content',
 	schema: z.object({
 		name: z.string(),
 		role: z.string(),
@@ -22,7 +21,7 @@ const reviews = defineCollection({
 });
 
 const benefits = defineCollection({
-	loader: glob({ pattern: '**/*.md', base: './src/content/benefits' }),
+	type: 'content',
 	schema: z.object({
 		title: z.string(),
 		description: z.string(),
@@ -32,7 +31,7 @@ const benefits = defineCollection({
 });
 
 const pricing = defineCollection({
-	loader: glob({ pattern: '**/*.md', base: './src/content/pricing' }),
+	type: 'content',
 	schema: z.object({
 		title: z.string(),
 		price: z.number(),

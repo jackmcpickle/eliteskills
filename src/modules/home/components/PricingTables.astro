@@ -1,5 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
+import { Check } from 'lucide-astro';
 
 const tiers = (await getCollection('pricing')).sort((a, b) => a.data.order - b.data.order);
 ---
@@ -22,12 +23,15 @@ const tiers = (await getCollection('pricing')).sort((a, b) => a.data.order - b.d
 
 		<!-- Pricing cards -->
 		<div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-			{tiers.map((tier, i) => (
-				<div class={`reveal reveal-delay-${i + 1} relative rounded-2xl p-8 sm:p-10 transition-all ${
-					tier.data.highlighted
-						? 'border-2 border-neon-cyan bg-surface shadow-[0_0_60px_var(--color-neon-cyan-glow)]'
-						: 'border border-border bg-surface hover:border-neon-cyan-dim'
-				}`}>
+			{tiers.map((tier, i) => {
+				const checkoutUrl = tier.id === 'lifetime' ? '/checkout/lifetime' : '/checkout/once';
+
+				return (
+					<div class={`reveal reveal-delay-${i + 1} relative rounded-2xl p-8 sm:p-10 transition-all ${
+						tier.data.highlighted
+							? 'border-2 border-neon-cyan bg-surface shadow-[0_0_60px_var(--color-neon-cyan-glow)]'
+							: 'border border-border bg-surface hover:border-neon-cyan-dim'
+					}`}>
 					{/* Recommended badge */}
 					{tier.data.highlighted && (
 						<div class="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-neon-cyan text-void font-mono text-xs font-700 tracking-wider uppercase">
@@ -60,22 +64,23 @@ const tiers = (await getCollection('pricing')).sort((a, b) => a.data.order - b.d
 					<ul class="space-y-3 mb-10">
 						{tier.data.features.map((feature: string) => (
 							<li class="flex items-start gap-3 text-sm">
-								<span class={`mt-0.5 text-xs ${tier.data.highlighted ? 'text-neon-cyan' : 'text-neon-green'}`}>&#x2713;</span>
+								<Check class={`size-4 mt-0.5 ${tier.data.highlighted ? 'text-neon-cyan' : 'text-neon-green'}`} aria-hidden="true" />
 								<span class="text-cloud">{feature}</span>
 							</li>
 						))}
 					</ul>
 
 					<!-- CTA -->
-					<a href="#" class={`block w-full text-center py-4 rounded-lg font-mono text-sm font-600 tracking-wide uppercase transition-all ${
+					<a href={checkoutUrl} class={`block w-full text-center py-4 rounded-lg font-mono text-sm font-600 tracking-wide uppercase transition-all ${
 						tier.data.highlighted
 							? 'bg-neon-cyan text-void hover:shadow-[0_0_40px_var(--color-neon-cyan-dim)]'
 							: 'border border-slate-mid text-mist hover:border-neon-cyan-dim hover:text-neon-cyan'
 					}`}>
 						{tier.data.highlighted ? 'Get Lifetime Access' : 'Buy Now'}
 					</a>
-				</div>
-			))}
+					</div>
+				);
+			})}
 		</div>
 
 		<!-- Trust note -->

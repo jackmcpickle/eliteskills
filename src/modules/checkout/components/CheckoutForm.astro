@@ -1,0 +1,167 @@
+---
+interface Props {
+	productId: 'once' | 'lifetime';
+	productName: string;
+	price: number;
+}
+
+const { productId, productName, price } = Astro.props;
+---
+
+<section class="relative min-h-screen px-6 py-20">
+	<div class="absolute top-0 left-1/2 -translate-x-1/2 size-[520px] rounded-full bg-neon-cyan/5 blur-[120px] pointer-events-none"></div>
+
+	<div class="relative max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-[1.1fr,1.4fr] gap-8 items-start">
+		<aside class="rounded-2xl border border-border bg-surface p-8 lg:sticky lg:top-8">
+			<p class="font-mono text-xs tracking-[0.28em] uppercase text-neon-cyan mb-4">Selected Product</p>
+			<h1 class="font-display text-4xl font-800 text-white leading-tight mb-3">{productName}</h1>
+			<p class="text-mist text-sm mb-8">You are checking out the Elite AI Skills pack.</p>
+
+			<div class="rounded-xl border border-neon-cyan-dim bg-neon-cyan-glow p-5">
+				<p class="font-mono text-xs uppercase tracking-[0.24em] text-ghost mb-2">Total</p>
+				<p class="font-display text-5xl font-900 text-neon-cyan">${price}</p>
+			</div>
+
+			<ul class="mt-8 space-y-3 text-sm text-cloud">
+				<li class="flex items-center gap-2"><span class="size-1.5 rounded-full bg-neon-amber"></span> Secure checkout</li>
+				<li class="flex items-center gap-2"><span class="size-1.5 rounded-full bg-neon-amber"></span> Instant access delivery</li>
+				<li class="flex items-center gap-2"><span class="size-1.5 rounded-full bg-neon-amber"></span> Human support if needed</li>
+			</ul>
+		</aside>
+
+		<div class="rounded-2xl border border-border bg-surface p-8 sm:p-10">
+			<h2 class="font-display text-2xl font-700 text-white mb-2">Checkout details</h2>
+			<p class="text-sm text-mist mb-8">Fill details. We will email next steps right after this.</p>
+
+			<form id="checkout-form" class="space-y-5" novalidate>
+				<input type="hidden" name="productId" value={productId} />
+				<input type="hidden" name="productName" value={productName} />
+				<input type="hidden" name="price" value={String(price)} />
+				<!-- Honeypot — hidden from humans, bots auto-fill -->
+				<div class="absolute -left-[9999px]" aria-hidden="true">
+					<label for="website">Website</label>
+					<input type="text" id="website" name="website" tabindex="-1" autocomplete="off" />
+				</div>
+
+				<div>
+					<label for="name" class="mb-2 block text-sm text-cloud">Full name</label>
+					<input id="name" name="name" type="text" required autocomplete="name" class="w-full rounded-lg border border-slate-mid bg-abyss px-4 py-3 text-white placeholder:text-ghost focus:border-neon-cyan focus:outline-none" placeholder="Jack McNicol" />
+				</div>
+
+				<div>
+					<label for="email" class="mb-2 block text-sm text-cloud">Email</label>
+					<input id="email" name="email" type="email" required autocomplete="email" class="w-full rounded-lg border border-slate-mid bg-abyss px-4 py-3 text-white placeholder:text-ghost focus:border-neon-cyan focus:outline-none" placeholder="you@company.com" />
+				</div>
+
+				<div>
+					<label for="purchaseKind" class="mb-2 block text-sm text-cloud">Purchase type</label>
+					<select id="purchaseKind" name="purchaseKind" class="w-full rounded-lg border border-slate-mid bg-abyss px-4 py-3 text-white focus:border-neon-cyan focus:outline-none">
+						<option value="personal">Personal purchase</option>
+						<option value="company">Company purchase / I need receipt</option>
+					</select>
+				</div>
+
+				<fieldset id="company-fields" class="space-y-4 rounded-xl border border-border p-4 hidden" disabled>
+					<legend class="px-2 text-xs font-mono uppercase tracking-[0.2em] text-neon-cyan">Receipt details</legend>
+
+					<div>
+						<label for="companyName" class="mb-2 block text-sm text-cloud">Company name</label>
+						<input id="companyName" name="companyName" type="text" autocomplete="organization" class="w-full rounded-lg border border-slate-mid bg-abyss px-4 py-3 text-white placeholder:text-ghost focus:border-neon-cyan focus:outline-none" />
+					</div>
+
+					<div>
+						<label for="addressLine1" class="mb-2 block text-sm text-cloud">Address line 1</label>
+						<input id="addressLine1" name="addressLine1" type="text" autocomplete="address-line1" class="w-full rounded-lg border border-slate-mid bg-abyss px-4 py-3 text-white placeholder:text-ghost focus:border-neon-cyan focus:outline-none" />
+					</div>
+
+					<div>
+						<label for="addressLine2" class="mb-2 block text-sm text-cloud">Address line 2 (optional)</label>
+						<input id="addressLine2" name="addressLine2" type="text" autocomplete="address-line2" class="w-full rounded-lg border border-slate-mid bg-abyss px-4 py-3 text-white placeholder:text-ghost focus:border-neon-cyan focus:outline-none" />
+					</div>
+
+					<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+						<div>
+							<label for="city" class="mb-2 block text-sm text-cloud">City</label>
+							<input id="city" name="city" type="text" autocomplete="address-level2" class="w-full rounded-lg border border-slate-mid bg-abyss px-4 py-3 text-white placeholder:text-ghost focus:border-neon-cyan focus:outline-none" />
+						</div>
+						<div>
+							<label for="postalCode" class="mb-2 block text-sm text-cloud">Postal code</label>
+							<input id="postalCode" name="postalCode" type="text" autocomplete="postal-code" class="w-full rounded-lg border border-slate-mid bg-abyss px-4 py-3 text-white placeholder:text-ghost focus:border-neon-cyan focus:outline-none" />
+						</div>
+					</div>
+
+					<div>
+						<label for="country" class="mb-2 block text-sm text-cloud">Country</label>
+						<input id="country" name="country" type="text" autocomplete="country-name" class="w-full rounded-lg border border-slate-mid bg-abyss px-4 py-3 text-white placeholder:text-ghost focus:border-neon-cyan focus:outline-none" />
+					</div>
+				</fieldset>
+
+				<button id="checkout-submit" type="submit" class="w-full rounded-lg bg-neon-cyan py-4 text-sm font-mono font-700 uppercase tracking-wide text-void transition-all hover:shadow-[0_0_30px_var(--color-neon-cyan-dim)]">
+					Send checkout request
+				</button>
+
+				<p id="checkout-status" class="min-h-5 text-sm text-mist" aria-live="polite"></p>
+			</form>
+		</div>
+	</div>
+</section>
+
+<script is:inline>
+	const form = document.getElementById('checkout-form');
+	const purchaseKind = document.getElementById('purchaseKind');
+	const companyFields = document.getElementById('company-fields');
+	const submitButton = document.getElementById('checkout-submit');
+	const statusNode = document.getElementById('checkout-status');
+
+	const setCompanyMode = () => {
+		const isCompany = purchaseKind && purchaseKind.value === 'company';
+		if (!companyFields) return;
+
+		companyFields.classList.toggle('hidden', !isCompany);
+		companyFields.toggleAttribute('disabled', !isCompany);
+	};
+
+	if (purchaseKind) {
+		purchaseKind.addEventListener('change', setCompanyMode);
+		setCompanyMode();
+	}
+
+	if (form) {
+		form.addEventListener('submit', async (event) => {
+			event.preventDefault();
+			if (!statusNode || !submitButton) return;
+
+			statusNode.textContent = 'Submitting...';
+			submitButton.setAttribute('disabled', 'true');
+			submitButton.classList.add('opacity-70');
+
+			try {
+				const formData = new FormData(form);
+				const response = await fetch('/api/checkout', {
+					method: 'POST',
+					body: formData,
+				});
+
+				const result = await response.json();
+
+				if (!response.ok) {
+					statusNode.textContent = result.error || 'Checkout request failed.';
+					statusNode.className = 'min-h-5 text-sm text-red-300';
+					return;
+				}
+
+				statusNode.textContent = 'Request sent. Redirecting...';
+				statusNode.className = 'min-h-5 text-sm text-neon-green';
+				const product = String(formData.get('productId') || 'once');
+				window.location.href = `/checkout/success?product=${encodeURIComponent(product)}`;
+				return;
+			} catch (_error) {
+				statusNode.textContent = 'Network issue. Try again.';
+				statusNode.className = 'min-h-5 text-sm text-red-300';
+			} finally {
+				submitButton.removeAttribute('disabled');
+				submitButton.classList.remove('opacity-70');
+			}
+		});
+	}
+</script>

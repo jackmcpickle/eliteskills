@@ -15,12 +15,12 @@
 	--color-cloud: #cbd5e1;
 	--color-white: #f1f5f9;
 
-	--color-neon-cyan: #00f0ff;
-	--color-neon-cyan-dim: #00f0ff33;
-	--color-neon-cyan-glow: #00f0ff1a;
-	--color-neon-green: #00ff88;
-	--color-neon-violet: #a855f7;
-	--color-neon-amber: #fbbf24;
+	--color-neon-cyan: #2de2c4;
+	--color-neon-cyan-dim: #2de2c433;
+	--color-neon-cyan-glow: #2de2c422;
+	--color-neon-green: #7ff287;
+	--color-neon-violet: #3b82f6;
+	--color-neon-amber: #ffc957;
 
 	--color-surface: #0f1420;
 	--color-surface-raised: #161d2e;
@@ -113,6 +113,13 @@ body::after {
 	animation-play-state: paused;
 }
 
+a:focus-visible,
+button:focus-visible {
+	outline: 2px solid var(--color-neon-amber);
+	outline-offset: 3px;
+	border-radius: 10px;
+}
+
 /* ── Glow pulse ─────────────────────────────────────────── */
 
 @keyframes glow-pulse {
@@ -152,4 +159,26 @@ body::after {
 ::selection {
 	background: var(--color-neon-cyan-dim);
 	color: var(--color-white);
+}
+
+@media (max-width: 640px) {
+	html {
+		scrollbar-width: thin;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+		scroll-behavior: auto !important;
+	}
+
+	.marquee-track {
+		animation: none;
+		transform: translateX(0);
+	}
 }

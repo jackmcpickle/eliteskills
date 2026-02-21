@@ -1,7 +1,10 @@
 ---
 import { getCollection } from 'astro:content';
+import { BadgeCheck, LockKeyhole, Minimize2 } from 'lucide-astro';
 
 const benefits = (await getCollection('benefits')).sort((a, b) => a.data.order - b.data.order);
+
+const iconMap = { BadgeCheck, LockKeyhole, Minimize2 };
 ---
 
 <section class="relative py-32 px-6">
@@ -22,10 +25,15 @@ const benefits = (await getCollection('benefits')).sort((a, b) => a.data.order -
 
 		<!-- Benefits cards -->
 		<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-			{benefits.map((benefit, i) => (
+			{benefits.map((benefit, i) => {
+				const Icon = iconMap[benefit.data.icon as keyof typeof iconMap] ?? BadgeCheck;
+
+				return (
 				<div class={`reveal reveal-delay-${i + 1} group relative rounded-2xl border border-border bg-surface p-10 text-center transition-all hover:border-neon-cyan-dim hover:bg-surface-hover`}>
 					<!-- Icon circle -->
-					<div class="mx-auto mb-6 flex items-center justify-center size-16 rounded-full bg-neon-cyan-glow border border-neon-cyan-dim text-neon-cyan text-2xl transition-shadow group-hover:shadow-[0_0_30px_var(--color-neon-cyan-glow)]" set:html={benefit.data.icon} />
+					<div class="mx-auto mb-6 flex items-center justify-center size-16 rounded-full bg-neon-cyan-glow border border-neon-cyan-dim text-neon-cyan transition-shadow group-hover:shadow-[0_0_30px_var(--color-neon-cyan-glow)]">
+						<Icon class="size-7" aria-hidden="true" />
+					</div>
 
 					<!-- Title -->
 					<h3 class="font-display text-xl font-700 text-white mb-3">
@@ -40,7 +48,8 @@ const benefits = (await getCollection('benefits')).sort((a, b) => a.data.order -
 					<!-- Bottom accent line -->
 					<div class="absolute bottom-0 inset-x-6 h-px bg-gradient-to-r from-transparent via-neon-cyan-dim to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
 				</div>
-			))}
+				);
+			})}
 		</div>
 	</div>
 </section>

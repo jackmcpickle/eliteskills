@@ -1,0 +1,139 @@
+{
+    "rules": {
+        "require-await": "off",
+        "no-warning-comments": "off",
+        "no-console": [
+            "warn",
+            {
+                "allow": ["warn", "error"]
+            }
+        ],
+        "no-void": [
+            "warn",
+            {
+                "allowAsStatement": true
+            }
+        ],
+        "no-undefined": "off",
+        "import/no-default-export": "warn",
+        "import/max-dependencies": [
+            "error",
+            {
+                "max": 50
+            }
+        ],
+        "import/no-unassigned-import": [
+            "warn",
+            {
+                "allow": ["**/*.css", "**/*.svg"]
+            }
+        ],
+        "max-lines": "off",
+        "max-lines-per-function": [
+            "warn",
+            {
+                "max": 500
+            }
+        ],
+        "react/react-in-jsx-scope": "off",
+        "react/only-export-components": "off",
+        "react-perf/jsx-no-new-function-as-prop": "off",
+        "react_perf/jsx-no-new-object-as-prop": "off",
+        "react_perf/jsx-no-new-array-as-prop": "off",
+        "func-style": [
+            "error",
+            "declaration",
+            {
+                "overrides": {
+                    "namedExports": "ignore"
+                }
+            }
+        ],
+        "typescript/no-floating-promises": [
+            "error",
+            {
+                "checkThenables": true
+            }
+        ],
+        "typescript/strict-boolean-expressions": "off",
+        "typescript/explicit-module-boundary-types": [
+            "warn",
+            {
+                "allowArgumentsExplicitlyTypedAsAny": true
+            }
+        ],
+        "typescript/no-unsafe-type-assertion": "off",
+        "typescript/only-throw-error": "off",
+        "typescript/explicit-function-return-type": [
+            "warn",
+            {
+                "allowExpressions": true,
+                "allowTypedFunctionExpressions": true
+            }
+        ],
+        "jsx_a11y/anchor-is-valid": "warn",
+        "react/jsx-filename-extension": [
+            "warn",
+            {
+                "extensions": [".jsx", ".tsx"]
+            }
+        ]
+    },
+    "categories": {
+        "perf": "warn",
+        "restriction": "warn",
+        "correctness": "error",
+        "suspicious": "warn",
+        "pedantic": "warn"
+    },
+    "plugins": [
+        "eslint",
+        "typescript",
+        "import",
+        "react",
+        "jsx-a11y",
+        "react-perf"
+    ],
+    "ignorePatterns": [
+        ".venv/",
+        "node_modules/",
+        "build/",
+        "dist/",
+        ".ruff_cache/",
+        "static/",
+        "src/ui-api-client/",
+        "config/tailwind.config.js",
+        "config/postcss.config.mjs",
+        "vite.config.ts",
+        "config/webpack.config.cjs"
+    ],
+    "overrides": [
+        {
+            "files": ["*.stories.*"],
+            "rules": {
+                "no-console": "off",
+                "no-array-index-key": "off",
+                "import/no-default-export": "off",
+                "typescript/explicit-module-boundary-types": "off",
+                "react-perf/jsx-no-jsx-as-prop": "off"
+            }
+        },
+        {
+            "files": ["**/ui-core/src/**"],
+            "rules": {
+                "no-array-index-key": "off",
+                "jsx-no-jsx-as-prop": "off",
+                "complexity": "off",
+                "no-multi-comp": "off",
+                "no-relative-parent-imports": "off"
+            }
+        },
+        {
+            "files": ["**/ui-superit-api/**"],
+            "rules": {
+                "no-unused-vars": "off",
+                "typescript/no-unused-vars": "off"
+            }
+        }
+    ]
+}

@@ -3,9 +3,16 @@
   "type": "module",
   "version": "0.0.1",
   "scripts": {
+    "test": "pnpm run fmt:check && pnpm run lint && pnpm vitest",
+    "test:coverage": "pnpm run fmt:check && pnpm run lint && vitest run --coverage.enabled",
+    "lint": "oxlint -c ../../.oxlintrc.json --type-aware --type-check --fix src/",
+    "fmt:check": "oxfmt --config ../../.oxfmtrc.json \"src/**/*.{js,mjs,cjs,jsx,ts,mts,cts,tsx,css}\" --check",
+    "fmt": "oxfmt --config ../../.oxfmtrc.json \"src/**/*.{js,mjs,cjs,jsx,ts,mts,cts,tsx,css}\" --write",
+    "vitest": "vitest run --coverage.enabled",
+    "preview": "wrangler dev",
+    "deploy": "pnpm build && wrangler deploy",
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview",
     "astro": "astro"
   },
   "dependencies": {
@@ -13,5 +20,8 @@
     "@tailwindcss/vite": "^4.2.0",
     "astro": "^5.17.1",
     "tailwindcss": "^4.2.0"
+  },
+  "devDependencies": {
+    "vitest": "^4.0.18"
   }
 }

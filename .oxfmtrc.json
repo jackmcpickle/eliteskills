@@ -1,0 +1,62 @@
+{
+    "$schema": "./node_modules/oxfmt/configuration_schema.json",
+    "semi": true,
+    "singleQuote": true,
+    "printWidth": 80,
+    "jsxSingleQuote": false,
+    "bracketSameLine": false,
+    "arrowParens": "always",
+    "proseWrap": "preserve",
+    "singleAttributePerLine": true,
+    "htmlWhitespaceSensitivity": "css",
+    "useTabs": false,
+    "endOfLine": "lf",
+    "trailingComma": "all",
+    "tabWidth": 4,
+    "insertFinalNewline": true,
+    "experimentalTailwindcss": {
+        "stylesheet": "./src/ui-core/src/styles.css",
+        "functions": ["cn", "clsx", "cva", "cx"],
+        "attributes": ["class", "classList", "className"]
+    },
+    "experimentalSortImports": {
+        "groups": [
+            ["side-effect"],
+            ["builtin"],
+            ["react", "external", "type-external", "superit"],
+            ["internal", "type-internal"],
+            ["parent", "type-parent"],
+            ["sibling", "type-sibling"],
+            ["index", "type-index"]
+        ],
+        "newlinesBetween": false,
+        "customGroups": [
+            {
+                "groupName": "react",
+                "elementNamePattern": ["react", "react-*"]
+            },
+            {
+                "groupName": "superit",
+                "elementNamePattern": ["@superit/ui-*"]
+            }
+        ]
+    },
+    "overrides": [
+        {
+            "files": ["*.yml", "*.yaml"],
+            "options": {
+                "tabWidth": 2,
+                "singleQuote": false
+            }
+        }
+    ],
+    "experimentalSortPackageJson": true,
+    "ignorePatterns": [
+        "dist/**",
+        ".venv/**",
+        ".ruff_cache/**",
+        ".uv-cache/**",
+        "node_modules/**",
+        "src/ui-service-desk/src/routeTree.gen.ts"
+    ]
+}

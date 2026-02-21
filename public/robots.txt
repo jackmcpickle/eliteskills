@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+Disallow: /api/
+Disallow: /checkout/
+
+Sitemap: https://eliteskills.dev/sitemap-index.xml

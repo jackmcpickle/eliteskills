@@ -106,20 +106,20 @@ const { productId, productName, price } = Astro.props;
 	</div>
 </section>
 
-<script is:inline>
-	const form = document.getElementById('checkout-form');
-	const purchaseKind = document.getElementById('purchaseKind');
-	const companyFields = document.getElementById('company-fields');
-	const submitButton = document.getElementById('checkout-submit');
+<script>
+	const form = document.getElementById('checkout-form') as HTMLFormElement | null;
+	const purchaseKind = document.getElementById('purchaseKind') as HTMLSelectElement | null;
+	const companyFields = document.getElementById('company-fields') as HTMLFieldSetElement | null;
+	const submitButton = document.getElementById('checkout-submit') as HTMLButtonElement | null;
 	const statusNode = document.getElementById('checkout-status');
 
-	const setCompanyMode = () => {
-		const isCompany = purchaseKind && purchaseKind.value === 'company';
+	function setCompanyMode(): void {
+		const isCompany = purchaseKind?.value === 'company';
 		if (!companyFields) return;
 
 		companyFields.classList.toggle('hidden', !isCompany);
 		companyFields.toggleAttribute('disabled', !isCompany);
-	};
+	}
 
 	if (purchaseKind) {
 		purchaseKind.addEventListener('change', setCompanyMode);

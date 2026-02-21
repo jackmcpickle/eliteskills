@@ -2,11 +2,20 @@
 import { defineConfig, envField } from 'astro/config';
 
 import tailwindcss from '@tailwindcss/vite';
+import sitemap from '@astrojs/sitemap';
 
 import cloudflare from '@astrojs/cloudflare';
 
 // https://astro.build/config
 export default defineConfig({
+  site: 'https://eliteskills.dev',
+
+  integrations: [
+    sitemap({
+      filter: (page) => !page.includes('/checkout/') && !page.includes('/api/'),
+    }),
+  ],
+
   vite: {
     plugins: [tailwindcss()]
   },

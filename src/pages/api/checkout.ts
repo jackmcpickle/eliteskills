@@ -2,10 +2,15 @@ import type { APIRoute } from 'astro';
 import { sendMail, isMailConfigured, getAdminEmail } from '@/libs/api/mail';
 import { checkHoneypot, checkRateLimit, parseFormField, jsonError, jsonOk } from '@/libs/api/spam';
 
+const PRODUCTS: Record<string, { name: string; price: number }> = {
+	once: { name: 'Elite AI Skills - One-Time Purchase', price: 29 },
+	lifetime: { name: 'Elite AI Skills - Lifetime Access', price: 99 },
+};
+
 interface CheckoutPayload {
 	productId: string;
 	productName: string;
-	price: string;
+	price: number;
 	name: string;
 	email: string;
 	purchaseKind: string;
@@ -17,23 +22,28 @@ interface CheckoutPayload {
 	country: string;
 }
 
-const parsePayload = (formData: FormData): CheckoutPayload => ({
-	productId: parseFormField(formData, 'productId'),
-	productName: parseFormField(formData, 'productName'),
-	price: parseFormField(formData, 'price'),
-	name: parseFormField(formData, 'name'),
-	email: parseFormField(formData, 'email'),
-	purchaseKind: parseFormField(formData, 'purchaseKind') || 'personal',
-	companyName: parseFormField(formData, 'companyName'),
-	addressLine1: parseFormField(formData, 'addressLine1'),
-	addressLine2: parseFormField(formData, 'addressLine2'),
-	city: parseFormField(formData, 'city'),
-	postalCode: parseFormField(formData, 'postalCode'),
-	country: parseFormField(formData, 'country'),
-});
+const parsePayload = (formData: FormData): CheckoutPayload | null => {
+	const productId = parseFormField(formData, 'productId');
+	const product = PRODUCTS[productId];
+	if (!product) return null;
+
+	return {
+		productId,
+		productName: product.name,
+		price: product.price,
+		name: parseFormField(formData, 'name'),
+		email: parseFormField(formData, 'email'),
+		purchaseKind: parseFormField(formData, 'purchaseKind') || 'personal',
+		companyName: parseFormField(formData, 'companyName'),
+		addressLine1: parseFormField(formData, 'addressLine1'),
+		addressLine2: parseFormField(formData, 'addressLine2'),
+		city: parseFormField(formData, 'city'),
+		postalCode: parseFormField(formData, 'postalCode'),
+		country: parseFormField(formData, 'country'),
+	};
+};
 
 const validatePayload = (payload: CheckoutPayload): string | null => {
-	if (!payload.productId || !payload.productName || !payload.price) return 'Invalid product.';
 	if (!payload.name) return 'Name required.';
 	if (!payload.email) return 'Email required.';
 
@@ -85,6 +95,8 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
 	if (checkHoneypot(formData)) return jsonOk();
 
 	const payload = parsePayload(formData);
+	if (!payload) return jsonError('Invalid product.', 400);
+
 	const error = validatePayload(payload);
 	if (error) return jsonError(error, 400);
 
@@ -114,5 +126,3 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
 		return jsonError('Failed to send email.', 500);
 	}
 };
-
-export const GET: APIRoute = async () => jsonOk({ ok: true, message: 'Use POST.' });

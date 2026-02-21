@@ -69,5 +69,3 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
 		return jsonError('Failed to send email.', 500);
 	}
 };
-
-export const GET: APIRoute = async () => jsonOk({ ok: true, message: 'Use POST.' });

@@ -1,4 +1,10 @@
 import Mailgun from 'mailgun.js';
+import {
+	MAILGUN_API_KEY,
+	MAILGUN_DOMAIN,
+	MAILGUN_FROM_EMAIL,
+	MAILGUN_TO_EMAIL,
+} from 'astro:env/server';
 
 interface SendMailOptions {
 	to: string[];
@@ -13,12 +19,8 @@ interface MailConfig {
 }
 
 const getMailConfig = (): MailConfig | null => {
-	const apiKey = import.meta.env.MAILGUN_API_KEY;
-	const domain = import.meta.env.MAILGUN_DOMAIN;
-	const from = import.meta.env.MAILGUN_FROM_EMAIL;
-
-	if (!apiKey || !domain || !from) return null;
-	return { apiKey, domain, from };
+	if (!MAILGUN_API_KEY || !MAILGUN_DOMAIN || !MAILGUN_FROM_EMAIL) return null;
+	return { apiKey: MAILGUN_API_KEY, domain: MAILGUN_DOMAIN, from: MAILGUN_FROM_EMAIL };
 };
 
 export const isMailConfigured = (): boolean => getMailConfig() !== null;
@@ -39,5 +41,5 @@ export const sendMail = async (options: SendMailOptions): Promise<void> => {
 };
 
 export const getAdminEmail = (): string => {
-	return import.meta.env.MAILGUN_TO_EMAIL ?? '';
+	return MAILGUN_TO_EMAIL ?? '';
 };

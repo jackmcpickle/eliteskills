@@ -1,18 +1,12 @@
 ---
-import '@/styles/global.css';
-import CheckoutForm from '@/modules/checkout/components/CheckoutForm.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { CheckoutForm } from '@/modules/checkout';
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Checkout - One-Time Purchase</title>
-	</head>
-	<body>
-		<CheckoutForm productId="once" productName="Elite AI Skills - One-Time Purchase" price={29} />
-	</body>
-</html>
+<BaseLayout
+	title="Checkout — One-Time Purchase — Elite Skills"
+	description="Get all 6 Elite AI Skills with a one-time purchase. Instant download."
+	noindex
+>
+	<CheckoutForm productId="once" productName="Elite AI Skills - One-Time Purchase" price={29} />
+</BaseLayout>

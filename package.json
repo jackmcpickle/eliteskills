@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@astrojs/cloudflare": "^12.6.12",
+    "@astrojs/sitemap": "^3.7.0",
     "@tailwindcss/vite": "^4.2.0",
     "astro": "^5.17.1",
     "lucide-astro": "^0.556.0",

@@ -1,32 +1,26 @@
 ---
-import '@/styles/global.css';
+import BaseLayout from '@/layouts/BaseLayout.astro';
 
 const product = Astro.url.searchParams.get('product');
 const productLabel = product === 'lifetime' ? 'Lifetime Access' : 'One-Time Purchase';
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Checkout Success</title>
-	</head>
-	<body>
-		<main class="min-h-screen px-6 py-20 flex items-center justify-center">
-			<section class="w-full max-w-2xl rounded-2xl border border-border bg-surface p-10 text-center">
-				<p class="font-mono text-xs tracking-[0.28em] uppercase text-neon-cyan mb-4">Success</p>
-				<h1 class="font-display text-4xl font-800 text-white mb-4">Thanks. Request received.</h1>
-				<p class="text-mist leading-relaxed mb-6">
-					You requested <span class="text-white">{productLabel}</span>. We emailed next steps and payment details.
-				</p>
-				<div class="flex flex-col sm:flex-row justify-center gap-3">
-					<a href="/" class="rounded-lg bg-neon-cyan px-6 py-3 font-mono text-xs uppercase tracking-wide text-void">Back home</a>
-					<a href="/contact" class="rounded-lg border border-slate-mid px-6 py-3 font-mono text-xs uppercase tracking-wide text-mist hover:border-neon-cyan-dim hover:text-neon-cyan">Contact</a>
-				</div>
-			</section>
-		</main>
-	</body>
-</html>
+<BaseLayout
+	title="Checkout Success — Elite Skills"
+	description="Your Elite Skills checkout request was received. Check your email for next steps."
+	noindex
+>
+	<main id="main-content" class="min-h-screen px-6 py-20 flex items-center justify-center">
+		<section class="w-full max-w-2xl rounded-2xl border border-border bg-surface p-10 text-center">
+			<p class="font-mono text-xs tracking-[0.28em] uppercase text-neon-cyan mb-4">Success</p>
+			<h1 class="font-display text-4xl font-800 text-white mb-4">Thanks. Request received.</h1>
+			<p class="text-mist leading-relaxed mb-6">
+				You requested <span class="text-white">{productLabel}</span>. We emailed next steps and payment details.
+			</p>
+			<div class="flex flex-col sm:flex-row justify-center gap-3">
+				<a href="/" class="rounded-lg bg-neon-cyan px-6 py-3 font-mono text-xs uppercase tracking-wide text-void">Back home</a>
+				<a href="/contact" class="rounded-lg border border-slate-mid px-6 py-3 font-mono text-xs uppercase tracking-wide text-mist hover:border-neon-cyan-dim hover:text-neon-cyan">Contact</a>
+			</div>
+		</section>
+	</main>
+</BaseLayout>

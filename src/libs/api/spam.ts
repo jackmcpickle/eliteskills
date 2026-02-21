@@ -3,6 +3,10 @@
  *
  * Honeypot: hidden field `website` must be empty — bots auto-fill it.
  * Rate limit: max N requests per IP in a rolling window.
+ *
+ * TODO: In-memory rate limiter resets on CF Workers cold starts and doesn't
+ * share state across isolates. Replace with Cloudflare KV or Durable Objects
+ * for production-grade rate limiting.
  */
 
 const RATE_WINDOW_MS = 60_000;

@@ -1,29 +1,69 @@
 ---
-import '@/styles/global.css';
-import HeroBanner from '@/modules/home/components/HeroBanner.astro';
-import SkillsGrid from '@/modules/home/components/SkillsGrid.astro';
-import ReviewsMarquee from '@/modules/home/components/ReviewsMarquee.astro';
-import BenefitsSection from '@/modules/home/components/BenefitsSection.astro';
-import PricingTables from '@/modules/home/components/PricingTables.astro';
-import FooterCta from '@/modules/home/components/FooterCta.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import {
+	HeroBanner,
+	SkillsGrid,
+	ReviewsMarquee,
+	BenefitsSection,
+	PricingTables,
+	FooterCta,
+} from '@/modules/home';
+import { getCollection } from 'astro:content';
+
+const reviews = await getCollection('reviews');
+const pricing = await getCollection('pricing');
+
+const SITE_URL = 'https://eliteskills.dev';
+
+const websiteJsonLd = {
+	'@context': 'https://schema.org',
+	'@type': 'WebSite',
+	name: 'Elite Skills',
+	url: SITE_URL,
+	description: 'Elite AI Skills for programmers and vibe coders. 20 years of engineering distilled into precision-crafted AI instruction sets.',
+};
+
+const productJsonLd = pricing.map((tier) => ({
+	'@context': 'https://schema.org',
+	'@type': 'Product',
+	name: tier.data.title,
+	description: tier.data.description,
+	offers: {
+		'@type': 'Offer',
+		price: tier.data.price,
+		priceCurrency: 'USD',
+		availability: 'https://schema.org/InStock',
+		url: `${SITE_URL}/checkout/${tier.id}`,
+	},
+}));
+
+const reviewJsonLd = {
+	'@context': 'https://schema.org',
+	'@type': 'Product',
+	name: 'Elite AI Skills',
+	aggregateRating: {
+		'@type': 'AggregateRating',
+		ratingValue: (reviews.reduce((sum, r) => sum + r.data.rating, 0) / reviews.length).toFixed(1),
+		reviewCount: reviews.length,
+		bestRating: 5,
+	},
+	review: reviews.map((r) => ({
+		'@type': 'Review',
+		author: { '@type': 'Person', name: r.data.name },
+		reviewRating: { '@type': 'Rating', ratingValue: r.data.rating, bestRating: 5 },
+	})),
+};
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="description" content="Elite AI Skills for programmers and vibe coders. 20 years of engineering distilled into precision-crafted AI instruction sets." />
-		<meta name="generator" content={Astro.generator} />
-		<title>Elite Skills — AI Skills for Builders</title>
-	</head>
-	<body>
-		<HeroBanner />
-		<SkillsGrid />
-		<ReviewsMarquee />
-		<BenefitsSection />
-		<PricingTables />
-		<FooterCta />
-	</body>
-</html>
+<BaseLayout
+	title="Elite Skills — AI Skills for Builders"
+	description="Elite AI Skills for programmers and vibe coders. 20 years of engineering distilled into precision-crafted AI instruction sets."
+	jsonLd={[websiteJsonLd, ...productJsonLd, reviewJsonLd]}
+>
+	<HeroBanner />
+	<SkillsGrid />
+	<ReviewsMarquee />
+	<BenefitsSection />
+	<PricingTables />
+	<FooterCta />
+</BaseLayout>

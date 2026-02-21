@@ -1,0 +1,22 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+	title="Page Not Found — Elite Skills"
+	description="The page you are looking for does not exist."
+	noindex
+>
+	<main id="main-content" class="min-h-screen px-6 py-20 flex items-center justify-center">
+		<section class="w-full max-w-2xl text-center">
+			<p class="font-mono text-8xl font-900 text-neon-cyan mb-4">404</p>
+			<h1 class="font-display text-4xl font-800 text-white mb-4">Page not found</h1>
+			<p class="text-mist leading-relaxed mb-8">
+				The page you are looking for does not exist or has been moved.
+			</p>
+			<a href="/" class="inline-flex items-center gap-2 px-8 py-4 rounded-lg bg-neon-cyan text-void font-mono font-700 text-sm tracking-wide uppercase transition-all hover:shadow-[0_0_40px_var(--color-neon-cyan-dim)]">
+				Back home
+			</a>
+		</section>
+	</main>
+</BaseLayout>

@@ -35,12 +35,12 @@ const renderedReviews = await Promise.all(
 		<div class="marquee-track flex gap-6 w-max">
 			{[...renderedReviews, ...renderedReviews].map((review) => (
 				<div class="flex-shrink-0 w-[min(85vw,380px)] rounded-xl border border-border bg-surface p-6 hover:border-neon-cyan-dim transition-colors">
-					<!-- Stars -->
-					<div class="flex gap-1 mb-4 text-neon-amber text-sm">
-						{Array.from({ length: review.data.rating }).map(() => (
-							<span>&#9733;</span>
-						))}
-					</div>
+				<!-- Stars -->
+				<div class="flex gap-1 mb-4 text-neon-amber text-sm" role="img" aria-label={`${review.data.rating} out of 5 stars`}>
+					{Array.from({ length: review.data.rating }).map(() => (
+						<span aria-hidden="true">&#9733;</span>
+					))}
+				</div>
 
 					<!-- Quote -->
 					<div class="text-sm text-cloud leading-relaxed mb-6">

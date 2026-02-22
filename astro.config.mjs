@@ -13,7 +13,9 @@ export default defineConfig({
             filter: (page) =>
                 !page.includes('/checkout/') &&
                 !page.includes('/api/') &&
-                !page.includes('/pay'),
+                !page.includes('/pay') &&
+                !page.includes('/account/') &&
+                !page.includes('/download/'),
         }),
     ],
 

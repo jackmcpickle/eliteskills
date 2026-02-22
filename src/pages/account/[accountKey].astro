@@ -1,0 +1,111 @@
+---
+export const prerender = false;
+
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { createDb } from '@/libs/db/client';
+import { getUserByAccountKey, getPurchasesByUserId, getInstallKeysByPurchaseId } from '@/libs/db/repo';
+import { getProduct } from '@/libs/api/stripe';
+
+const { accountKey } = Astro.params;
+
+if (!accountKey) return Astro.redirect('/404');
+
+const d1 = Astro.locals.runtime.env.DB;
+const db = createDb(d1);
+const user = await getUserByAccountKey(db, accountKey);
+
+if (!user) return Astro.redirect('/404');
+
+const purchases = await getPurchasesByUserId(db, user.id);
+
+type PurchaseDisplay = {
+	id: string;
+	productName: string;
+	productId: string;
+	amountPaid: string;
+	date: string;
+	installKeys: Array<{ key: string; downloadCount: number; createdAt: string }>;
+};
+
+const purchaseDisplays: PurchaseDisplay[] = await Promise.all(
+	purchases.map(async (p) => {
+		const product = getProduct(p.productId);
+		const keys = await getInstallKeysByPurchaseId(db, p.id);
+		return {
+			id: p.id,
+			productName: product?.name ?? p.productId,
+			productId: p.productId,
+			amountPaid: p.amountTotal ? `$${(p.amountTotal / 100).toFixed(2)}` : 'N/A',
+			date: new Date(p.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }),
+			installKeys: keys.map((k) => ({
+				key: k.key,
+				downloadCount: k.downloadCount,
+				createdAt: new Date(k.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }),
+			})),
+		};
+	}),
+);
+---
+
+<BaseLayout
+	title="Your Account — Elite Skills"
+	description="Manage your Elite Skills purchases and download links."
+	noindex
+>
+	<main id="main-content" class="min-h-screen px-6 py-20">
+		<div class="max-w-3xl mx-auto">
+			<p class="font-mono text-xs tracking-[0.28em] uppercase text-neon-cyan mb-4">Account</p>
+			<h1 class="font-display text-4xl font-800 text-white mb-2">{user.name ?? 'Your Account'}</h1>
+			<p class="text-mist text-sm mb-10">{user.email}</p>
+
+			{purchaseDisplays.length === 0 && (
+				<div class="rounded-2xl border border-border bg-surface p-10 text-center">
+					<p class="text-mist">No purchases found.</p>
+				</div>
+			)}
+
+			{purchaseDisplays.map((purchase) => (
+				<div class="rounded-2xl border border-border bg-surface p-8 mb-6">
+					<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-6">
+						<div>
+							<h2 class="font-display text-xl font-700 text-white">{purchase.productName}</h2>
+							<p class="text-ghost text-xs font-mono mt-1">{purchase.date} &middot; {purchase.amountPaid}</p>
+						</div>
+						<form method="POST" action={`/api/generate-install-key`}>
+							<input type="hidden" name="purchaseId" value={purchase.id} />
+							<input type="hidden" name="accountKey" value={accountKey} />
+							<button
+								type="submit"
+								class="rounded-lg bg-neon-cyan px-5 py-2.5 font-mono text-xs uppercase tracking-wide text-void hover:shadow-[0_0_30px_var(--color-neon-cyan-dim)] transition-all"
+							>
+								Generate install URL
+							</button>
+						</form>
+					</div>
+
+					{purchase.installKeys.length > 0 && (
+						<div class="space-y-3">
+							<p class="font-mono text-xs uppercase tracking-[0.2em] text-ghost">Install URLs</p>
+							{purchase.installKeys.map((ik) => {
+								const downloadUrl = `https://eliteskills.ai/download/${ik.key}`;
+								return (
+									<div class="rounded-lg border border-slate-mid bg-abyss p-4">
+										<code class="block text-sm text-neon-green break-all select-all">{downloadUrl}</code>
+										<p class="text-ghost text-xs font-mono mt-2">
+											Created {ik.createdAt} &middot; {ik.downloadCount} download{ik.downloadCount === 1 ? '' : 's'}
+										</p>
+									</div>
+								);
+							})}
+						</div>
+					)}
+				</div>
+			))}
+
+			<div class="mt-10 flex gap-3">
+				<a href="/" class="rounded-lg border border-slate-mid px-6 py-3 font-mono text-xs uppercase tracking-wide text-mist hover:border-neon-cyan-dim hover:text-neon-cyan">Back home</a>
+				<a href="/contact" class="rounded-lg border border-slate-mid px-6 py-3 font-mono text-xs uppercase tracking-wide text-mist hover:border-neon-cyan-dim hover:text-neon-cyan">Contact</a>
+			</div>
+		</div>
+	</main>
+</BaseLayout>

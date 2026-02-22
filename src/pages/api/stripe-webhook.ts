@@ -1,9 +1,13 @@
 import type { APIRoute } from 'astro';
 import { STRIPE_WEBHOOK_SECRET } from 'astro:env/server';
+import { createDb } from '@/libs/db/client';
+import { upsertUserByEmail, createPurchase } from '@/libs/db/repo';
 import { sendMail, isMailConfigured, getAdminEmail } from '@/libs/api/mail';
 import { isRateLimited, WEBHOOK_IP } from '@/libs/api/rate-limit';
 import { jsonError, jsonOk } from '@/libs/api/spam';
 import { constructWebhookEvent } from '@/libs/api/stripe';
+
+const SITE_URL = 'https://eliteskills.ai';
 
 /** Simple in-memory set for idempotency (single isolate only). */
 const processedEvents = new Set<string>();
@@ -23,14 +27,16 @@ interface CheckoutSessionData {
     id: string;
     customer_email: string | null;
     amount_total: number | null;
+    currency: string | null;
+    payment_status: string;
     metadata: Record<string, string>;
 }
 
 async function handleCheckoutCompleted(
     session: CheckoutSessionData,
+    d1: D1Database,
 ): Promise<void> {
-    if (!isMailConfigured()) return;
-
+    const db = createDb(d1);
     const customerName = session.metadata?.customerName ?? 'Unknown';
     const productId = session.metadata?.productId ?? 'unknown';
     const source = session.metadata?.source ?? 'unknown';
@@ -38,6 +44,23 @@ async function handleCheckoutCompleted(
     const amountPaid = session.amount_total
         ? `$${(session.amount_total / 100).toFixed(2)}`
         : 'unknown';
+
+    // Persist user + purchase
+    const user = await upsertUserByEmail(db, email, customerName);
+    await createPurchase(db, {
+        userId: user.id,
+        stripeSessionId: session.id,
+        stripeCustomerEmail: email,
+        productId,
+        amountTotal: session.amount_total,
+        currency: session.currency ?? 'usd',
+        paymentStatus: session.payment_status,
+        metadata: session.metadata,
+    });
+
+    const accountUrl = `${SITE_URL}/account/${user.accountKey}`;
+
+    if (!isMailConfigured()) return;
 
     try {
         await sendMail({
@@ -52,6 +75,7 @@ async function handleCheckoutCompleted(
                 `Customer: ${customerName}`,
                 `Email: ${email}`,
                 `Source: ${source}`,
+                `Account: ${accountUrl}`,
                 '',
                 `Purchase type: ${session.metadata?.purchaseKind ?? 'personal'}`,
                 session.metadata?.companyName
@@ -69,7 +93,9 @@ async function handleCheckoutCompleted(
                 `Hi ${customerName},`,
                 '',
                 `Your payment of ${amountPaid} has been received.`,
-                'We will send your skills download shortly.',
+                '',
+                'Access your account and download your skills here:',
+                accountUrl,
                 '',
                 'Thanks,',
                 'Elite Skills',
@@ -80,7 +106,7 @@ async function handleCheckoutCompleted(
     }
 }
 
-export const POST: APIRoute = async ({ request, clientAddress }) => {
+export const POST: APIRoute = async ({ request, clientAddress, locals }) => {
     if (!STRIPE_WEBHOOK_SECRET)
         return jsonError('Webhook not configured.', 500);
 
@@ -110,7 +136,8 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
 
     if (event.type === 'checkout.session.completed') {
         const session = event.data.object as CheckoutSessionData;
-        await handleCheckoutCompleted(session);
+        const d1 = locals.runtime.env.DB;
+        await handleCheckoutCompleted(session, d1);
     }
 
     return jsonOk({ ok: true, received: true });

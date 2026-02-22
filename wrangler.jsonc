@@ -9,13 +9,27 @@
 	"workers_dev": false,
 	"preview_urls": false,
 	"routes": [
-		{ "pattern": "eliteskills.ai", "custom_domain": true },
-		{ "pattern": "www.eliteskills.ai", "custom_domain": true }
+		{
+			"pattern": "eliteskills.ai",
+			"custom_domain": true
+		},
+		{
+			"pattern": "www.eliteskills.ai",
+			"custom_domain": true
+		}
 	],
 	"assets": {
 		"binding": "ASSETS",
 		"directory": "./dist"
 	},
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "eliteskills-db",
+			"database_id": "daff610d-91bd-43fe-8431-4e0b7316692b",
+			"migrations_dir": "drizzle"
+		}
+	],
 	"observability": {
 		"enabled": true
 	}

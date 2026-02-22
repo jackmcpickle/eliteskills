@@ -1,0 +1,79 @@
+---
+import { FileCode, Blocks } from '@lucide/astro';
+
+const genericSkills = [
+	'"You are a senior frontend developer. Never make mistakes."',
+	'"Always write clean, maintainable code."',
+	'"Follow best practices for performance."',
+	'"Use TypeScript and write tests."',
+];
+
+const eliteSkills = [
+	'Component composition with compound patterns and slot-based APIs',
+	'Query key factories with stale-time hierarchies for cache invalidation',
+	'Form state machines: idle → validating → submitting → success/error',
+	'API error boundaries with retry strategies and optimistic rollback',
+];
+---
+
+<section class="relative py-32 px-6">
+	<!-- Ambient glow -->
+	<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-[600px] rounded-full bg-neon-violet/5 blur-[140px] pointer-events-none"></div>
+
+	<div class="relative max-w-5xl mx-auto">
+		<!-- Section header -->
+		<div class="text-center mb-20">
+			<p class="reveal font-mono text-xs text-neon-cyan tracking-[0.3em] uppercase mb-4">The Difference</p>
+			<h2 class="reveal reveal-delay-1 font-display text-4xl sm:text-5xl md:text-6xl font-800 text-white tracking-tight">
+				Architecture, Not Affirmations
+			</h2>
+			<p class="reveal reveal-delay-2 mt-4 max-w-xl mx-auto text-mist">
+				Open-source skills tell your AI what to be. Ours teach it how to build.
+			</p>
+		</div>
+
+		<!-- Comparison cards -->
+		<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+			<!-- Generic open source skills -->
+			<div class="reveal reveal-delay-1 group relative rounded-2xl border border-red-500/20 bg-surface p-8 sm:p-10">
+				<div class="flex items-center gap-3 mb-6">
+					<div class="flex items-center justify-center size-10 rounded-full bg-red-500/10 border border-red-500/20 text-red-400">
+						<FileCode class="size-5" aria-hidden="true" />
+					</div>
+					<h3 class="font-display text-lg font-700 text-ghost">Generic Open Source Skills</h3>
+				</div>
+
+				<ul class="space-y-4">
+					{genericSkills.map((skill) => (
+						<li class="font-mono text-sm text-ghost/70 leading-relaxed pl-4 border-l-2 border-red-500/20">
+							{skill}
+						</li>
+					))}
+				</ul>
+			</div>
+
+			<!-- Elite Skills -->
+			<div class="reveal reveal-delay-2 group relative rounded-2xl border-2 border-neon-cyan bg-surface p-8 sm:p-10 shadow-[0_0_60px_var(--color-neon-cyan-glow)]">
+				<div class="flex items-center gap-3 mb-6">
+					<div class="flex items-center justify-center size-10 rounded-full bg-neon-cyan-glow border border-neon-cyan-dim text-neon-cyan">
+						<Blocks class="size-5" aria-hidden="true" />
+					</div>
+					<h3 class="font-display text-lg font-700 text-white">Elite Skills</h3>
+				</div>
+
+				<ul class="space-y-4">
+					{eliteSkills.map((skill) => (
+						<li class="font-mono text-sm text-cloud leading-relaxed pl-4 border-l-2 border-neon-cyan">
+							{skill}
+						</li>
+					))}
+				</ul>
+			</div>
+		</div>
+
+		<!-- Bottom text -->
+		<p class="reveal reveal-delay-3 text-center mt-12 font-mono text-xs text-ghost tracking-wider">
+			Real patterns from production-scale apps. Not vibes.
+		</p>
+	</div>
+</section>

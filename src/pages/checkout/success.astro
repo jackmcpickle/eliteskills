@@ -1,8 +1,45 @@
 ---
+export const prerender = false;
+
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import { createDb } from '@/libs/db/client';
+import { getPurchaseByStripeSessionId, getUserByEmail, upsertUserByEmail, createPurchase } from '@/libs/db/repo';
+import { isStripeConfigured, getCheckoutSession, getProduct } from '@/libs/api/stripe';
 
 const product = Astro.url.searchParams.get('product');
+const sessionId = Astro.url.searchParams.get('session_id');
 const productLabel = product === 'lifetime' ? 'Lifetime Access' : 'One-Time Purchase';
+
+let accountUrl = '';
+
+if (sessionId && isStripeConfigured()) {
+	try {
+		const d1 = Astro.locals.runtime.env.DB;
+		const db = createDb(d1);
+		const session = await getCheckoutSession(sessionId);
+
+		if (session.payment_status === 'paid' && session.customer_email) {
+			const productId = (session.metadata?.productId as string) ?? 'unknown';
+			const customerName = (session.metadata?.customerName as string) ?? null;
+
+			const user = await upsertUserByEmail(db, session.customer_email, customerName);
+			await createPurchase(db, {
+				userId: user.id,
+				stripeSessionId: session.id,
+				stripeCustomerEmail: session.customer_email,
+				productId,
+				amountTotal: session.amount_total,
+				currency: (session.currency as string) ?? 'usd',
+				paymentStatus: session.payment_status,
+				metadata: session.metadata as Record<string, string> | undefined,
+			});
+
+			accountUrl = `/account/${user.accountKey}`;
+		}
+	} catch {
+		// Non-fatal: account link not available, user can use email link
+	}
+}
 ---
 
 <BaseLayout
@@ -15,10 +52,18 @@ const productLabel = product === 'lifetime' ? 'Lifetime Access' : 'One-Time Purc
 			<p class="font-mono text-xs tracking-[0.28em] uppercase text-neon-green mb-4">Payment confirmed</p>
 			<h1 class="font-display text-4xl font-800 text-white mb-4">Thanks for your purchase.</h1>
 			<p class="text-mist leading-relaxed mb-6">
-				You purchased <span class="text-white">{productLabel}</span>. Check your email for download details.
+				You purchased <span class="text-white">{productLabel}</span>.
+				{accountUrl
+					? 'Access your account to download your skills.'
+					: 'Check your email for your account link and download details.'
+				}
 			</p>
 			<div class="flex flex-col sm:flex-row justify-center gap-3">
-				<a href="/" class="rounded-lg bg-neon-cyan px-6 py-3 font-mono text-xs uppercase tracking-wide text-void">Back home</a>
+				{accountUrl ? (
+					<a href={accountUrl} class="rounded-lg bg-neon-cyan px-6 py-3 font-mono text-xs uppercase tracking-wide text-void">Go to account</a>
+				) : (
+					<a href="/" class="rounded-lg bg-neon-cyan px-6 py-3 font-mono text-xs uppercase tracking-wide text-void">Back home</a>
+				)}
 				<a href="/contact" class="rounded-lg border border-slate-mid px-6 py-3 font-mono text-xs uppercase tracking-wide text-mist hover:border-neon-cyan-dim hover:text-neon-cyan">Contact</a>
 			</div>
 		</section>

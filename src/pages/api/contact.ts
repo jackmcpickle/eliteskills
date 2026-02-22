@@ -1,73 +1,81 @@
 import type { APIRoute } from 'astro';
 import { sendMail, isMailConfigured, getAdminEmail } from '@/libs/api/mail';
-import { checkHoneypot, checkRateLimit, parseFormField, jsonError, jsonOk } from '@/libs/api/spam';
+import {
+    checkHoneypot,
+    checkRateLimit,
+    parseFormField,
+    jsonError,
+    jsonOk,
+} from '@/libs/api/spam';
 
 interface ContactPayload {
-	name: string;
-	email: string;
-	message: string;
+    name: string;
+    email: string;
+    message: string;
 }
 
 function parsePayload(formData: FormData): ContactPayload {
-	return {
-		name: parseFormField(formData, 'name'),
-		email: parseFormField(formData, 'email'),
-		message: parseFormField(formData, 'message'),
-	};
+    return {
+        name: parseFormField(formData, 'name'),
+        email: parseFormField(formData, 'email'),
+        message: parseFormField(formData, 'message'),
+    };
 }
 
 function validatePayload(payload: ContactPayload): string | null {
-	if (!payload.name) return 'Name required.';
-	if (!payload.email) return 'Email required.';
-	if (!payload.message) return 'Message required.';
+    if (!payload.name) return 'Name required.';
+    if (!payload.email) return 'Email required.';
+    if (!payload.message) return 'Message required.';
 
-	const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(payload.email);
-	if (!emailValid) return 'Email invalid.';
+    const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(payload.email);
+    if (!emailValid) return 'Email invalid.';
 
-	return null;
+    return null;
 }
 
 export const POST: APIRoute = async ({ request, clientAddress }) => {
-	if (!isMailConfigured()) return jsonError('Email service not configured.', 500);
-	if (checkRateLimit(clientAddress)) return jsonError('Too many requests. Try later.', 429);
+    if (!isMailConfigured())
+        return jsonError('Email service not configured.', 500);
+    if (checkRateLimit(clientAddress))
+        return jsonError('Too many requests. Try later.', 429);
 
-	const formData = await request.formData();
-	if (checkHoneypot(formData)) return jsonOk();
+    const formData = await request.formData();
+    if (checkHoneypot(formData)) return jsonOk();
 
-	const payload = parsePayload(formData);
-	const error = validatePayload(payload);
-	if (error) return jsonError(error, 400);
+    const payload = parsePayload(formData);
+    const error = validatePayload(payload);
+    if (error) return jsonError(error, 400);
 
-	try {
-		await sendMail({
-			to: [getAdminEmail()],
-			subject: `Contact: ${payload.name} (${payload.email})`,
-			text: [
-				'New contact form message',
-				'',
-				`Name: ${payload.name}`,
-				`Email: ${payload.email}`,
-				'',
-				'Body',
-				payload.message,
-			].join('\n'),
-		});
+    try {
+        await sendMail({
+            to: [getAdminEmail()],
+            subject: `Contact: ${payload.name} (${payload.email})`,
+            text: [
+                'New contact form message',
+                '',
+                `Name: ${payload.name}`,
+                `Email: ${payload.email}`,
+                '',
+                'Body',
+                payload.message,
+            ].join('\n'),
+        });
 
-		await sendMail({
-			to: [payload.email],
-			subject: 'We received your message',
-			text: [
-				`Hi ${payload.name},`,
-				'',
-				'Got your message. We will reply soon.',
-				'',
-				'Thanks,',
-				'Elite Skills',
-			].join('\n'),
-		});
+        await sendMail({
+            to: [payload.email],
+            subject: 'We received your message',
+            text: [
+                `Hi ${payload.name},`,
+                '',
+                'Got your message. We will reply soon.',
+                '',
+                'Thanks,',
+                'Elite Skills',
+            ].join('\n'),
+        });
 
-		return jsonOk();
-	} catch {
-		return jsonError('Failed to send email.', 500);
-	}
+        return jsonOk();
+    } catch {
+        return jsonError('Failed to send email.', 500);
+    }
 };

@@ -152,11 +152,7 @@ export async function getInstallKeyByKey(
     db: AppDb,
     key: string,
 ): Promise<typeof installKeys.$inferSelect | undefined> {
-    return db
-        .select()
-        .from(installKeys)
-        .where(eq(installKeys.key, key))
-        .get();
+    return db.select().from(installKeys).where(eq(installKeys.key, key)).get();
 }
 
 /** Increment download count on install key. */

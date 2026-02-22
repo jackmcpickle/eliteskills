@@ -15,7 +15,9 @@ export const GET: APIRoute = async ({ params, locals }) => {
 
     const installKey = await getInstallKeyByKey(db, key);
     if (!installKey) {
-        return new Response('Invalid or unknown download key.', { status: 404 });
+        return new Response('Invalid or unknown download key.', {
+            status: 404,
+        });
     }
 
     if (
@@ -43,8 +45,7 @@ export const GET: APIRoute = async ({ params, locals }) => {
         status: 200,
         headers: {
             'Content-Type': 'application/zip',
-            'Content-Disposition':
-                'attachment; filename="elite-skills.zip"',
+            'Content-Disposition': 'attachment; filename="elite-skills.zip"',
             'Content-Length': zipBody.byteLength.toString(),
             'Cache-Control': 'no-store',
         },

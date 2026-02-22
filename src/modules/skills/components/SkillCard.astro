@@ -1,0 +1,58 @@
+---
+import { Check, Database, Layers, Palette, Rocket, ShieldCheck, Sparkles } from '@lucide/astro';
+
+interface Props {
+	title: string;
+	description: string;
+	icon: string;
+	order: number;
+	highlights: string[];
+	index: number;
+}
+
+const { title, description, icon, order, highlights, index } = Astro.props;
+
+const iconMap = { Database, Layers, Palette, Rocket, ShieldCheck, Sparkles };
+const Icon = iconMap[icon as keyof typeof iconMap] ?? Sparkles;
+---
+
+<div class={`reveal reveal-delay-${(index % 3) + 1} group relative rounded-2xl border border-neon-cyan-dim bg-surface shadow-[0_0_60px_var(--color-neon-cyan-glow)] transition-all hover:bg-surface-hover`}>
+	<div class="p-8 sm:p-10">
+		<!-- Header -->
+		<div class="flex items-center gap-4 mb-6">
+			<div class="flex items-center justify-center size-14 rounded-xl bg-neon-cyan-glow border border-neon-cyan-dim text-neon-cyan transition-shadow group-hover:shadow-[0_0_30px_var(--color-neon-cyan-glow)]">
+				<Icon class="size-6" aria-hidden="true" />
+			</div>
+			<div>
+				<h2 class="font-display text-3xl sm:text-4xl font-800 text-white tracking-tight group-hover:text-neon-cyan transition-colors">
+					{title}
+				</h2>
+				<span class="font-mono text-[10px] text-ghost tracking-[0.3em] uppercase">Skill {String(order).padStart(2, '0')}</span>
+			</div>
+		</div>
+
+		<p class="text-mist text-lg leading-relaxed mb-10 max-w-2xl">
+			{description}
+		</p>
+
+		<!-- Highlights -->
+		{highlights.length > 0 && (
+			<div>
+				<h3 class="font-mono text-xs text-neon-amber tracking-[0.3em] uppercase mb-5">What It Covers</h3>
+				<ul class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+					{highlights.map((highlight) => (
+						<li class="flex items-start gap-3 text-sm">
+							<div class="flex items-center justify-center size-6 rounded bg-neon-cyan-glow text-neon-cyan shrink-0 mt-0.5">
+								<Check class="size-3.5" aria-hidden="true" />
+							</div>
+							<span class="text-cloud">{highlight}</span>
+						</li>
+					))}
+				</ul>
+			</div>
+		)}
+	</div>
+
+	<!-- Bottom accent -->
+	<div class="absolute bottom-0 inset-x-6 h-px bg-gradient-to-r from-transparent via-neon-cyan-dim to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+</div>

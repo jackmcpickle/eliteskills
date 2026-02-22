@@ -1,0 +1,21 @@
+---
+import { getCollection } from 'astro:content';
+import SkillCard from './SkillCard.astro';
+
+const skills = (await getCollection('skills')).sort((a, b) => a.data.order - b.data.order);
+---
+
+<section id="main-content" class="relative pb-32 px-6">
+	<div class="max-w-4xl mx-auto space-y-8">
+		{skills.map((skill, i) => (
+			<SkillCard
+				title={skill.data.title}
+				description={skill.data.description}
+				icon={skill.data.icon}
+				order={skill.data.order}
+				highlights={skill.data.highlights}
+				index={i}
+			/>
+		))}
+	</div>
+</section>

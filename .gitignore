@@ -28,6 +28,9 @@ coverage/
 test-results/
 playwright-report/
 
+# Wrangler
+.wrangler/
+
 # claude local settings
 .claude/settings.local.json
 

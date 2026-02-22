@@ -1,6 +1,6 @@
 // Reads SKILL.md frontmatter from each skill dir, extracts version + hash,
 // writes skills-lock.json with version tracking.
-// Run: node --import tsx scripts/build-skills-manifest.ts
+// Run: pnpm exec vite-node scripts/build-skills-manifest.ts
 import { createHash } from 'node:crypto';
 import {
     readFileSync,

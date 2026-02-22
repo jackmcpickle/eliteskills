@@ -2,7 +2,7 @@
  * Build script: zips .claude/skills/ into public/skills-bundle.zip
  * and per-skill zips into public/skills-{slug}.zip
  *
- * Run before astro build: node --import tsx scripts/build-skills-zip.ts
+ * Run before astro build: pnpm exec vite-node scripts/build-skills-zip.ts
  */
 import { readFileSync, writeFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
@@ -67,8 +67,7 @@ for (const [slug, dirName] of Object.entries(SKILL_SLUG_TO_DIR)) {
     try {
         statSync(skillDir);
     } catch {
-        console.warn(`WARN: skill dir missing for "${slug}" → ${dirName}`);
-        continue;
+        throw new Error(`Missing mapped skill dir for "${slug}" -> ${dirName}`);
     }
 
     const skillFiles = collectFiles(

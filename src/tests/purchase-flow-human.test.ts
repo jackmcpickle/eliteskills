@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+import { BUNDLE_PRODUCT_IDS, SKILL_SLUG_TO_PRODUCT_ID } from '@/constants/products';
 
 describe('Human purchase flow — product catalog', () => {
     // DB seed: 6 skill products (id 1-6), 3 bundle products (id 7-9)
@@ -153,5 +154,24 @@ describe('Human purchase flow — Stripe checkout session contract', () => {
         expect(metadata).toHaveProperty('customerName');
         expect(metadata).toHaveProperty('continent');
         expect(metadata).toHaveProperty('source');
+    });
+});
+
+describe('Human purchase flow — skills CTA routing contract', () => {
+    it('skill CTAs use new /checkout/{id} routes only', () => {
+        const skillRoutes = Object.values(SKILL_SLUG_TO_PRODUCT_ID).map(
+            (id) => `/checkout/${id}`,
+        );
+
+        for (const route of skillRoutes) {
+            expect(route).toMatch(/^\/checkout\/\d+$/);
+            expect(route.includes('/checkout/single?skill=')).toBe(false);
+        }
+    });
+
+    it('bundle CTA uses new all-skills product id route', () => {
+        const allSkillsRoute = `/checkout/${BUNDLE_PRODUCT_IDS.allSkills}`;
+        expect(allSkillsRoute).toBe('/checkout/7');
+        expect(allSkillsRoute).not.toBe('/checkout/once');
     });
 });

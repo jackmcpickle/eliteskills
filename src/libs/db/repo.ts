@@ -1,4 +1,4 @@
-import { eq, and } from 'drizzle-orm';
+import { eq, and, sql } from 'drizzle-orm';
 import type { AppDb } from './client';
 import {
     users,
@@ -280,11 +280,10 @@ export async function getInstallKeyByKey(
 export async function incrementDownloadCount(
     db: AppDb,
     keyId: string,
-    currentCount: number,
 ): Promise<void> {
     await db
         .update(installKeys)
-        .set({ downloadCount: currentCount + 1 })
+        .set({ downloadCount: sql`${installKeys.downloadCount} + 1` })
         .where(eq(installKeys.id, keyId));
 }
 

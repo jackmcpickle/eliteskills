@@ -132,34 +132,25 @@ describe('Agent purchase flow — payload validation', () => {
 
 describe('Agent purchase flow — two-step API contract', () => {
     it('step 1 response shape: sessionToken + expiresAt', () => {
-        const expectedShape = {
-            ok: true,
-            sessionToken: expect.any(String),
-            expiresAt: expect.any(String),
-        };
-
-        // Simulate response
         const response = {
             ok: true,
             sessionToken: 'eyJ...',
             expiresAt: '2026-02-22T02:37:00.000Z',
         };
 
-        expect(response).toMatchObject(expectedShape);
+        expect(response.ok).toBe(true);
+        expect(typeof response.sessionToken).toBe('string');
+        expect(typeof response.expiresAt).toBe('string');
     });
 
     it('step 2 response shape: paymentUrl', () => {
-        const expectedShape = {
-            ok: true,
-            paymentUrl: expect.any(String),
-        };
-
         const response = {
             ok: true,
             paymentUrl: 'https://eliteskills.ai/pay?token=eyJ...',
         };
 
-        expect(response).toMatchObject(expectedShape);
+        expect(response.ok).toBe(true);
+        expect(typeof response.paymentUrl).toBe('string');
 
         // paymentUrl must contain /pay?token=
         expect(response.paymentUrl).toMatch(/\/pay\?token=/);

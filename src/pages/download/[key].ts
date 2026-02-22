@@ -8,6 +8,7 @@ import {
     getPurchaseById,
     getProductById,
 } from '@/libs/db/repo';
+import { resolveDownloadZip } from '@/libs/download';
 
 export const GET: APIRoute = async ({ params, locals }) => {
     const { key } = params;
@@ -43,14 +44,7 @@ export const GET: APIRoute = async ({ params, locals }) => {
         return new Response('Product not found.', { status: 404 });
     }
 
-    // Skill products get per-skill zip, bundle products get full bundle
-    const zipFile = product.skillSlug
-        ? `skills-${product.skillSlug}.zip`
-        : 'skills-bundle.zip';
-
-    const fileName = product.skillSlug
-        ? `elite-skill-${product.skillSlug}.zip`
-        : 'elite-skills.zip';
+    const { zipFile, fileName } = resolveDownloadZip(product.skillSlug);
 
     const assets = locals.runtime.env.ASSETS;
     const zipResponse = await assets.fetch(
@@ -61,7 +55,7 @@ export const GET: APIRoute = async ({ params, locals }) => {
         return new Response('Skills bundle not found.', { status: 500 });
     }
 
-    await incrementDownloadCount(db, installKey.id, installKey.downloadCount);
+    await incrementDownloadCount(db, installKey.id);
 
     const zipBody = await zipResponse.arrayBuffer();
 

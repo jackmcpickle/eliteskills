@@ -25,5 +25,5 @@
         // Allow JavaScript files to be imported
         "allowJs": true,
     },
-    "include": ["vitest.config.ts", "playwright.config.ts", "astro.config.mjs"],
+    "include": ["vitest.config.ts", "playwright.config.ts", "astro.config.mjs", "scripts/**/*.ts"],
 }

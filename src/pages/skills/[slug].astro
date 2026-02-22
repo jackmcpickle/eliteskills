@@ -3,6 +3,7 @@ import type { GetStaticPaths } from 'astro';
 import { getCollection } from 'astro:content';
 import { Check, Database, Layers, Palette, Rocket, ShieldCheck, Sparkles } from '@lucide/astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import { BUNDLE_PRODUCT_IDS, SKILL_SLUG_TO_PRODUCT_ID } from '@/constants/products';
 
 export const getStaticPaths = (async () => {
 	const skills = await getCollection('skills');
@@ -15,6 +16,9 @@ export const getStaticPaths = (async () => {
 const { skill } = Astro.props;
 const { title, description, icon, order, highlights } = skill.data;
 const slug = skill.id.replace(/\.md$/, '');
+const skillProductId = SKILL_SLUG_TO_PRODUCT_ID[slug as keyof typeof SKILL_SLUG_TO_PRODUCT_ID];
+const skillCheckoutHref = skillProductId ? `/checkout/${skillProductId}` : '/skills';
+const bundleCheckoutHref = `/checkout/${BUNDLE_PRODUCT_IDS.allSkills}`;
 
 const iconMap = { Database, Layers, Palette, Rocket, ShieldCheck, Sparkles };
 const Icon = iconMap[icon as keyof typeof iconMap] ?? Sparkles;
@@ -65,10 +69,10 @@ const Icon = iconMap[icon as keyof typeof iconMap] ?? Sparkles;
 
 			<!-- CTAs -->
 			<div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-				<a href={`/checkout/single?skill=${slug}`} class="inline-flex items-center gap-2 px-8 py-4 rounded-lg bg-neon-cyan text-void font-mono font-700 text-sm tracking-wide uppercase transition-all hover:shadow-[0_0_40px_var(--color-neon-cyan-dim)]">
+				<a href={skillCheckoutHref} class="inline-flex items-center gap-2 px-8 py-4 rounded-lg bg-neon-cyan text-void font-mono font-700 text-sm tracking-wide uppercase transition-all hover:shadow-[0_0_40px_var(--color-neon-cyan-dim)]">
 					Buy This Skill &mdash; $9
 				</a>
-				<a href="/checkout/once" class="font-mono text-sm text-mist hover:text-neon-cyan transition-colors">
+				<a href={bundleCheckoutHref} class="font-mono text-sm text-mist hover:text-neon-cyan transition-colors">
 					Or get all skills for $29 &rarr;
 				</a>
 			</div>

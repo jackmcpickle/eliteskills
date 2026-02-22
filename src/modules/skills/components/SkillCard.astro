@@ -9,9 +9,11 @@ interface Props {
 	highlights: string[];
 	index: number;
 	slug: string;
+	productId?: number;
 }
 
-const { title, description, icon, order, highlights, index, slug } = Astro.props;
+const { title, description, icon, order, highlights, index, slug, productId } = Astro.props;
+const checkoutHref = productId ? `/checkout/${productId}` : '/skills';
 
 const iconMap = { Database, Layers, Palette, Rocket, ShieldCheck, Sparkles };
 const Icon = iconMap[icon as keyof typeof iconMap] ?? Sparkles;
@@ -55,7 +57,7 @@ const Icon = iconMap[icon as keyof typeof iconMap] ?? Sparkles;
 
 		<!-- Buy button -->
 		<div class="mt-8">
-			<a href={`/checkout/single?skill=${slug}`} class="inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-neon-cyan-dim text-neon-cyan font-mono text-sm font-600 tracking-wide uppercase transition-all hover:border-neon-cyan hover:shadow-[0_0_30px_var(--color-neon-cyan-glow)]">
+			<a href={checkoutHref} class="inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-neon-cyan-dim text-neon-cyan font-mono text-sm font-600 tracking-wide uppercase transition-all hover:border-neon-cyan hover:shadow-[0_0_30px_var(--color-neon-cyan-glow)]">
 				Buy $9
 			</a>
 		</div>

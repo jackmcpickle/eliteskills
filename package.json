@@ -5,9 +5,9 @@
   "scripts": {
     "test": "pnpm run fmt:check && pnpm run lint && pnpm vitest",
     "test:coverage": "pnpm run fmt:check && pnpm run lint && vitest run --coverage.enabled",
-    "lint": "oxlint -c ../../.oxlintrc.json --type-aware --type-check --fix src/",
-    "fmt:check": "oxfmt --config ../../.oxfmtrc.json \"src/**/*.{js,mjs,cjs,jsx,ts,mts,cts,tsx,css}\" --check",
-    "fmt": "oxfmt --config ../../.oxfmtrc.json \"src/**/*.{js,mjs,cjs,jsx,ts,mts,cts,tsx,css}\" --write",
+    "lint": "oxlint --type-aware --type-check --fix src/",
+    "fmt:check": "oxfmt \"src/**/*.{js,mjs,cjs,jsx,ts,mts,cts,tsx,css}\" --check",
+    "fmt": "oxfmt \"src/**/*.{js,mjs,cjs,jsx,ts,mts,cts,tsx,css}\" --write",
     "vitest": "vitest run --coverage.enabled",
     "preview": "wrangler dev",
     "deploy": "pnpm build && wrangler deploy",
@@ -22,9 +22,14 @@
     "astro": "^5.17.1",
     "lucide-astro": "^0.556.0",
     "mailgun.js": "^12.7.0",
+    "stripe": "^20.3.1",
     "tailwindcss": "^4.2.0"
   },
   "devDependencies": {
+    "@vitest/coverage-v8": "^4.0.18",
+    "oxfmt": "^0.34.0",
+    "oxlint": "^1.49.0",
+    "oxlint-tsgolint": "^0.14.2",
     "vitest": "^4.0.18"
   }
 }

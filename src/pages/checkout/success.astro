@@ -6,16 +6,16 @@ const productLabel = product === 'lifetime' ? 'Lifetime Access' : 'One-Time Purc
 ---
 
 <BaseLayout
-	title="Checkout Success — Elite Skills"
-	description="Your Elite Skills checkout request was received. Check your email for next steps."
+	title="Payment Confirmed — Elite Skills"
+	description="Your Elite Skills payment has been confirmed. Check your email for download details."
 	noindex
 >
 	<main id="main-content" class="min-h-screen px-6 py-20 flex items-center justify-center">
 		<section class="w-full max-w-2xl rounded-2xl border border-border bg-surface p-10 text-center">
-			<p class="font-mono text-xs tracking-[0.28em] uppercase text-neon-cyan mb-4">Success</p>
-			<h1 class="font-display text-4xl font-800 text-white mb-4">Thanks. Request received.</h1>
+			<p class="font-mono text-xs tracking-[0.28em] uppercase text-neon-green mb-4">Payment confirmed</p>
+			<h1 class="font-display text-4xl font-800 text-white mb-4">Thanks for your purchase.</h1>
 			<p class="text-mist leading-relaxed mb-6">
-				You requested <span class="text-white">{productLabel}</span>. We emailed next steps and payment details.
+				You purchased <span class="text-white">{productLabel}</span>. Check your email for download details.
 			</p>
 			<div class="flex flex-col sm:flex-row justify-center gap-3">
 				<a href="/" class="rounded-lg bg-neon-cyan px-6 py-3 font-mono text-xs uppercase tracking-wide text-void">Back home</a>

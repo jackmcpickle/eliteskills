@@ -1,13 +1,13 @@
 # Elite Skills
 
-> Elite Skills sells precision-crafted AI instruction sets (skills) for programmers and vibe coders. Each skill is built from 20 years of production engineering experience by Jack McNicol. Skills work with any AI coding tool (Claude, Cursor, Copilot, etc.) and ship as downloadable instruction files.
+> Elite Skills sells precision-crafted AI instruction sets (skills) for programmers and vibe coders. Each skill is built from 20 years of production engineering experience by Jack McNicol. Skills work with any AI coding tool (Claude, Cursor, Copilot, etc.) and ship as downloadable instruction files. Payment is handled via Stripe (one-time, no subscriptions).
 
 ## Products
 
-There are two purchase options. Neither is a subscription.
+There are two purchase options. Neither is a subscription. Both are one-time payments processed via Stripe.
 
-- **One-Time Purchase — $29**: All 6 skills, instant download, use with any AI tool, community Discord access. This is a snapshot of the current version.
-- **Lifetime Access — $99** (best value): Everything in One-Time, plus all future updates, new skills as they launch, and priority support. Forever.
+- **One-Time Purchase — $29** (`productId: "once"`): All 6 skills, instant download, use with any AI tool, community Discord access. This is a snapshot of the current version.
+- **Lifetime Access — $99** (`productId: "lifetime"`, best value): Everything in One-Time, plus all future updates, new skills as they launch, and priority support. Forever.
 
 ## Skills included
 
@@ -38,58 +38,128 @@ A: No. Both options are one-time payments. No recurring charges.
 A: Yes. 30-day money-back guarantee on both plans.
 
 **Q: How do I get the skills after purchase?**
-A: Instant delivery via email after checkout.
+A: Instant delivery via email after Stripe payment completes.
 
 **Q: Who made these?**
 A: Jack McNicol — 20 years shipping production code.
 
-## Checkout API
+**Q: How does the payment link work?**
+A: The API returns a `/pay?token=...` URL. The buyer opens it in a browser and clicks "Continue to secure payment" which redirects to Stripe hosted checkout. After payment, Stripe redirects to a success page and a confirmation email is sent automatically.
 
-The checkout API accepts POST requests with `multipart/form-data`. It sends checkout details via email and does not process payment directly — payment instructions are emailed to the buyer.
+**Q: How long does the payment link last?**
+A: Payment links expire after 1 hour. If expired, the buyer sees an error page with a link to contact support or return home.
 
-### Required fields
+**Q: Is payment handled directly or via Stripe?**
+A: All payments go through Stripe hosted checkout. No card details touch the Elite Skills server.
 
-- `productId` — `once` or `lifetime`
+## Payment API (for AI agents)
+
+The payment API is a 2-step flow for AI agents to create payment links on behalf of users. Both endpoints are heavily rate-limited.
+
+### Step 1: Create a session token
+
+Authenticate with the agent API key to get a short-lived session token (expires in 1 hour).
+
+**Endpoint:** `POST /api/payment-session`
+**Auth:** `Authorization: Bearer <AGENT_API_KEY>`
+**Body:** none
+
+```bash
+curl -X POST https://eliteskills.dev/api/payment-session \
+  -H "Authorization: Bearer YOUR_AGENT_API_KEY"
+```
+
+**Response:**
+```json
+{
+  "ok": true,
+  "sessionToken": "eyJ...",
+  "expiresAt": "2026-02-22T02:37:00.000Z"
+}
+```
+
+### Step 2: Create a payment link
+
+Use the session token to create a Stripe checkout session. The API returns a payment URL and also emails it to the buyer.
+
+**Endpoint:** `POST /api/payment-link`
+**Auth:** `Authorization: Bearer <sessionToken>` (from step 1)
+**Content-Type:** `application/json`
+
+#### Required fields
+
+- `productId` — `"once"` or `"lifetime"`
 - `name` — buyer full name
 - `email` — buyer email address
 
-### Optional fields (for company receipt)
+#### Optional fields (for company receipt)
 
-- `purchaseKind` — `personal` (default) or `company`
-- `companyName` — required when `purchaseKind=company`
-- `addressLine1` — required when `purchaseKind=company`
+- `purchaseKind` — `"personal"` (default) or `"company"`
+- `companyName` — required when `purchaseKind` is `"company"`
+- `addressLine1` — required when `purchaseKind` is `"company"`
 - `addressLine2` — optional
-- `city` — required when `purchaseKind=company`
-- `postalCode` — required when `purchaseKind=company`
-- `country` — required when `purchaseKind=company`
+- `city` — required when `purchaseKind` is `"company"`
+- `postalCode` — required when `purchaseKind` is `"company"`
+- `country` — required when `purchaseKind` is `"company"`
 
-### Example: personal purchase via curl
-
-```bash
-curl -X POST https://eliteskills.dev/api/checkout \
-  -F "productId=lifetime" \
-  -F "name=Jane Doe" \
-  -F "email=jane@example.com"
-```
-
-### Example: company purchase with receipt via curl
+#### Example: personal purchase
 
 ```bash
-curl -X POST https://eliteskills.dev/api/checkout \
-  -F "productId=once" \
-  -F "name=Jane Doe" \
-  -F "email=jane@example.com" \
-  -F "purchaseKind=company" \
-  -F "companyName=Acme Corp" \
-  -F "addressLine1=123 Main St" \
-  -F "city=Melbourne" \
-  -F "postalCode=3000" \
-  -F "country=Australia"
+curl -X POST https://eliteskills.dev/api/payment-link \
+  -H "Authorization: Bearer SESSION_TOKEN_FROM_STEP_1" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "productId": "lifetime",
+    "name": "Jane Doe",
+    "email": "jane@example.com"
+  }'
 ```
 
-### Response
+#### Example: company purchase with receipt
 
-Success returns `{"ok":true}`. Errors return `{"error":"..."}` with an appropriate HTTP status code (400, 429, or 500).
+```bash
+curl -X POST https://eliteskills.dev/api/payment-link \
+  -H "Authorization: Bearer SESSION_TOKEN_FROM_STEP_1" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "productId": "once",
+    "name": "Jane Doe",
+    "email": "jane@example.com",
+    "purchaseKind": "company",
+    "companyName": "Acme Corp",
+    "addressLine1": "123 Main St",
+    "city": "Melbourne",
+    "postalCode": "3000",
+    "country": "Australia"
+  }'
+```
+
+#### Response
+
+```json
+{
+  "ok": true,
+  "paymentUrl": "https://eliteskills.dev/pay?token=eyJ..."
+}
+```
+
+The `paymentUrl` is a one-time-use link (1 hour expiry) that takes the buyer to an order summary page with a "Continue to secure payment" button that redirects to Stripe hosted checkout.
+
+The same link is also emailed to the buyer automatically.
+
+### Error responses
+
+All error responses follow the format `{"error": "..."}` with appropriate HTTP status codes:
+
+- `400` — invalid input (bad product id, missing fields, invalid email)
+- `401` — unauthorized (bad API key or expired session token)
+- `429` — rate limited (too many requests)
+- `500` — server error (Stripe or mail not configured)
+
+### Rate limits
+
+- `/api/payment-session`: 5 requests per 5 minutes per IP, 30 per hour per API key
+- `/api/payment-link`: 20 per 10 minutes per IP, 10 per hour per session, 5 per hour per email
 
 ## Pages
 

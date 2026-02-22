@@ -3,5 +3,6 @@ Allow: /
 
 Disallow: /api/
 Disallow: /checkout/
+Disallow: /pay
 
 Sitemap: https://eliteskills.dev/sitemap-index.xml

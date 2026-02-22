@@ -12,7 +12,7 @@ export default defineConfig({
 
   integrations: [
     sitemap({
-      filter: (page) => !page.includes('/checkout/') && !page.includes('/api/'),
+      filter: (page) => !page.includes('/checkout/') && !page.includes('/api/') && !page.includes('/pay'),
     }),
   ],
 
@@ -42,12 +42,37 @@ export default defineConfig({
         access: 'secret',
         optional: true
       }),
-      STRIPE_PUBLISHABLE_KEY: envField.string({
+      STRIPE_SECRET_KEY: envField.string({
         context: 'server',
         access: 'secret',
         optional: true
       }),
-      STRIPE_SECRET_KEY: envField.string({
+      STRIPE_WEBHOOK_SECRET: envField.string({
+        context: 'server',
+        access: 'secret',
+        optional: true
+      }),
+      STRIPE_PRICE_ONCE: envField.string({
+        context: 'server',
+        access: 'secret',
+        optional: true
+      }),
+      STRIPE_PRICE_LIFETIME: envField.string({
+        context: 'server',
+        access: 'secret',
+        optional: true
+      }),
+      AGENT_API_KEY: envField.string({
+        context: 'server',
+        access: 'secret',
+        optional: true
+      }),
+      SESSION_TOKEN_SECRET: envField.string({
+        context: 'server',
+        access: 'secret',
+        optional: true
+      }),
+      PAY_TOKEN_SECRET: envField.string({
         context: 'server',
         access: 'secret',
         optional: true

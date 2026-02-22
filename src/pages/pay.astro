@@ -1,0 +1,130 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { PAY_TOKEN_SECRET } from 'astro:env/server';
+import { verifyToken } from '@/libs/api/tokens';
+import { isStripeConfigured, getCheckoutSession, getProduct } from '@/libs/api/stripe';
+
+type PayState = 'loading' | 'unpaid' | 'paid' | 'expired' | 'error';
+
+let state: PayState = 'error';
+let stripeUrl = '';
+let productName = '';
+let productPrice = 0;
+let customerEmail = '';
+let errorMessage = 'Invalid or expired payment link.';
+
+const token = Astro.url.searchParams.get('token');
+
+if (token && PAY_TOKEN_SECRET && isStripeConfigured()) {
+	const payload = await verifyToken(token, PAY_TOKEN_SECRET, 'pay');
+
+	if (!payload) {
+		state = 'expired';
+		errorMessage = 'This payment link has expired. Please request a new one.';
+	} else if (payload.data) {
+		try {
+			const session = await getCheckoutSession(payload.data);
+			const productId = (session.metadata?.productId as string) ?? '';
+			const product = getProduct(productId);
+
+			if (session.payment_status === 'paid') {
+				state = 'paid';
+				productName = product?.name ?? 'Elite AI Skills';
+				customerEmail = session.customer_email ?? '';
+			} else if (session.status === 'expired') {
+				state = 'expired';
+				errorMessage = 'This checkout session has expired. Please request a new link.';
+			} else {
+				state = 'unpaid';
+				stripeUrl = session.url ?? '';
+				productName = product?.name ?? 'Elite AI Skills';
+				productPrice = product?.price ?? 0;
+				customerEmail = session.customer_email ?? '';
+			}
+		} catch {
+			state = 'error';
+			errorMessage = 'Unable to retrieve payment details. Please try again or contact support.';
+		}
+	} else {
+		state = 'error';
+		errorMessage = 'Invalid payment link.';
+	}
+} else if (!token) {
+	errorMessage = 'No payment token provided.';
+}
+---
+
+<BaseLayout
+	title="Payment — Elite Skills"
+	description="Complete your Elite Skills payment securely via Stripe."
+	noindex
+>
+	<main id="main-content" class="min-h-screen px-6 py-20 flex items-center justify-center">
+		{state === 'unpaid' && (
+			<section class="w-full max-w-2xl rounded-2xl border border-border bg-surface p-10 text-center">
+				<p class="font-mono text-xs tracking-[0.28em] uppercase text-neon-cyan mb-4">Checkout</p>
+				<h1 class="font-display text-4xl font-800 text-white mb-4">{productName}</h1>
+
+				<div class="rounded-xl border border-neon-cyan-dim bg-neon-cyan-glow p-5 mb-8 inline-block">
+					<p class="font-mono text-xs uppercase tracking-[0.24em] text-ghost mb-2">Total</p>
+					<p class="font-display text-5xl font-900 text-neon-cyan">${productPrice}</p>
+				</div>
+
+				{customerEmail && (
+					<p class="text-mist text-sm mb-6">
+						Paying as <span class="text-white">{customerEmail}</span>
+					</p>
+				)}
+
+				<div class="space-y-3">
+					<a
+						href={stripeUrl}
+						class="block w-full rounded-lg bg-neon-cyan py-4 font-mono text-sm font-700 uppercase tracking-wide text-void transition-all hover:shadow-[0_0_40px_var(--color-neon-cyan-dim)]"
+					>
+						Continue to secure payment
+					</a>
+					<p class="font-mono text-xs text-ghost tracking-wider">
+						Powered by Stripe &middot; 256-bit encryption
+					</p>
+				</div>
+
+				<ul class="mt-8 space-y-3 text-sm text-cloud text-left max-w-xs mx-auto">
+					<li class="flex items-center gap-2"><span class="size-1.5 rounded-full bg-neon-amber"></span> Instant access after payment</li>
+					<li class="flex items-center gap-2"><span class="size-1.5 rounded-full bg-neon-amber"></span> 30-day money-back guarantee</li>
+					<li class="flex items-center gap-2"><span class="size-1.5 rounded-full bg-neon-amber"></span> Secure Stripe checkout</li>
+				</ul>
+			</section>
+		)}
+
+		{state === 'paid' && (
+			<section class="w-full max-w-2xl rounded-2xl border border-border bg-surface p-10 text-center">
+				<p class="font-mono text-xs tracking-[0.28em] uppercase text-neon-green mb-4">Paid</p>
+				<h1 class="font-display text-4xl font-800 text-white mb-4">Payment confirmed</h1>
+				<p class="text-mist leading-relaxed mb-6">
+					{productName} is on its way to <span class="text-white">{customerEmail}</span>.
+					Check your inbox for download details.
+				</p>
+				<div class="flex flex-col sm:flex-row justify-center gap-3">
+					<a href="/" class="rounded-lg bg-neon-cyan px-6 py-3 font-mono text-xs uppercase tracking-wide text-void">Back home</a>
+					<a href="/contact" class="rounded-lg border border-slate-mid px-6 py-3 font-mono text-xs uppercase tracking-wide text-mist hover:border-neon-cyan-dim hover:text-neon-cyan">Contact</a>
+				</div>
+			</section>
+		)}
+
+		{(state === 'expired' || state === 'error') && (
+			<section class="w-full max-w-2xl rounded-2xl border border-border bg-surface p-10 text-center">
+				<p class="font-mono text-xs tracking-[0.28em] uppercase text-red-300 mb-4">
+					{state === 'expired' ? 'Expired' : 'Error'}
+				</p>
+				<h1 class="font-display text-4xl font-800 text-white mb-4">
+					{state === 'expired' ? 'Link expired' : 'Something went wrong'}
+				</h1>
+				<p class="text-mist leading-relaxed mb-6">{errorMessage}</p>
+				<div class="flex flex-col sm:flex-row justify-center gap-3">
+					<a href="/" class="rounded-lg bg-neon-cyan px-6 py-3 font-mono text-xs uppercase tracking-wide text-void">Back home</a>
+					<a href="/contact" class="rounded-lg border border-slate-mid px-6 py-3 font-mono text-xs uppercase tracking-wide text-mist hover:border-neon-cyan-dim hover:text-neon-cyan">Contact</a>
+				</div>
+			</section>
+		)}
+	</main>
+</BaseLayout>

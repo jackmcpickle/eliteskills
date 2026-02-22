@@ -8,13 +8,15 @@ interface ContactPayload {
 	message: string;
 }
 
-const parsePayload = (formData: FormData): ContactPayload => ({
-	name: parseFormField(formData, 'name'),
-	email: parseFormField(formData, 'email'),
-	message: parseFormField(formData, 'message'),
-});
+function parsePayload(formData: FormData): ContactPayload {
+	return {
+		name: parseFormField(formData, 'name'),
+		email: parseFormField(formData, 'email'),
+		message: parseFormField(formData, 'message'),
+	};
+}
 
-const validatePayload = (payload: ContactPayload): string | null => {
+function validatePayload(payload: ContactPayload): string | null {
 	if (!payload.name) return 'Name required.';
 	if (!payload.email) return 'Email required.';
 	if (!payload.message) return 'Message required.';
@@ -23,7 +25,7 @@ const validatePayload = (payload: ContactPayload): string | null => {
 	if (!emailValid) return 'Email invalid.';
 
 	return null;
-};
+}
 
 export const POST: APIRoute = async ({ request, clientAddress }) => {
 	if (!isMailConfigured()) return jsonError('Email service not configured.', 500);
@@ -65,7 +67,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
 		});
 
 		return jsonOk();
-	} catch (_error) {
+	} catch {
 		return jsonError('Failed to send email.', 500);
 	}
 };

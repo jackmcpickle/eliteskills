@@ -18,14 +18,16 @@ interface MailConfig {
 	from: string;
 }
 
-const getMailConfig = (): MailConfig | null => {
+function getMailConfig(): MailConfig | null {
 	if (!MAILGUN_API_KEY || !MAILGUN_DOMAIN || !MAILGUN_FROM_EMAIL) return null;
 	return { apiKey: MAILGUN_API_KEY, domain: MAILGUN_DOMAIN, from: MAILGUN_FROM_EMAIL };
-};
+}
 
-export const isMailConfigured = (): boolean => getMailConfig() !== null;
+export function isMailConfigured(): boolean {
+	return getMailConfig() !== null;
+}
 
-export const sendMail = async (options: SendMailOptions): Promise<void> => {
+export async function sendMail(options: SendMailOptions): Promise<void> {
 	const config = getMailConfig();
 	if (!config) throw new Error('Mailgun not configured.');
 
@@ -38,8 +40,8 @@ export const sendMail = async (options: SendMailOptions): Promise<void> => {
 		subject: options.subject,
 		text: options.text,
 	});
-};
+}
 
-export const getAdminEmail = (): string => {
+export function getAdminEmail(): string {
 	return MAILGUN_TO_EMAIL ?? '';
-};
+}

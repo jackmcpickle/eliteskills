@@ -31,12 +31,10 @@ const { productId, productName, price } = Astro.props;
 
 		<div class="rounded-2xl border border-border bg-surface p-8 sm:p-10">
 			<h2 class="font-display text-2xl font-700 text-white mb-2">Checkout details</h2>
-			<p class="text-sm text-mist mb-8">Fill details. We will email next steps right after this.</p>
+			<p class="text-sm text-mist mb-8">Fill in your details. You will be redirected to secure Stripe payment.</p>
 
 			<form id="checkout-form" class="space-y-5" novalidate>
 				<input type="hidden" name="productId" value={productId} />
-				<input type="hidden" name="productName" value={productName} />
-				<input type="hidden" name="price" value={String(price)} />
 				<!-- Honeypot — hidden from humans, bots auto-fill -->
 				<div class="absolute -left-[9999px]" aria-hidden="true">
 					<label for="website">Website</label>
@@ -97,8 +95,12 @@ const { productId, productName, price } = Astro.props;
 				</fieldset>
 
 				<button id="checkout-submit" type="submit" class="w-full rounded-lg bg-neon-cyan py-4 text-sm font-mono font-700 uppercase tracking-wide text-void transition-all hover:shadow-[0_0_30px_var(--color-neon-cyan-dim)]">
-					Send checkout request
+					Continue to payment
 				</button>
+
+				<p class="text-center font-mono text-xs text-ghost tracking-wider">
+					Powered by Stripe &middot; 256-bit encryption
+				</p>
 
 				<p id="checkout-status" class="min-h-5 text-sm text-mist" aria-live="polite"></p>
 			</form>
@@ -131,13 +133,14 @@ const { productId, productName, price } = Astro.props;
 			event.preventDefault();
 			if (!statusNode || !submitButton) return;
 
-			statusNode.textContent = 'Submitting...';
+			statusNode.textContent = 'Creating secure checkout...';
+			statusNode.className = 'min-h-5 text-sm text-mist';
 			submitButton.setAttribute('disabled', 'true');
 			submitButton.classList.add('opacity-70');
 
 			try {
 				const formData = new FormData(form);
-				const response = await fetch('/api/checkout', {
+				const response = await fetch('/api/create-checkout', {
 					method: 'POST',
 					body: formData,
 				});
@@ -145,16 +148,20 @@ const { productId, productName, price } = Astro.props;
 				const result = await response.json();
 
 				if (!response.ok) {
-					statusNode.textContent = result.error || 'Checkout request failed.';
+					statusNode.textContent = result.error || 'Checkout failed.';
 					statusNode.className = 'min-h-5 text-sm text-red-300';
 					return;
 				}
 
-				statusNode.textContent = 'Request sent. Redirecting...';
-				statusNode.className = 'min-h-5 text-sm text-neon-green';
-				const product = String(formData.get('productId') || 'once');
-				window.location.href = `/checkout/success?product=${encodeURIComponent(product)}`;
-				return;
+				if (result.paymentUrl) {
+					statusNode.textContent = 'Redirecting to payment...';
+					statusNode.className = 'min-h-5 text-sm text-neon-green';
+					window.location.href = result.paymentUrl;
+					return;
+				}
+
+				statusNode.textContent = 'Unexpected response. Please try again.';
+				statusNode.className = 'min-h-5 text-sm text-red-300';
 			} catch (_error) {
 				statusNode.textContent = 'Network issue. Try again.';
 				statusNode.className = 'min-h-5 text-sm text-red-300';

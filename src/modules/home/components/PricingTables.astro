@@ -5,13 +5,13 @@ import { Check } from '@lucide/astro';
 const tiers = (await getCollection('pricing')).sort((a, b) => a.data.order - b.data.order);
 ---
 
-<section id="pricing" class="relative py-32 px-6">
+<section id="pricing" class="relative py-16 sm:py-24 lg:py-32 px-6">
 	<!-- Ambient glow -->
 	<div class="absolute top-0 left-1/2 -translate-x-1/2 size-[500px] rounded-full bg-neon-cyan/5 blur-[140px] pointer-events-none"></div>
 
 	<div class="relative max-w-4xl mx-auto">
 		<!-- Section header -->
-		<div class="text-center mb-20">
+		<div class="text-center mb-10 sm:mb-16 lg:mb-20">
 			<p class="reveal font-mono text-xs text-neon-cyan tracking-[0.3em] uppercase mb-4">Pricing</p>
 			<h2 class="reveal reveal-delay-1 font-display text-4xl sm:text-5xl md:text-6xl font-800 text-white tracking-tight">
 				Invest in Your Edge
@@ -50,7 +50,7 @@ const tiers = (await getCollection('pricing')).sort((a, b) => a.data.order - b.d
 					<!-- Price -->
 					<div class="flex items-baseline gap-1 mb-8">
 						<span class="font-mono text-xs text-ghost">$</span>
-						<span class={`font-display text-6xl font-900 tracking-tight ${
+						<span class={`font-display text-5xl sm:text-6xl font-900 tracking-tight ${
 							tier.data.highlighted ? 'text-neon-cyan' : 'text-white'
 						}`}>
 							{tier.data.price}

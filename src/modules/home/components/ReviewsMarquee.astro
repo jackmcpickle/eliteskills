@@ -12,13 +12,13 @@ const renderedReviews = await Promise.all(
 );
 ---
 
-<section class="relative py-24 overflow-hidden">
+<section class="relative py-16 sm:py-24 overflow-hidden">
 	<!-- Top/bottom fade edges -->
 	<div class="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-neon-cyan-dim to-transparent"></div>
 	<div class="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-neon-cyan-dim to-transparent"></div>
 
 	<!-- Section label -->
-	<div class="text-center mb-16 px-6">
+	<div class="text-center mb-10 sm:mb-16 px-6">
 		<p class="reveal font-mono text-xs text-neon-cyan tracking-[0.3em] uppercase mb-4">Wall of Proof</p>
 		<h2 class="reveal reveal-delay-1 font-display text-4xl sm:text-5xl font-800 text-white tracking-tight">
 			Builders Love It
@@ -28,8 +28,8 @@ const renderedReviews = await Promise.all(
 	<!-- Marquee container -->
 	<div class="relative">
 		<!-- Left/right fade masks -->
-		<div class="absolute left-0 top-0 bottom-0 w-32 z-10 bg-gradient-to-r from-void to-transparent pointer-events-none"></div>
-		<div class="absolute right-0 top-0 bottom-0 w-32 z-10 bg-gradient-to-l from-void to-transparent pointer-events-none"></div>
+		<div class="absolute left-0 top-0 bottom-0 w-16 sm:w-32 z-10 bg-gradient-to-r from-void to-transparent pointer-events-none"></div>
+		<div class="absolute right-0 top-0 bottom-0 w-16 sm:w-32 z-10 bg-gradient-to-l from-void to-transparent pointer-events-none"></div>
 
 		<!-- Track (doubled for seamless loop) -->
 		<div class="marquee-track flex gap-6 w-max">

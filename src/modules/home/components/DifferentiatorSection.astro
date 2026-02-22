@@ -16,13 +16,13 @@ const eliteSkills = [
 ];
 ---
 
-<section class="relative py-32 px-6">
+<section class="relative py-16 sm:py-24 lg:py-32 px-6">
 	<!-- Ambient glow -->
 	<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-[600px] rounded-full bg-neon-violet/5 blur-[140px] pointer-events-none"></div>
 
 	<div class="relative max-w-5xl mx-auto">
 		<!-- Section header -->
-		<div class="text-center mb-20">
+		<div class="text-center mb-10 sm:mb-16 lg:mb-20">
 			<p class="reveal font-mono text-xs text-neon-cyan tracking-[0.3em] uppercase mb-4">The Difference</p>
 			<h2 class="reveal reveal-delay-1 font-display text-4xl sm:text-5xl md:text-6xl font-800 text-white tracking-tight">
 				Architecture, Not Affirmations
@@ -45,7 +45,7 @@ const eliteSkills = [
 
 				<ul class="space-y-4">
 					{genericSkills.map((skill) => (
-						<li class="font-mono text-sm text-ghost/70 leading-relaxed pl-4 border-l-2 border-red-500/20">
+						<li class="font-mono text-xs sm:text-sm text-ghost/70 leading-relaxed pl-4 border-l-2 border-red-500/20 break-words">
 							{skill}
 						</li>
 					))}
@@ -63,7 +63,7 @@ const eliteSkills = [
 
 				<ul class="space-y-4">
 					{eliteSkills.map((skill) => (
-						<li class="font-mono text-sm text-cloud leading-relaxed pl-4 border-l-2 border-neon-cyan">
+						<li class="font-mono text-xs sm:text-sm text-cloud leading-relaxed pl-4 border-l-2 border-neon-cyan break-words">
 							{skill}
 						</li>
 					))}

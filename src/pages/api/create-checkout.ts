@@ -11,12 +11,11 @@ import {
     jsonError,
     jsonOk,
 } from '@/libs/api/spam';
-import {
-    isStripeConfigured,
-    getProduct,
-    createCheckoutSession,
-} from '@/libs/api/stripe';
+import { isStripeConfigured, createCheckoutSession } from '@/libs/api/stripe';
 import { createToken } from '@/libs/api/tokens';
+import { createDb } from '@/libs/db/client';
+import { getProductById, getProductPrice } from '@/libs/db/repo';
+import { resolveContinent } from '@/libs/geo';
 
 const SITE_URL = 'https://eliteskills.ai';
 
@@ -24,7 +23,7 @@ const SITE_URL = 'https://eliteskills.ai';
 const PAY_TOKEN_TTL_SECONDS = 3600;
 
 interface CheckoutPayload {
-    productId: string;
+    productId: number;
     name: string;
     email: string;
     purchaseKind: string;
@@ -38,7 +37,7 @@ interface CheckoutPayload {
 
 function parsePayload(formData: FormData): CheckoutPayload {
     return {
-        productId: parseFormField(formData, 'productId'),
+        productId: Number(parseFormField(formData, 'productId')) || 0,
         name: parseFormField(formData, 'name'),
         email: parseFormField(formData, 'email'),
         purchaseKind: parseFormField(formData, 'purchaseKind') || 'personal',
@@ -52,7 +51,7 @@ function parsePayload(formData: FormData): CheckoutPayload {
 }
 
 function validatePayload(payload: CheckoutPayload): string | null {
-    if (!getProduct(payload.productId)) return 'Invalid product.';
+    if (!payload.productId) return 'Invalid product.';
     if (!payload.name) return 'Name required.';
     if (!payload.email) return 'Email required.';
 
@@ -96,7 +95,11 @@ function buildMetadata(payload: CheckoutPayload): Record<string, string> {
     return { ...base, purchaseKind: 'personal' };
 }
 
-export const POST: APIRoute = async ({ request, clientAddress }) => {
+export const POST: APIRoute = async ({
+    request,
+    clientAddress,
+    locals,
+}) => {
     if (!PAY_TOKEN_SECRET || !isStripeConfigured()) {
         return jsonError('Payment service not configured.', 500);
     }
@@ -122,8 +125,22 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
         return jsonError('Too many requests for this email. Try later.', 429);
     }
 
-    const product = getProduct(payload.productId);
+    const d1 = locals.runtime.env.DB;
+    const db = createDb(d1);
+
+    const product = await getProductById(db, payload.productId);
     if (!product) return jsonError('Invalid product.', 400);
+
+    const cf = locals.runtime.cf as { continent?: string } | undefined;
+    const continent = resolveContinent(
+        cf,
+        request.headers.get('cf-ipcontinent'),
+    );
+
+    const priceRow = await getProductPrice(db, product.id, continent);
+    if (!priceRow?.stripePriceId) {
+        return jsonError('Product not available in your region.', 400);
+    }
 
     const { token: tempToken } = await createToken(
         PAY_TOKEN_SECRET,
@@ -133,11 +150,13 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     const tempPayUrl = `${SITE_URL}/pay?token=${encodeURIComponent(tempToken)}`;
 
     const stripeSession = await createCheckoutSession({
-        productId: payload.productId,
-        product,
+        productId: product.id,
+        productName: product.name,
+        stripePriceId: priceRow.stripePriceId,
         customerEmail: payload.email,
         customerName: payload.name,
         payUrl: tempPayUrl,
+        continent,
         metadata: buildMetadata(payload),
     });
 

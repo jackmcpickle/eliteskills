@@ -1,6 +1,6 @@
 {
     "lockVersion": 2,
-    "generatedAt": "2026-02-22T13:06:13.172Z",
+    "generatedAt": "2026-02-22T20:25:39.084Z",
     "skills": {
         "agent-browser": {
             "version": "1.0.0",
@@ -11,6 +11,16 @@
             "version": "1.0.0",
             "contentHash": "090f0a7b677f16b2c0113fa14e3c312f69b3212ba340a768dad7ef9ac052cea4",
             "files": 7
+        },
+        "bootstrap": {
+            "version": "0.0.0",
+            "contentHash": "10142a79d25fd343a320bd8f36a2d54aef2f38490150509c33882ef53e4c3ecc",
+            "files": 1
+        },
+        "feature": {
+            "version": "0.0.0",
+            "contentHash": "630422c5567f2d3ea89ef491b7c72261bc933d0a2c8f9772b5581307a388f218",
+            "files": 1
         },
         "frontend-coder": {
             "version": "1.0.0",
@@ -32,6 +42,11 @@
         "react-doctor": {
             "version": "1.0.0",
             "contentHash": "f2b529172abd981e81935156bca043c5783f3c0423c169ae2a5ad42d12a16eb8",
+            "files": 1
+        },
+        "review": {
+            "version": "0.0.0",
+            "contentHash": "e8d45ab4804b174dba7d921e9b69e16e85a2aedbceb9c5015a9309caade9d4c4",
             "files": 1
         }
     }

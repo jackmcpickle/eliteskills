@@ -3,8 +3,7 @@ export const prerender = false;
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { createDb } from '@/libs/db/client';
-import { getUserByAccountKey, getPurchasesByUserId, getInstallKeysByPurchaseId } from '@/libs/db/repo';
-import { getProduct } from '@/libs/api/stripe';
+import { getUserByAccountKey, getPurchasesByUserId, getInstallKeysByPurchaseId, getProductById } from '@/libs/db/repo';
 
 const { accountKey } = Astro.params;
 
@@ -21,7 +20,7 @@ const purchases = await getPurchasesByUserId(db, user.id);
 type PurchaseDisplay = {
 	id: string;
 	productName: string;
-	productId: string;
+	productId: number;
 	amountPaid: string;
 	date: string;
 	installKeys: Array<{ key: string; downloadCount: number; createdAt: string }>;
@@ -29,11 +28,11 @@ type PurchaseDisplay = {
 
 const purchaseDisplays: PurchaseDisplay[] = await Promise.all(
 	purchases.map(async (p) => {
-		const product = getProduct(p.productId);
+		const product = await getProductById(db, p.productId);
 		const keys = await getInstallKeysByPurchaseId(db, p.id);
 		return {
 			id: p.id,
-			productName: product?.name ?? p.productId,
+			productName: product?.name ?? `Product #${p.productId}`,
 			productId: p.productId,
 			amountPaid: p.amountTotal ? `$${(p.amountTotal / 100).toFixed(2)}` : 'N/A',
 			date: new Date(p.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }),

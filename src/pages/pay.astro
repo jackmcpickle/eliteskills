@@ -1,8 +1,13 @@
 ---
+export const prerender = false;
+
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { PAY_TOKEN_SECRET } from 'astro:env/server';
 import { verifyToken } from '@/libs/api/tokens';
-import { isStripeConfigured, getCheckoutSession, getProduct } from '@/libs/api/stripe';
+import { isStripeConfigured, getCheckoutSession } from '@/libs/api/stripe';
+import { createDb } from '@/libs/db/client';
+import { getProductById, getProductPrice } from '@/libs/db/repo';
+import { resolveContinent } from '@/libs/geo';
 
 type PayState = 'loading' | 'unpaid' | 'paid' | 'expired' | 'error';
 
@@ -23,9 +28,20 @@ if (token && PAY_TOKEN_SECRET && isStripeConfigured()) {
 		errorMessage = 'This payment link has expired. Please request a new one.';
 	} else if (payload.data) {
 		try {
+			const d1 = Astro.locals.runtime.env.DB;
+			const db = createDb(d1);
+
 			const session = await getCheckoutSession(payload.data);
-			const productId = (session.metadata?.productId as string) ?? '';
-			const product = getProduct(productId);
+			const metaProductId = Number(session.metadata?.productId);
+			const product = metaProductId ? await getProductById(db, metaProductId) : undefined;
+
+			// Resolve geo price ahead of branching to avoid nesting
+			if (product) {
+				const cf = Astro.locals.runtime.cf as { continent?: string } | undefined;
+				const continent = resolveContinent(cf, Astro.request.headers.get('cf-ipcontinent'));
+				const priceRow = await getProductPrice(db, product.id, continent);
+				productPrice = priceRow?.price ?? 0;
+			}
 
 			if (session.payment_status === 'paid') {
 				state = 'paid';
@@ -38,7 +54,6 @@ if (token && PAY_TOKEN_SECRET && isStripeConfigured()) {
 				state = 'unpaid';
 				stripeUrl = session.url ?? '';
 				productName = product?.name ?? 'Elite AI Skills';
-				productPrice = product?.price ?? 0;
 				customerEmail = session.customer_email ?? '';
 			}
 		} catch {

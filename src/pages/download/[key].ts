@@ -2,7 +2,12 @@ export const prerender = false;
 
 import type { APIRoute } from 'astro';
 import { createDb } from '@/libs/db/client';
-import { getInstallKeyByKey, incrementDownloadCount } from '@/libs/db/repo';
+import {
+    getInstallKeyByKey,
+    incrementDownloadCount,
+    getPurchaseById,
+    getProductById,
+} from '@/libs/db/repo';
 
 export const GET: APIRoute = async ({ params, locals }) => {
     const { key } = params;
@@ -27,10 +32,29 @@ export const GET: APIRoute = async ({ params, locals }) => {
         return new Response('Download limit reached.', { status: 410 });
     }
 
-    // Fetch zip from static assets
+    // Resolve product to determine zip file
+    const purchase = await getPurchaseById(db, installKey.purchaseId);
+    if (!purchase) {
+        return new Response('Purchase not found.', { status: 404 });
+    }
+
+    const product = await getProductById(db, purchase.productId);
+    if (!product) {
+        return new Response('Product not found.', { status: 404 });
+    }
+
+    // Skill products get per-skill zip, bundle products get full bundle
+    const zipFile = product.skillSlug
+        ? `skills-${product.skillSlug}.zip`
+        : 'skills-bundle.zip';
+
+    const fileName = product.skillSlug
+        ? `elite-skill-${product.skillSlug}.zip`
+        : 'elite-skills.zip';
+
     const assets = locals.runtime.env.ASSETS;
     const zipResponse = await assets.fetch(
-        new Request('https://placeholder/skills-bundle.zip'),
+        new Request(`https://placeholder/${zipFile}`),
     );
 
     if (!zipResponse.ok) {
@@ -45,7 +69,7 @@ export const GET: APIRoute = async ({ params, locals }) => {
         status: 200,
         headers: {
             'Content-Type': 'application/zip',
-            'Content-Disposition': 'attachment; filename="elite-skills.zip"',
+            'Content-Disposition': `attachment; filename="${fileName}"`,
             'Content-Length': zipBody.byteLength.toString(),
             'Cache-Control': 'no-store',
         },

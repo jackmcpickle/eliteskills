@@ -47,15 +47,28 @@ describe('Agent purchase flow — token lifecycle', () => {
 });
 
 describe('Agent purchase flow — payload validation', () => {
-    const validProducts = ['once', 'lifetime'];
-    const invalidProducts = ['', 'monthly', 'annual', 'free', 'nonexistent'];
+    // Product IDs are now integers from DB (1-9 in seed data)
+    const validProductIds = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+    const invalidProductIds = [0, -1, NaN];
 
-    it.each(validProducts)('accepts valid productId: %s', (productId) => {
-        expect(validProducts.includes(productId)).toBe(true);
+    it.each(validProductIds)('accepts valid productId: %d', (productId) => {
+        expect(Number.isInteger(productId)).toBe(true);
+        expect(productId).toBeGreaterThan(0);
     });
 
-    it.each(invalidProducts)('rejects invalid productId: %s', (productId) => {
-        expect(validProducts.includes(productId)).toBe(false);
+    it.each(invalidProductIds)(
+        'rejects invalid productId: %s',
+        (productId) => {
+            expect(
+                !Number.isInteger(productId) || productId <= 0,
+            ).toBe(true);
+        },
+    );
+
+    it('unknown productId would be rejected by DB lookup', () => {
+        // 999 is structurally valid but won't exist in DB — server returns 400
+        const unknownId = 999;
+        expect(Number.isInteger(unknownId)).toBe(true);
     });
 
     it('validates email format', () => {

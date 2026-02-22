@@ -1,27 +1,46 @@
 import { describe, it, expect } from 'vitest';
 
 describe('Human purchase flow — product catalog', () => {
-    const products = {
-        once: { name: 'Elite AI Skills - One-Time Purchase', price: 29 },
-        lifetime: { name: 'Elite AI Skills - Lifetime Access', price: 99 },
+    // DB seed: 6 skill products (id 1-6), 3 bundle products (id 7-9)
+    const bundleProducts = {
+        7: { code: 'bundle-once', name: 'Elite AI Skills — All Skills', price: 29 },
+        8: { code: 'bundle-lifetime', name: 'Elite AI Skills — Lifetime Access', price: 99 },
+        9: { code: 'bundle-teams', name: 'Elite AI Skills — Teams', price: 299 },
     } as const;
 
-    it('has exactly 2 products', () => {
-        expect(Object.keys(products)).toHaveLength(2);
+    const skillProducts = {
+        1: { code: 'skill-frontend', name: 'Elite Skill — Frontend', price: 9 },
+        2: { code: 'skill-backend', name: 'Elite Skill — Backend', price: 9 },
+        3: { code: 'skill-style', name: 'Elite Skill — Style', price: 9 },
+        4: { code: 'skill-code-review', name: 'Elite Skill — Code Review', price: 9 },
+        5: { code: 'skill-feature-enhancer', name: 'Elite Skill — Feature Enhancer', price: 9 },
+        6: { code: 'skill-app-bootstrap', name: 'Elite Skill — App Bootstrap', price: 9 },
+    } as const;
+
+    it('has 3 bundle products', () => {
+        expect(Object.keys(bundleProducts)).toHaveLength(3);
     });
 
-    it('once product is $29', () => {
-        expect(products.once.price).toBe(29);
+    it('has 6 skill products', () => {
+        expect(Object.keys(skillProducts)).toHaveLength(6);
     });
 
-    it('lifetime product is $99', () => {
-        expect(products.lifetime.price).toBe(99);
+    it('bundle-once NA price is $29', () => {
+        expect(bundleProducts[7].price).toBe(29);
     });
 
-    it('checkout routes match product ids', () => {
-        const routes = ['/checkout/once', '/checkout/lifetime'];
-        for (const id of Object.keys(products)) {
-            expect(routes).toContain(`/checkout/${id}`);
+    it('bundle-lifetime NA price is $99', () => {
+        expect(bundleProducts[8].price).toBe(99);
+    });
+
+    it('skill NA price is $9', () => {
+        expect(skillProducts[1].price).toBe(9);
+    });
+
+    it('checkout routes use integer product ids', () => {
+        for (const id of Object.keys(bundleProducts)) {
+            const route = `/checkout/${id}`;
+            expect(route).toMatch(/^\/checkout\/\d+$/);
         }
     });
 });
@@ -39,23 +58,22 @@ describe('Human purchase flow — checkout form contract', () => {
             'country',
         ];
 
-        // All required fields are distinct from optional
         for (const field of requiredFields) {
             expect(optionalFields).not.toContain(field);
         }
     });
 
     it('honeypot field name is "website"', () => {
-        // Must match the hidden field in CheckoutForm.astro
         const honeypotField = 'website';
         expect(honeypotField).toBe('website');
     });
 
-    it('valid productId values are "once" and "lifetime"', () => {
-        const validIds = ['once', 'lifetime'];
-        expect(validIds).toContain('once');
-        expect(validIds).toContain('lifetime');
-        expect(validIds).toHaveLength(2);
+    it('productId is a numeric integer', () => {
+        const validIds = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+        for (const id of validIds) {
+            expect(Number.isInteger(id)).toBe(true);
+            expect(id).toBeGreaterThan(0);
+        }
     });
 
     it('purchaseKind values are "personal" and "company"', () => {
@@ -66,26 +84,18 @@ describe('Human purchase flow — checkout form contract', () => {
 });
 
 describe('Human purchase flow — success page contract', () => {
-    it('success page uses product query param', () => {
-        const successUrl = '/checkout/success';
-        const onceUrl = `${successUrl}?product=once`;
-        const lifetimeUrl = `${successUrl}?product=lifetime`;
-
-        const onceParams = new URLSearchParams(
-            new URL(`https://x${onceUrl}`).search,
+    it('success page uses session_id query param', () => {
+        const url = new URL(
+            'https://eliteskills.ai/checkout/success?product=7&session_id=cs_test_123',
         );
-        const lifetimeParams = new URLSearchParams(
-            new URL(`https://x${lifetimeUrl}`).search,
-        );
-
-        expect(onceParams.get('product')).toBe('once');
-        expect(lifetimeParams.get('product')).toBe('lifetime');
+        expect(url.searchParams.get('session_id')).toBe('cs_test_123');
+        expect(url.searchParams.get('product')).toBe('7');
     });
 
     it('success URL built by Stripe includes session_id placeholder', () => {
         // Stripe success_url pattern from stripe.ts
         const template =
-            'https://eliteskills.ai/checkout/success?product=once&session_id={CHECKOUT_SESSION_ID}';
+            'https://eliteskills.ai/checkout/success?product=7&session_id={CHECKOUT_SESSION_ID}';
         expect(template).toContain('{CHECKOUT_SESSION_ID}');
         expect(template).toContain('product=');
     });
@@ -116,28 +126,32 @@ describe('Human purchase flow — Stripe checkout session contract', () => {
     it('createCheckoutSession needs required options', () => {
         const requiredOptions = [
             'productId',
-            'product',
+            'productName',
+            'stripePriceId',
             'customerEmail',
             'customerName',
             'payUrl',
+            'continent',
         ];
 
-        // All required
-        expect(requiredOptions).toHaveLength(5);
+        expect(requiredOptions).toHaveLength(7);
         expect(requiredOptions).toContain('productId');
-        expect(requiredOptions).toContain('customerEmail');
+        expect(requiredOptions).toContain('stripePriceId');
+        expect(requiredOptions).toContain('continent');
     });
 
-    it('metadata includes productId and customerName', () => {
+    it('metadata includes productId as string number and customerName', () => {
         const metadata = {
-            productId: 'once',
+            productId: '7',
             customerName: 'Test User',
+            continent: 'NA',
             source: 'website',
             purchaseKind: 'personal',
         };
 
         expect(metadata).toHaveProperty('productId');
         expect(metadata).toHaveProperty('customerName');
+        expect(metadata).toHaveProperty('continent');
         expect(metadata).toHaveProperty('source');
     });
 });

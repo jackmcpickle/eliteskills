@@ -4,7 +4,13 @@ import { sendMail, isMailConfigured, getAdminEmail } from '@/libs/api/mail';
 import { isRateLimited, WEBHOOK_IP } from '@/libs/api/rate-limit';
 import { jsonError, jsonOk } from '@/libs/api/spam';
 import { constructWebhookEvent } from '@/libs/api/stripe';
-import { createDb, createPurchase, upsertUserByEmail } from '@/libs/db';
+import { createDb } from '@/libs/db/client';
+import {
+    upsertUserByEmail,
+    createPurchase,
+    getProductById,
+    getProductByCode,
+} from '@/libs/db/repo';
 
 const SITE_URL = 'https://eliteskills.ai';
 
@@ -37,12 +43,34 @@ async function handleCheckoutCompleted(
 ): Promise<void> {
     const db = createDb(d1);
     const customerName = session.metadata?.customerName ?? 'Unknown';
-    const productId = session.metadata?.productId ?? 'unknown';
     const source = session.metadata?.source ?? 'unknown';
     const email = session.customer_email ?? 'no-email';
+    const continent = session.metadata?.continent ?? 'NA';
     const amountPaid = session.amount_total
         ? `$${(session.amount_total / 100).toFixed(2)}`
         : 'unknown';
+
+    // Resolve product id from metadata
+    const metaProductId = Number(session.metadata?.productId);
+    let product = metaProductId
+        ? await getProductById(db, metaProductId)
+        : undefined;
+
+    // Fallback: try legacy code lookup
+    if (!product && session.metadata?.productCode) {
+        product = await getProductByCode(db, session.metadata.productCode);
+    }
+
+    if (!product) {
+        if (isMailConfigured()) {
+            await sendMail({
+                to: [getAdminEmail()],
+                subject: `WARN: Unknown product in payment (${email})`,
+                text: `Session: ${session.id}\nMetadata productId: ${session.metadata?.productId}\nEmail: ${email}`,
+            }).catch(() => {});
+        }
+        return;
+    }
 
     // Persist user + purchase
     const user = await upsertUserByEmail(db, email, customerName);
@@ -50,10 +78,14 @@ async function handleCheckoutCompleted(
         userId: user.id,
         stripeSessionId: session.id,
         stripeCustomerEmail: email,
-        productId,
+        productId: product.id,
         amountTotal: session.amount_total,
         currency: session.currency ?? 'usd',
         paymentStatus: session.payment_status,
+        pricingContinent: continent,
+        priceSnapshot: session.amount_total
+            ? session.amount_total / 100
+            : null,
         metadata: session.metadata,
     });
 
@@ -64,16 +96,17 @@ async function handleCheckoutCompleted(
     try {
         await sendMail({
             to: [getAdminEmail()],
-            subject: `Payment received: ${productId} (${email})`,
+            subject: `Payment received: ${product.name} (${email})`,
             text: [
                 'Payment completed',
                 '',
                 `Session: ${session.id}`,
-                `Product: ${productId}`,
+                `Product: ${product.name} (${product.code})`,
                 `Amount: ${amountPaid}`,
                 `Customer: ${customerName}`,
                 `Email: ${email}`,
                 `Source: ${source}`,
+                `Continent: ${continent}`,
                 `Account: ${accountUrl}`,
                 '',
                 `Purchase type: ${session.metadata?.purchaseKind ?? 'personal'}`,

@@ -3,14 +3,13 @@ export const prerender = false;
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { createDb } from '@/libs/db/client';
-import { getPurchaseByStripeSessionId, getUserByEmail, upsertUserByEmail, createPurchase } from '@/libs/db/repo';
-import { isStripeConfigured, getCheckoutSession, getProduct } from '@/libs/api/stripe';
+import { upsertUserByEmail, createPurchase, getProductById } from '@/libs/db/repo';
+import { isStripeConfigured, getCheckoutSession } from '@/libs/api/stripe';
 
-const product = Astro.url.searchParams.get('product');
 const sessionId = Astro.url.searchParams.get('session_id');
-const productLabel = product === 'lifetime' ? 'Lifetime Access' : 'One-Time Purchase';
 
 let accountUrl = '';
+let productLabel = 'Elite Skills';
 
 if (sessionId && isStripeConfigured()) {
 	try {
@@ -19,20 +18,29 @@ if (sessionId && isStripeConfigured()) {
 		const session = await getCheckoutSession(sessionId);
 
 		if (session.payment_status === 'paid' && session.customer_email) {
-			const productId = (session.metadata?.productId as string) ?? 'unknown';
+			const metaProductId = Number(session.metadata?.productId);
 			const customerName = (session.metadata?.customerName as string) ?? null;
+			const continent = (session.metadata?.continent as string) ?? 'NA';
+
+			const product = metaProductId ? await getProductById(db, metaProductId) : undefined;
+			if (product) productLabel = product.name;
 
 			const user = await upsertUserByEmail(db, session.customer_email, customerName);
-			await createPurchase(db, {
-				userId: user.id,
-				stripeSessionId: session.id,
-				stripeCustomerEmail: session.customer_email,
-				productId,
-				amountTotal: session.amount_total,
-				currency: (session.currency as string) ?? 'usd',
-				paymentStatus: session.payment_status,
-				metadata: session.metadata as Record<string, string> | undefined,
-			});
+
+			if (product) {
+				await createPurchase(db, {
+					userId: user.id,
+					stripeSessionId: session.id,
+					stripeCustomerEmail: session.customer_email,
+					productId: product.id,
+					amountTotal: session.amount_total,
+					currency: (session.currency as string) ?? 'usd',
+					paymentStatus: session.payment_status,
+					pricingContinent: continent,
+					priceSnapshot: session.amount_total ? session.amount_total / 100 : null,
+					metadata: session.metadata as Record<string, string> | undefined,
+				});
+			}
 
 			accountUrl = `/account/${user.accountKey}`;
 		}

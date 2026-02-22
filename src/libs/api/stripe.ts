@@ -1,40 +1,11 @@
-import {
-    STRIPE_SECRET_KEY,
-    STRIPE_PRICE_ONCE,
-    STRIPE_PRICE_LIFETIME,
-} from 'astro:env/server';
+import { STRIPE_SECRET_KEY } from 'astro:env/server';
 import type { Stripe as StripeTypes } from 'stripe';
 import StripeClient from 'stripe';
 
 const SITE_URL = 'https://eliteskills.ai';
 
-export interface ProductInfo {
-    name: string;
-    price: number;
-    priceId: string;
-}
-
-const PRODUCTS: Record<string, ProductInfo> = {
-    once: {
-        name: 'Elite AI Skills - One-Time Purchase',
-        price: 29,
-        priceId: STRIPE_PRICE_ONCE ?? '',
-    },
-    lifetime: {
-        name: 'Elite AI Skills - Lifetime Access',
-        price: 99,
-        priceId: STRIPE_PRICE_LIFETIME ?? '',
-    },
-};
-
-export function getProduct(productId: string): ProductInfo | null {
-    return PRODUCTS[productId] ?? null;
-}
-
 export function isStripeConfigured(): boolean {
-    return Boolean(
-        STRIPE_SECRET_KEY && STRIPE_PRICE_ONCE && STRIPE_PRICE_LIFETIME,
-    );
+    return Boolean(STRIPE_SECRET_KEY);
 }
 
 function getStripeClient(): StripeClient {
@@ -43,11 +14,13 @@ function getStripeClient(): StripeClient {
 }
 
 export interface CreateSessionOptions {
-    productId: string;
-    product: ProductInfo;
+    productId: number;
+    productName: string;
+    stripePriceId: string;
     customerEmail: string;
     customerName: string;
     payUrl: string;
+    continent: string;
     metadata?: Record<string, string>;
 }
 
@@ -60,12 +33,13 @@ export async function createCheckoutSession(
     return stripe.checkout.sessions.create({
         mode: 'payment',
         customer_email: opts.customerEmail,
-        line_items: [{ price: opts.product.priceId, quantity: 1 }],
-        success_url: `${SITE_URL}/checkout/success?product=${encodeURIComponent(opts.productId)}&session_id={CHECKOUT_SESSION_ID}`,
+        line_items: [{ price: opts.stripePriceId, quantity: 1 }],
+        success_url: `${SITE_URL}/checkout/success?product=${opts.productId}&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: opts.payUrl,
         metadata: {
-            productId: opts.productId,
+            productId: String(opts.productId),
             customerName: opts.customerName,
+            continent: opts.continent,
             ...opts.metadata,
         },
     });
@@ -87,4 +61,35 @@ export async function constructWebhookEvent(
 ): Promise<StripeTypes.Event> {
     const stripe = getStripeClient();
     return stripe.webhooks.constructEvent(body, signature, webhookSecret);
+}
+
+/** Retrieve a Stripe Price by id (for sync script validation). */
+export async function getStripePrice(
+    priceId: string,
+): Promise<StripeTypes.Price> {
+    const stripe = getStripeClient();
+    return stripe.prices.retrieve(priceId);
+}
+
+/** Create a Stripe Product. */
+export async function createStripeProduct(
+    name: string,
+    metadata: Record<string, string>,
+): Promise<StripeTypes.Product> {
+    const stripe = getStripeClient();
+    return stripe.products.create({ name, metadata });
+}
+
+/** Create a Stripe Price for a product. */
+export async function createStripePrice(
+    stripeProductId: string,
+    unitAmount: number,
+    currency: string,
+): Promise<StripeTypes.Price> {
+    const stripe = getStripeClient();
+    return stripe.prices.create({
+        product: stripeProductId,
+        unit_amount: unitAmount,
+        currency,
+    });
 }

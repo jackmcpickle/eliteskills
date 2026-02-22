@@ -1,4 +1,6 @@
 ---
+export const prerender = false;
+
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import {
 	HeroBanner,
@@ -13,9 +15,35 @@ import {
 	FooterCta,
 } from '@/modules/home';
 import { getCollection } from 'astro:content';
+import { createDb } from '@/libs/db/client';
+import { listProducts, getProductPrice } from '@/libs/db/repo';
+import { resolveContinent } from '@/libs/geo';
 
 const reviews = await getCollection('reviews');
-const pricing = await getCollection('pricing');
+
+const d1 = Astro.locals.runtime.env.DB;
+const db = createDb(d1);
+const dbProducts = await listProducts(db);
+
+const cf = Astro.locals.runtime.cf as { continent?: string } | undefined;
+const continent = resolveContinent(cf, Astro.request.headers.get('cf-ipcontinent'));
+
+// Build product map with geo price
+const productMap = new Map<number, { id: number; code: string; name: string; price: number; lifetime: number; skillSlug: string | null }>();
+for (const p of dbProducts) {
+	const priceRow = await getProductPrice(db, p.id, continent);
+	productMap.set(p.id, {
+		id: p.id,
+		code: p.code,
+		name: p.name,
+		price: priceRow?.price ?? 0,
+		lifetime: p.lifetime,
+		skillSlug: p.skillSlug,
+	});
+}
+
+const bundleProducts = [...productMap.values()].filter((p) => !p.skillSlug);
+const skillProducts = [...productMap.values()].filter((p) => p.skillSlug);
 
 const SITE_URL = 'https://eliteskills.ai';
 
@@ -27,17 +55,16 @@ const websiteJsonLd = {
 	description: 'Elite AI Skills for vibe coders, founders, and builders. 20 years of engineering distilled into precision-crafted AI instruction sets.',
 };
 
-const productJsonLd = pricing.map((tier) => ({
+const productJsonLd = bundleProducts.map((p) => ({
 	'@context': 'https://schema.org',
 	'@type': 'Product',
-	name: tier.data.title,
-	description: tier.data.description,
+	name: p.name,
 	offers: {
 		'@type': 'Offer',
-		price: tier.data.price,
+		price: p.price,
 		priceCurrency: 'USD',
 		availability: 'https://schema.org/InStock',
-		url: `${SITE_URL}/checkout/${tier.id.replace(/\.md$/, '')}`,
+		url: `${SITE_URL}/checkout/${p.id}`,
 	},
 }));
 
@@ -65,13 +92,13 @@ const reviewJsonLd = {
 	jsonLd={[websiteJsonLd, ...productJsonLd, reviewJsonLd]}
 >
 	<HeroBanner />
-	<SkillsGrid />
+	<SkillsGrid skillProducts={skillProducts} />
 	<MetricsBar />
 	<ReviewsMarquee />
 	<BenefitsSection />
 	<DifferentiatorSection />
 	<CompatibleTools />
-	<PricingTables />
+	<PricingTables bundleProducts={bundleProducts} skillProducts={skillProducts} />
 	<AiBotSection />
 	<FooterCta />
 </BaseLayout>

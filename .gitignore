@@ -34,5 +34,5 @@ playwright-report/
 # claude local settings
 .claude/settings.local.json
 
-# generated skills bundle
-public/skills-bundle.zip
+# generated skills bundles
+public/skills-*.zip

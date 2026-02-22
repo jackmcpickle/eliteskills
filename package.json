@@ -21,6 +21,7 @@
     "deploy": "pnpm build && wrangler deploy",
     "dev": "astro dev",
     "build:skills": "node --import tsx scripts/build-skills-zip.ts",
+    "stripe:sync": "node --import tsx scripts/sync-stripe-products.ts",
     "build": "pnpm build:manifest && pnpm build:skills && astro build",
     "astro": "astro"
   },

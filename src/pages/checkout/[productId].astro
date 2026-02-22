@@ -1,0 +1,34 @@
+---
+export const prerender = false;
+
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { CheckoutForm } from '@/modules/checkout';
+import { createDb } from '@/libs/db/client';
+import { getProductById, getProductPrice } from '@/libs/db/repo';
+import { resolveContinent } from '@/libs/geo';
+
+const rawId = Astro.params.productId;
+const productId = Number(rawId);
+
+if (!productId || Number.isNaN(productId)) return Astro.redirect('/404');
+
+const d1 = Astro.locals.runtime.env.DB;
+const db = createDb(d1);
+
+const product = await getProductById(db, productId);
+if (!product) return Astro.redirect('/404');
+
+const cf = Astro.locals.runtime.cf as { continent?: string } | undefined;
+const continent = resolveContinent(cf, Astro.request.headers.get('cf-ipcontinent'));
+
+const priceRow = await getProductPrice(db, product.id, continent);
+const price = priceRow?.price ?? 0;
+---
+
+<BaseLayout
+	title={`Checkout — ${product.name} — Elite Skills`}
+	description={`Get ${product.name}. Instant download.`}
+	noindex
+>
+	<CheckoutForm productId={product.id} productName={product.name} price={price} />
+</BaseLayout>

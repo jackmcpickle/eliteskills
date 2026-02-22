@@ -1,0 +1,85 @@
+---
+import { Check, Clock } from '@lucide/astro';
+
+interface Props {
+	name: string;
+	command: string;
+	description: string;
+	template: string[];
+	features: string[];
+	comingSoon?: boolean;
+	index: number;
+}
+
+const { name, command, description, template, features, comingSoon = false, index } = Astro.props;
+---
+
+<div class={`reveal reveal-delay-${index + 1} relative rounded-2xl border ${
+	comingSoon
+		? 'border-border bg-surface/50'
+		: 'border-neon-cyan-dim bg-surface shadow-[0_0_60px_var(--color-neon-cyan-glow)]'
+}`}>
+	{/* Coming soon badge */}
+	{comingSoon && (
+		<div class="absolute -top-3.5 left-6 inline-flex items-center gap-1.5 px-4 py-1 rounded-full bg-neon-amber text-void font-mono text-xs font-700 tracking-wider uppercase">
+			<Clock class="size-3" aria-hidden="true" />
+			Coming Soon
+		</div>
+	)}
+
+	<div class={`p-8 sm:p-10 ${comingSoon ? 'opacity-50' : ''}`}>
+		<!-- Header -->
+		<div class="flex flex-col sm:flex-row sm:items-center gap-4 mb-8">
+			<h2 class="font-display text-3xl sm:text-4xl font-800 text-white tracking-tight">
+				{name}
+			</h2>
+			<code class={`inline-flex items-center px-4 py-1.5 rounded-lg font-mono text-sm font-600 tracking-wide ${
+				comingSoon
+					? 'bg-slate-mid/50 text-ghost'
+					: 'bg-neon-cyan-glow border border-neon-cyan-dim text-neon-cyan'
+			}`}>
+				{command}
+			</code>
+		</div>
+
+		<p class="text-mist text-lg leading-relaxed mb-10 max-w-2xl">
+			{description}
+		</p>
+
+		<div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+			<!-- Template -->
+			<div>
+				<h3 class="font-mono text-xs text-neon-amber tracking-[0.3em] uppercase mb-5">Template Stack</h3>
+				<ul class="space-y-3">
+					{template.map((item) => (
+						<li class="flex items-center gap-3 text-sm">
+							<div class={`flex items-center justify-center size-6 rounded ${
+								comingSoon ? 'bg-slate-mid/50 text-ghost' : 'bg-neon-cyan-glow text-neon-cyan'
+							}`}>
+								<Check class="size-3.5" aria-hidden="true" />
+							</div>
+							<span class="text-cloud">{item}</span>
+						</li>
+					))}
+				</ul>
+			</div>
+
+			<!-- Features -->
+			<div>
+				<h3 class="font-mono text-xs text-neon-amber tracking-[0.3em] uppercase mb-5">What It Teaches Your AI</h3>
+				<ul class="space-y-3">
+					{features.map((feature) => (
+						<li class="flex items-start gap-3 text-sm">
+							<div class={`flex items-center justify-center size-6 rounded shrink-0 mt-0.5 ${
+								comingSoon ? 'bg-slate-mid/50 text-ghost' : 'bg-neon-cyan-glow text-neon-cyan'
+							}`}>
+								<Check class="size-3.5" aria-hidden="true" />
+							</div>
+							<span class="text-cloud">{feature}</span>
+						</li>
+					))}
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>

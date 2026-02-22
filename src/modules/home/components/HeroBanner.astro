@@ -8,10 +8,13 @@
 	<div class="absolute top-1/3 right-1/4 size-[400px] rounded-full bg-neon-violet/5 blur-[120px] pointer-events-none"></div>
 
 	<!-- Floating particles -->
-	<div class="particle particle-1" style="top: 20%; left: 15%;"></div>
-	<div class="particle particle-2" style="top: 35%; right: 20%;"></div>
-	<div class="particle particle-3" style="bottom: 30%; left: 25%;"></div>
-	<div class="particle particle-4" style="bottom: 20%; right: 15%;"></div>
+	<div class="particle" style="top: 20%; left: 15%;"></div>
+	<div class="particle" style="top: 35%; right: 20%;"></div>
+	<div class="particle" style="bottom: 30%; left: 25%;"></div>
+	<div class="particle" style="bottom: 20%; right: 15%;"></div>
+	<div class="particle" style="top: 12%; left: 45%;"></div>
+	<div class="particle" style="top: 55%; right: 10%;"></div>
+	<div class="particle" style="bottom: 40%; left: 8%;"></div>
 
 	<div class="relative z-10 max-w-4xl mx-auto text-center">
 		<!-- Badge -->
@@ -57,3 +60,50 @@
 		<div class="w-px h-8 bg-gradient-to-b from-neon-amber to-transparent"></div>
 	</div>
 </section>
+
+<script>
+	const section = document.getElementById('main-content');
+	if (section && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+		const particles = section.querySelectorAll<HTMLElement>('.particle');
+		const offsets = Array.from(particles, () => ({ x: 0, y: 0 }));
+		const configs = Array.from(particles, () => ({
+			phase: Math.random() * Math.PI * 2,
+			driftRadius: 10 + Math.random() * 15,
+			driftSpeed: 0.2 + Math.random() * 0.4,
+			mouseStrength: 20 + Math.random() * 60, // 20–80px max displacement
+			mouseAngle: Math.random() * Math.PI * 2, // random axis offset
+			mouseRatioX: 0.3 + Math.random() * 0.7, // 0.3–1.0 x sensitivity
+			mouseRatioY: 0.3 + Math.random() * 0.7, // 0.3–1.0 y sensitivity
+			invert: Math.random() > 0.5 ? -1 : 1, // some move opposite
+			lerp: 0.02 + Math.random() * 0.04, // 0.02–0.06 smoothing
+		}));
+		let mouseX = 0;
+		let mouseY = 0;
+
+		section.addEventListener('mousemove', (e) => {
+			const rect = section.getBoundingClientRect();
+			mouseX = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
+			mouseY = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
+		});
+
+		function tick(t: number): void {
+			const s = t * 0.001;
+			for (let i = 0; i < particles.length; i++) {
+				const c = configs[i];
+				const driftX = Math.sin(s * c.driftSpeed + c.phase) * c.driftRadius;
+				const driftY = Math.cos(s * c.driftSpeed * 0.7 + c.phase) * c.driftRadius;
+				const mx = mouseX * c.mouseRatioX * c.invert;
+				const my = mouseY * c.mouseRatioY * c.invert;
+				const rotatedX = mx * Math.cos(c.mouseAngle) - my * Math.sin(c.mouseAngle);
+				const rotatedY = mx * Math.sin(c.mouseAngle) + my * Math.cos(c.mouseAngle);
+				const targetX = driftX + rotatedX * c.mouseStrength;
+				const targetY = driftY + rotatedY * c.mouseStrength;
+				offsets[i].x += (targetX - offsets[i].x) * c.lerp;
+				offsets[i].y += (targetY - offsets[i].y) * c.lerp;
+				particles[i].style.transform = `translate(${offsets[i].x}px, ${offsets[i].y}px)`;
+			}
+			requestAnimationFrame(tick);
+		}
+		requestAnimationFrame(tick);
+	}
+</script>

@@ -14,10 +14,10 @@ const OUTPUT_DIR = join(ROOT, 'public');
 
 /** Map DB skill_slug → .claude/skills/ directory name */
 const SKILL_SLUG_TO_DIR: Record<string, string> = {
-    frontend: 'frontend-coder',
-    backend: 'backend',
+    react: 'frontend-coder',
+    python: 'backend',
     style: 'frontend-design',
-    'code-review': 'review',
+    'architecture-review': 'review',
     'feature-enhancer': 'feature',
     'app-bootstrap': 'bootstrap',
 };

@@ -58,10 +58,10 @@ CREATE UNIQUE INDEX `purchases_stripe_session_id_unique` ON `purchases` (`stripe
 
 -- Seed products
 INSERT INTO `products` (`code`, `name`, `version`, `lifetime`, `skill_slug`, `created_at`) VALUES
-('skill-frontend', 'Elite Skill — Frontend', '1.0.0', 0, 'frontend', datetime('now')),
-('skill-backend', 'Elite Skill — Backend', '1.0.0', 0, 'backend', datetime('now')),
+('skill-react', 'Elite Skill — React', '1.0.0', 0, 'react', datetime('now')),
+('skill-python', 'Elite Skill — Python', '1.0.0', 0, 'python', datetime('now')),
 ('skill-style', 'Elite Skill — Style', '1.0.0', 0, 'style', datetime('now')),
-('skill-code-review', 'Elite Skill — Code Review', '1.0.0', 0, 'code-review', datetime('now')),
+('skill-architecture-review', 'Elite Skill — Architecture Review', '1.0.0', 0, 'architecture-review', datetime('now')),
 ('skill-feature-enhancer', 'Elite Skill — Feature Enhancer', '1.0.0', 0, 'feature-enhancer', datetime('now')),
 ('skill-app-bootstrap', 'Elite Skill — App Bootstrap', '1.0.0', 0, 'app-bootstrap', datetime('now')),
 ('bundle-once', 'Elite AI Skills — All Skills', '1.0.0', 0, NULL, datetime('now')),
@@ -72,16 +72,16 @@ INSERT INTO `products` (`code`, `name`, `version`, `lifetime`, `skill_slug`, `cr
 -- Seed product_prices (USD per continent)
 -- Skills: $9 base (NA), geo-adjusted per continent
 INSERT INTO `product_prices` (`product_id`, `continent`, `price`) VALUES
--- skill-frontend (id=1)
+-- skill-react (id=1)
 (1, 'NA', 9), (1, 'EU', 9), (1, 'OC', 9),
 (1, 'SA', 5), (1, 'AF', 3), (1, 'AS', 5), (1, 'AN', 9),
--- skill-backend (id=2)
+-- skill-python (id=2)
 (2, 'NA', 9), (2, 'EU', 9), (2, 'OC', 9),
 (2, 'SA', 5), (2, 'AF', 3), (2, 'AS', 5), (2, 'AN', 9),
 -- skill-style (id=3)
 (3, 'NA', 9), (3, 'EU', 9), (3, 'OC', 9),
 (3, 'SA', 5), (3, 'AF', 3), (3, 'AS', 5), (3, 'AN', 9),
--- skill-code-review (id=4)
+-- skill-architecture-review (id=4)
 (4, 'NA', 9), (4, 'EU', 9), (4, 'OC', 9),
 (4, 'SA', 5), (4, 'AF', 3), (4, 'AS', 5), (4, 'AN', 9),
 -- skill-feature-enhancer (id=5)

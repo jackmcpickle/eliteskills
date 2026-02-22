@@ -1,5 +1,5 @@
 ---
-title: Frontend
+title: React
 description: React component patterns. Accessibility-first markup. Responsive layouts that don't break.
 icon: Layers
 order: 1

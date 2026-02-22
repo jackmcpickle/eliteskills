@@ -25,12 +25,12 @@ describe('Human purchase flow — product catalog', () => {
     } as const;
 
     const skillProducts = {
-        1: { code: 'skill-frontend', name: 'Elite Skill — Frontend', price: 9 },
-        2: { code: 'skill-backend', name: 'Elite Skill — Backend', price: 9 },
+        1: { code: 'skill-react', name: 'Elite Skill — React', price: 9 },
+        2: { code: 'skill-python', name: 'Elite Skill — Python', price: 9 },
         3: { code: 'skill-style', name: 'Elite Skill — Style', price: 9 },
         4: {
-            code: 'skill-code-review',
-            name: 'Elite Skill — Code Review',
+            code: 'skill-architecture-review',
+            name: 'Elite Skill — Architecture Review',
             price: 9,
         },
         5: {

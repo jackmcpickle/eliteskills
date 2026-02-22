@@ -1,197 +1,262 @@
 ---
-import BaseLayout from '@/layouts/BaseLayout.astro';
-import { Image } from 'astro:assets';
-import jackHeadshot from '@/assets/jack-headshot.jpg';
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { Image } from "astro:assets";
+import jackHeadshot from "@/assets/jack-headshot.jpg";
 
-const SITE_URL = 'https://eliteskills.ai';
+const SITE_URL = "https://eliteskills.ai";
 
 const personJsonLd = {
-	'@context': 'https://schema.org',
-	'@type': 'Person',
-	name: 'Jack McNicol',
-	alternateName: 'Jack McPickle',
-	jobTitle: 'Lead Agentic Engineer',
-	worksFor: {
-		'@type': 'Organization',
-		name: 'SuperIT',
-		url: 'https://www.superit.ai/',
-	},
-	url: 'https://jack.mcpickle.com.au',
-	sameAs: [
-		'https://github.com/jackmcpickle',
-		'https://www.linkedin.com/in/jackmcpickle/',
-	],
-	knowsAbout: ['TypeScript', 'React', 'Python', 'AI Agents', 'Cloud Architecture', 'Team Leadership'],
-	image: `${SITE_URL}/images/jack-headshot.jpg`,
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: "Jack McNicol",
+    alternateName: "Jack McPickle",
+    jobTitle: "Lead Agentic Engineer",
+    worksFor: {
+        "@type": "Organization",
+        name: "SuperIT",
+        url: "https://www.superit.ai/",
+    },
+    url: "https://jack.mcpickle.com.au",
+    sameAs: [
+        "https://github.com/jackmcpickle",
+        "https://www.linkedin.com/in/jackmcpickle/",
+    ],
+    knowsAbout: [
+        "TypeScript",
+        "React",
+        "Python",
+        "AI Agents",
+        "Cloud Architecture",
+        "Team Leadership",
+    ],
+    image: `${SITE_URL}/images/jack-headshot.jpg`,
 };
 
-const selectedWork = [
-	{ name: 'PregCheck', url: 'https://pregcheck.com.au/', tags: ['Next.js', 'Custom Webapp'] },
-	{ name: 'HexPegs', url: 'https://hexpegs.com.au/', tags: ['Next.js', 'E-commerce'] },
-	{ name: '7-Eleven Pay@Pump', url: 'https://www.7eleven.com.au/', tags: ['Integration Architect', 'Magento'] },
-	{ name: 'Kathmandu', url: 'https://www.kathmandu.com.au/', tags: ['Architect', 'PWA', 'Magento'] },
-	{ name: 'Haighs Chocolates', url: 'https://www.haighschocolates.com.au/', tags: ['E-commerce', 'React'] },
-	{ name: 'Flora & Fauna', url: 'https://www.floraandfauna.com.au/', tags: ['E-commerce', 'React'] },
-	{ name: 'Williams Shoes', url: 'https://www.williamsshoes.com.au/', tags: ['E-commerce', 'React'] },
-	{ name: 'QuickTickets', url: 'https://quicktickets-web.quicktravel.com.au', tags: ['React', 'PWA', 'POS'] },
-];
-
 const career = [
-	{ period: 'Current', role: 'Lead Agentic Engineer', company: 'SuperIT', url: 'https://www.superit.ai/' },
-	{ period: '2025', role: 'Principal Software Engineer', company: 'Rex Software' },
-	{ period: '2022 – 2025', role: 'Technical Team Lead', company: 'NQRY' },
-	{ period: '2022', role: 'Solution Architect', company: 'Addend AI' },
-	{ period: '2021 – 2022', role: 'Senior Software Engineer', company: 'Alcidion' },
-	{ period: '2020 – 2021', role: 'Full Stack JS Instructor', company: 'Sydney & Adelaide University' },
-	{ period: '2018 – 2021', role: 'Senior Developer / Solution Architect', company: 'Aligent Consulting' },
-	{ period: '2017 – 2018', role: 'Digital Consultant', company: 'Brand South Australia' },
+    { period: "Current", role: "Lead Agentic Engineer", highlight: true },
+    { period: "2022 – 2025", role: "Principal Engineer & Technical Lead" },
+    { period: "2020 – 2022", role: "Senior Engineer & Solution Architect" },
+    { period: "2020 – 2021", role: "Full Stack Instructor" },
+    { period: "2017 – 2020", role: "Senior Engineer & Technical Lead" },
+    { period: "2010 – 2017", role: "Digital Developer" },
+    { period: "2003 – 2010", role: "Designer & Developer" },
 ];
 
 const skills = {
-	Frontend: ['TypeScript', 'React', 'Vue.js', 'HTML/CSS'],
-	Backend: ['PHP', 'Java', 'Python', 'Ruby'],
-	DevOps: ['AWS', 'Azure', 'Cloudflare', 'Terraform', 'GitHub Actions'],
-	Tooling: ['Vite', 'Webpack', 'ESLint', 'PHPStan', 'Gradle', 'Poetry/UV'],
+    Frontend: ["TypeScript", "React", "Vue.js", "HTML/CSS"],
+    Backend: ["PHP", "Java", "Python", "Ruby"],
+    DevOps: ["AWS", "Azure", "Cloudflare", "Terraform", "GitHub Actions"],
+    Tooling: ["Vite", "Webpack", "ESLint", "PHPStan", "Gradle", "Poetry/UV"],
 };
 ---
 
 <BaseLayout
-	title="About — Jack McNicol (Jack McPickle)"
-	description="20+ years shipping production software. Lead Agentic Engineer at SuperIT, consultant, instructor, and the builder behind Elite Skills."
-	jsonLd={personJsonLd}
+    title='About — Jack McNicol (Jack McPickle)'
+    description='20+ years shipping production software. Lead Agentic Engineer at SuperIT, engineer, instructor, and the builder behind Elite Skills.'
+    jsonLd={personJsonLd}
 >
-	<main id="main-content" class="min-h-screen">
-		<!-- Hero -->
-		<section class="relative px-6 pt-20 pb-16 sm:pt-28 sm:pb-24">
-			<div class="max-w-4xl mx-auto flex flex-col sm:flex-row items-center gap-8 sm:gap-12">
-				<div class="shrink-0">
-					<Image
-						src={jackHeadshot}
-						alt="Jack McNicol"
-						width={200}
-						height={200}
-						class="size-40 sm:size-48 rounded-full border-2 border-neon-cyan-dim object-cover"
-					/>
-				</div>
-				<div class="text-center sm:text-left">
-					<p class="font-mono text-xs tracking-[0.28em] uppercase text-neon-cyan mb-3">About</p>
-					<h1 class="font-display text-4xl sm:text-5xl font-800 text-white tracking-tight mb-2">
-						Jack McNicol
-					</h1>
-					<p class="font-mono text-sm text-mist mb-4">aka Jack McPickle</p>
-					<p class="text-lg text-cloud leading-relaxed">
-						Lead Agentic Engineer at <a href="https://www.superit.ai/" class="text-neon-cyan hover:underline" target="_blank" rel="noopener noreferrer">SuperIT</a>.
-						Consultant, instructor, and developer with 20+ years shipping production software.
-					</p>
-				</div>
-			</div>
-		</section>
+    <main
+        id='main-content'
+        class='min-h-screen'
+    >
+        <!-- Hero -->
+        <section class='relative px-6 pt-20 pb-16 sm:pt-28 sm:pb-24'>
+            <div
+                class='max-w-4xl mx-auto flex flex-col sm:flex-row items-center gap-8 sm:gap-12'
+            >
+                <div class='shrink-0 relative'>
+                    <Image
+                        src={jackHeadshot}
+                        alt='Jack McNicol'
+                        width={200}
+                        height={200}
+                        class='size-40 sm:size-48 rotate-90 rounded-full border-2 border-neon-cyan-dim object-cover grayscale'
+                    />
+                    <div
+                        class='absolute inset-0 rounded-full bg-neon-cyan/20 mix-blend-color pointer-events-none'
+                    >
+                    </div>
+                </div>
+                <div class='text-center sm:text-left'>
+                    <p
+                        class='font-mono text-xs tracking-[0.28em] uppercase text-neon-cyan mb-3'
+                    >
+                        About
+                    </p>
+                    <h1
+                        class='font-display text-4xl sm:text-5xl font-800 text-white tracking-tight mb-2'
+                    >
+                        Jack McNicol
+                    </h1>
+                    <p class='font-mono text-sm text-mist mb-4'>
+                        aka Jack McPickle
+                    </p>
+                    <p class='text-lg text-cloud leading-relaxed'>
+                        Lead Agentic Engineer at <a
+                            href='https://www.superit.ai/'
+                            class='text-neon-cyan hover:underline'
+                            target='_blank'
+                            rel='noopener noreferrer'
+                            >SuperIT</a
+                        >. Engineer, instructor, and developer with 20+ years
+                        shipping production software.
+                    </p>
+                </div>
+            </div>
+        </section>
 
-		<!-- Bio -->
-		<section class="px-6 pb-16 sm:pb-24">
-			<div class="max-w-3xl mx-auto">
-				<p class="text-cloud leading-relaxed mb-6">
-					Jack builds digital products, mentors teams, and keeps large-scale platforms moving. He blends thoughtful architecture with hands-on delivery, from greenfield builds to legacy transformations. Based in Australia, working worldwide.
-				</p>
-				<p class="text-cloud leading-relaxed">
-					He specialises in uplifting legacy systems, leading engineering teams, and designing modern cloud-first architectures. Passionate about driving technical strategy, mentoring developers, and delivering scalable, resilient software.
-				</p>
-			</div>
-		</section>
+        <!-- Bio -->
+        <section class='px-6 pb-16 sm:pb-24'>
+            <div class='max-w-3xl mx-auto'>
+                <p class='text-cloud leading-relaxed mb-6'>
+                    Jack designs and builds production systems, mentors
+                    engineering teams, and keeps large-scale platforms shipping.
+                    He pairs principled architecture with hands-on delivery,
+                    from greenfield builds to legacy transformations. Based in
+                    Australia, working worldwide.
+                </p>
+                <p class='text-cloud leading-relaxed'>
+                    He specialises in uplifting legacy codebases, leading
+                    engineering teams, and designing modern cloud-first
+                    architectures. Driven by technical strategy, raising the bar
+                    for developer standards, and delivering scalable, resilient
+                    software.
+                </p>
+            </div>
+        </section>
 
-		<!-- Current Focus -->
-		<section class="px-6 pb-16 sm:pb-24">
-			<div class="max-w-3xl mx-auto rounded-xl border border-border bg-surface p-6 sm:p-8">
-				<p class="font-mono text-xs tracking-[0.28em] uppercase text-neon-cyan mb-3">Current Focus</p>
-				<h2 class="font-display text-2xl sm:text-3xl font-800 text-white tracking-tight mb-4">
-					<a href="https://www.superit.ai/" target="_blank" rel="noopener noreferrer" class="hover:text-neon-cyan transition-colors">SuperIT</a>
-				</h2>
-				<p class="text-cloud leading-relaxed">
-					Building AI agents that solve real IT issues for end users. Supercharging MSPs with agents that deliver exceptional IT support at scale, so staff can focus on the fulfilling, high-value work they love.
-				</p>
-			</div>
-		</section>
+        <!-- Current Focus -->
+        <section class='px-6 pb-16 sm:pb-24'>
+            <div
+                class='max-w-3xl mx-auto rounded-xl border border-border bg-surface p-6 sm:p-8'
+            >
+                <p
+                    class='font-mono text-xs tracking-[0.28em] uppercase text-neon-cyan mb-3'
+                >
+                    Current Focus
+                </p>
+                <h2
+                    class='font-display text-2xl sm:text-3xl font-800 text-white tracking-tight mb-4'
+                >
+                    <a
+                        href='https://www.superit.ai/'
+                        target='_blank'
+                        rel='noopener noreferrer'
+                        class='hover:text-neon-cyan transition-colors'
+                        >SuperIT</a
+                    >
+                </h2>
+                <p class='text-cloud leading-relaxed'>
+                    Building AI agents that solve real IT issues for end users.
+                    Supercharging MSPs with agents that deliver exceptional IT
+                    support at scale, so staff can focus on the fulfilling,
+                    high-value work they love.
+                </p>
+            </div>
+        </section>
 
-		<!-- Career -->
-		<section class="px-6 pb-16 sm:pb-24">
-			<div class="max-w-3xl mx-auto">
-				<p class="font-mono text-xs tracking-[0.28em] uppercase text-neon-cyan mb-6">Career</p>
-				<div class="space-y-4">
-					{career.map((c) => (
-						<div class="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-4">
-							<span class="font-mono text-xs text-ghost shrink-0 sm:w-32">{c.period}</span>
-							<div>
-								<span class="text-white font-600">{c.role}</span>
-								<span class="text-mist"> &middot; </span>
-								{c.url ? (
-									<a href={c.url} target="_blank" rel="noopener noreferrer" class="text-neon-cyan hover:underline">{c.company}</a>
-								) : (
-									<span class="text-mist">{c.company}</span>
-								)}
-							</div>
-						</div>
-					))}
-				</div>
-			</div>
-		</section>
+        <!-- Career -->
+        <section class='px-6 pb-16 sm:pb-24'>
+            <div class='max-w-3xl mx-auto'>
+                <p
+                    class='font-mono text-xs tracking-[0.28em] uppercase text-neon-cyan mb-6'
+                >
+                    Career
+                </p>
+                <div class='space-y-4'>
+                    {
+                        career.map((c) => (
+                            <div class='flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-4'>
+                                <span class='font-mono text-xs text-ghost shrink-0 sm:w-32'>
+                                    {c.period}
+                                </span>
+                                <span
+                                    class:list={[
+                                        "font-600",
+                                        c.highlight
+                                            ? "text-neon-cyan"
+                                            : "text-white",
+                                    ]}
+                                >
+                                    {c.role}
+                                </span>
+                            </div>
+                        ))
+                    }
+                </div>
+            </div>
+        </section>
 
-		<!-- Skills -->
-		<section class="px-6 pb-16 sm:pb-24">
-			<div class="max-w-3xl mx-auto">
-				<p class="font-mono text-xs tracking-[0.28em] uppercase text-neon-cyan mb-6">Skills</p>
-				<div class="grid grid-cols-2 sm:grid-cols-4 gap-6">
-					{Object.entries(skills).map(([category, items]) => (
-						<div>
-							<h3 class="font-mono text-xs text-white uppercase tracking-wide mb-3">{category}</h3>
-							<ul class="space-y-1.5">
-								{items.map((item) => (
-									<li class="text-sm text-mist">{item}</li>
-								))}
-							</ul>
-						</div>
-					))}
-				</div>
-			</div>
-		</section>
+        <!-- Skills -->
+        <section class='px-6 pb-16 sm:pb-24'>
+            <div class='max-w-3xl mx-auto'>
+                <p
+                    class='font-mono text-xs tracking-[0.28em] uppercase text-neon-cyan mb-6'
+                >
+                    Skills
+                </p>
+                <div class='grid grid-cols-2 sm:grid-cols-4 gap-6'>
+                    {
+                        Object.entries(skills).map(([category, items]) => (
+                            <div>
+                                <h3 class='font-mono text-xs text-white uppercase tracking-wide mb-3'>
+                                    {category}
+                                </h3>
+                                <ul class='space-y-1.5'>
+                                    {items.map((item) => (
+                                        <li class='text-sm text-mist'>
+                                            {item}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        ))
+                    }
+                </div>
+            </div>
+        </section>
 
-		<!-- Selected Work -->
-		<section class="px-6 pb-16 sm:pb-24">
-			<div class="max-w-3xl mx-auto">
-				<p class="font-mono text-xs tracking-[0.28em] uppercase text-neon-cyan mb-6">Selected Work</p>
-				<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-					{selectedWork.map((w) => (
-						<a href={w.url} target="_blank" rel="noopener noreferrer" class="group rounded-lg border border-border bg-surface p-4 transition-all hover:border-neon-cyan-dim hover:shadow-[0_0_20px_var(--color-neon-cyan-glow)]">
-							<p class="font-display text-white font-600 group-hover:text-neon-cyan transition-colors mb-1">{w.name}</p>
-							<div class="flex flex-wrap gap-2">
-								{w.tags.map((tag) => (
-									<span class="font-mono text-[10px] text-ghost uppercase tracking-wide">{tag}</span>
-								))}
-							</div>
-						</a>
-					))}
-				</div>
-			</div>
-		</section>
-
-		<!-- Links -->
-		<section class="px-6 pb-20 sm:pb-28">
-			<div class="max-w-3xl mx-auto">
-				<p class="font-mono text-xs tracking-[0.28em] uppercase text-neon-cyan mb-6">Connect</p>
-				<div class="flex flex-wrap gap-4">
-					<a href="https://github.com/jackmcpickle" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 rounded-lg border border-slate-mid px-4 py-2.5 font-mono text-xs uppercase tracking-wide text-mist hover:border-neon-cyan-dim hover:text-neon-cyan transition-colors">
-						GitHub
-					</a>
-					<a href="https://www.linkedin.com/in/jackmcpickle/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 rounded-lg border border-slate-mid px-4 py-2.5 font-mono text-xs uppercase tracking-wide text-mist hover:border-neon-cyan-dim hover:text-neon-cyan transition-colors">
-						LinkedIn
-					</a>
-					<a href="https://jack.mcpickle.com.au" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 rounded-lg border border-slate-mid px-4 py-2.5 font-mono text-xs uppercase tracking-wide text-mist hover:border-neon-cyan-dim hover:text-neon-cyan transition-colors">
-						Website
-					</a>
-					<a href="mailto:jack@mcpickle.com.au" class="inline-flex items-center gap-2 rounded-lg border border-slate-mid px-4 py-2.5 font-mono text-xs uppercase tracking-wide text-mist hover:border-neon-cyan-dim hover:text-neon-cyan transition-colors">
-						Email
-					</a>
-				</div>
-			</div>
-		</section>
-	</main>
+        <!-- Links -->
+        <section class='px-6 pb-20 sm:pb-28'>
+            <div class='max-w-3xl mx-auto'>
+                <p
+                    class='font-mono text-xs tracking-[0.28em] uppercase text-neon-cyan mb-6'
+                >
+                    Connect
+                </p>
+                <div class='flex flex-wrap gap-4'>
+                    <a
+                        href='https://github.com/jackmcpickle'
+                        target='_blank'
+                        rel='noopener noreferrer'
+                        class='inline-flex items-center gap-2 rounded-lg border border-slate-mid px-4 py-2.5 font-mono text-xs uppercase tracking-wide text-mist hover:border-neon-cyan-dim hover:text-neon-cyan transition-colors'
+                    >
+                        GitHub
+                    </a>
+                    <a
+                        href='https://www.linkedin.com/in/jackmcpickle/'
+                        target='_blank'
+                        rel='noopener noreferrer'
+                        class='inline-flex items-center gap-2 rounded-lg border border-slate-mid px-4 py-2.5 font-mono text-xs uppercase tracking-wide text-mist hover:border-neon-cyan-dim hover:text-neon-cyan transition-colors'
+                    >
+                        LinkedIn
+                    </a>
+                    <a
+                        href='https://jack.mcpickle.com.au'
+                        target='_blank'
+                        rel='noopener noreferrer'
+                        class='inline-flex items-center gap-2 rounded-lg border border-slate-mid px-4 py-2.5 font-mono text-xs uppercase tracking-wide text-mist hover:border-neon-cyan-dim hover:text-neon-cyan transition-colors'
+                    >
+                        Website
+                    </a>
+                    <a
+                        href='mailto:jack@mcpickle.com.au'
+                        class='inline-flex items-center gap-2 rounded-lg border border-slate-mid px-4 py-2.5 font-mono text-xs uppercase tracking-wide text-mist hover:border-neon-cyan-dim hover:text-neon-cyan transition-colors'
+                    >
+                        Email
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
 </BaseLayout>

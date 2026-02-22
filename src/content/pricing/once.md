@@ -1,5 +1,5 @@
 ---
-title: One-Time Purchase
+title: All Skills
 price: 29
 period: once
 description: Get the full skill pack as it exists today. Download and use forever.

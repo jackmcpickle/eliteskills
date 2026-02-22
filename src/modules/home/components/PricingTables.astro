@@ -2,7 +2,13 @@
 import { getCollection } from 'astro:content';
 import { Check } from '@lucide/astro';
 
-const tiers = (await getCollection('pricing')).sort((a, b) => a.data.order - b.data.order);
+const allTiers = (await getCollection('pricing')).sort((a, b) => a.data.order - b.data.order);
+
+const slug = (id: string): string => id.replace(/\.md$/, '');
+
+const topTier = allTiers.find((t) => slug(t.id) === 'single');
+const middleTiers = allTiers.filter((t) => t.data.size === 'default');
+const bottomTier = allTiers.find((t) => slug(t.id) === 'teams');
 ---
 
 <section id="pricing" class="relative py-16 sm:py-24 lg:py-32 px-6">
@@ -17,74 +23,144 @@ const tiers = (await getCollection('pricing')).sort((a, b) => a.data.order - b.d
 				Invest in Your Edge
 			</h2>
 			<p class="reveal reveal-delay-2 mt-4 max-w-lg mx-auto text-mist">
-				Two ways in. No subscriptions. No hidden fees. Pay once and build.
+				Plans for every builder. No subscriptions. No hidden fees. Pay once and build.
 			</p>
 		</div>
 
-		<!-- Pricing cards -->
-		<div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-			{tiers.map((tier, i) => {
-				const checkoutUrl = tier.id === 'lifetime' ? '/checkout/lifetime' : '/checkout/once';
+		<div class="flex flex-col gap-6">
+			<!-- Top row: Single Skill (compact, full-width) -->
+			{topTier && (
+				<a href={`/checkout/${slug(topTier.id)}`} class="reveal reveal-delay-1 group relative rounded-xl border border-border bg-surface hover:border-neon-cyan-dim p-5 sm:p-6 transition-all">
+					<div class="flex flex-col gap-4">
+						<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
+							<div class="flex-1 min-w-0">
+								<h3 class="font-display text-lg font-700 text-white">
+									{topTier.data.title}
+								</h3>
+								<p class="text-sm text-ghost mt-1">
+									{topTier.data.description}
+								</p>
+							</div>
 
-				return (
-					<div class={`reveal reveal-delay-${i + 1} relative rounded-2xl p-8 sm:p-10 transition-all ${
-						tier.data.highlighted
-							? 'border-2 border-neon-cyan bg-surface shadow-[0_0_60px_var(--color-neon-cyan-glow)]'
-							: 'border border-border bg-surface hover:border-neon-cyan-dim'
-					}`}>
-					{/* Recommended badge */}
-					{tier.data.highlighted && (
-						<div class="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-neon-cyan text-void font-mono text-xs font-700 tracking-wider uppercase">
-							Best Value
+							<div class="flex items-center gap-3 shrink-0">
+								<div class="flex items-baseline gap-0.5">
+									<span class="font-mono text-xs text-ghost">$</span>
+									<span class="font-display text-3xl font-900 tracking-tight text-white">{topTier.data.price}</span>
+									<span class="font-mono text-xs text-ghost ml-0.5">/ {topTier.data.period}</span>
+								</div>
+								<span class="px-4 py-2 rounded-lg border border-slate-mid text-mist font-mono text-xs font-600 tracking-wide uppercase group-hover:border-neon-cyan-dim group-hover:text-neon-cyan transition-all">
+									Buy
+								</span>
+							</div>
 						</div>
-					)}
 
-					<!-- Tier name -->
-					<h3 class="font-display text-xl font-700 text-white mb-2">
-						{tier.data.title}
-					</h3>
-					<p class="text-sm text-ghost mb-8">
-						{tier.data.description}
-					</p>
+						<ul class="flex flex-wrap items-center gap-x-5 gap-y-1 border-t border-border/50 pt-3">
+							{topTier.data.features.map((feature: string) => (
+								<li class="flex items-center gap-1.5 text-xs text-cloud">
+									<Check class="size-3.5 text-neon-green shrink-0" aria-hidden="true" />
+									{feature}
+								</li>
+							))}
+						</ul>
+					</div>
+				</a>
+			)}
 
-					<!-- Price -->
-					<div class="flex items-baseline gap-1 mb-8">
-						<span class="font-mono text-xs text-ghost">$</span>
-						<span class={`font-display text-5xl sm:text-6xl font-900 tracking-tight ${
-							tier.data.highlighted ? 'text-neon-cyan' : 'text-white'
+			<!-- Middle row: 2-col grid (All Skills + Lifetime) -->
+			<div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+				{middleTiers.map((tier, i) => {
+					return (
+						<div class={`reveal reveal-delay-${i + 2} relative rounded-2xl p-8 sm:p-10 transition-all ${
+							tier.data.highlighted
+								? 'border-2 border-neon-cyan bg-surface shadow-[0_0_60px_var(--color-neon-cyan-glow)]'
+								: 'border border-border bg-surface hover:border-neon-cyan-dim'
 						}`}>
-							{tier.data.price}
-						</span>
-						<span class="font-mono text-sm text-ghost ml-1">
-							/ {tier.data.period}
-						</span>
-					</div>
+						{/* Recommended badge */}
+						{tier.data.highlighted && (
+							<div class="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-neon-cyan text-void font-mono text-xs font-700 tracking-wider uppercase">
+								Best Value
+							</div>
+						)}
 
-					<!-- Features -->
-					<ul class="space-y-3 mb-10">
-						{tier.data.features.map((feature: string) => (
-							<li class="flex items-start gap-3 text-sm">
-								<Check class={`size-4 mt-0.5 ${tier.data.highlighted ? 'text-neon-cyan' : 'text-neon-green'}`} aria-hidden="true" />
-								<span class="text-cloud">{feature}</span>
-							</li>
-						))}
-					</ul>
+						<!-- Tier name -->
+						<h3 class="font-display text-xl font-700 text-white mb-2">
+							{tier.data.title}
+						</h3>
+						<p class="text-sm text-ghost mb-8">
+							{tier.data.description}
+						</p>
 
-					<!-- CTA -->
-					<a href={checkoutUrl} class={`block w-full text-center py-4 rounded-lg font-mono text-sm font-600 tracking-wide uppercase transition-all ${
-						tier.data.highlighted
-							? 'bg-neon-cyan text-void hover:shadow-[0_0_40px_var(--color-neon-cyan-dim)]'
-							: 'border border-slate-mid text-mist hover:border-neon-cyan-dim hover:text-neon-cyan'
-					}`}>
-						{tier.data.highlighted ? 'Get Lifetime Access' : 'Buy Now'}
-					</a>
+						<!-- Price -->
+						<div class="flex items-baseline gap-1 mb-8">
+							<span class="font-mono text-xs text-ghost">$</span>
+							<span class={`font-display text-5xl sm:text-6xl font-900 tracking-tight ${
+								tier.data.highlighted ? 'text-neon-cyan' : 'text-white'
+							}`}>
+								{tier.data.price}
+							</span>
+							<span class="font-mono text-sm text-ghost ml-1">
+								/ {tier.data.period}
+							</span>
+						</div>
+
+						<!-- Features -->
+						<ul class="space-y-3 mb-10">
+							{tier.data.features.map((feature: string) => (
+								<li class="flex items-start gap-3 text-sm">
+									<Check class={`size-4 mt-0.5 ${tier.data.highlighted ? 'text-neon-cyan' : 'text-neon-green'}`} aria-hidden="true" />
+									<span class="text-cloud">{feature}</span>
+								</li>
+							))}
+						</ul>
+
+						<!-- CTA -->
+						<a href={`/checkout/${slug(tier.id)}`} class={`block w-full text-center py-4 rounded-lg font-mono text-sm font-600 tracking-wide uppercase transition-all ${
+							tier.data.highlighted
+								? 'bg-neon-cyan text-void hover:shadow-[0_0_40px_var(--color-neon-cyan-dim)]'
+								: 'border border-slate-mid text-mist hover:border-neon-cyan-dim hover:text-neon-cyan'
+						}`}>
+							{tier.data.highlighted ? 'Get Lifetime Access' : 'Buy Now'}
+						</a>
+						</div>
+					);
+				})}
+			</div>
+
+			<!-- Bottom row: Teams (subtle, full-width) -->
+			{bottomTier && (
+				<a href={`/checkout/${slug(bottomTier.id)}`} class="reveal reveal-delay-4 group relative rounded-xl border border-border/60 bg-surface/50 hover:border-neon-cyan-dim p-5 sm:p-6 transition-all">
+					<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+						<div class="flex-1 min-w-0">
+							<div class="flex items-center gap-2">
+								<h3 class="font-display text-lg font-700 text-mist">
+									{bottomTier.data.title}
+								</h3>
+								<span class="px-2 py-0.5 rounded-full bg-white/5 font-mono text-[10px] text-ghost uppercase tracking-wider">
+									Unlimited seats
+								</span>
+							</div>
+							<p class="text-sm text-ghost mt-1">
+								{bottomTier.data.description}
+							</p>
+						</div>
+
+						<div class="flex items-center gap-3">
+							<div class="flex items-baseline gap-0.5">
+								<span class="font-mono text-xs text-ghost">$</span>
+								<span class="font-display text-3xl font-900 tracking-tight text-mist">{bottomTier.data.price}</span>
+								<span class="font-mono text-xs text-ghost ml-0.5">/ {bottomTier.data.period}</span>
+							</div>
+							<span class="shrink-0 px-4 py-2 rounded-lg border border-slate-mid/60 text-ghost font-mono text-xs font-600 tracking-wide uppercase group-hover:border-neon-cyan-dim group-hover:text-neon-cyan transition-all">
+								Get Started
+							</span>
+						</div>
 					</div>
-				);
-			})}
+				</a>
+			)}
 		</div>
 
 		<!-- Trust note -->
-		<p class="reveal reveal-delay-3 text-center mt-12 font-mono text-xs text-ghost tracking-wider">
+		<p class="reveal reveal-delay-5 text-center mt-12 font-mono text-xs text-ghost tracking-wider">
 			Secure checkout &middot; Instant delivery &middot; 30-day money-back guarantee
 		</p>
 	</div>

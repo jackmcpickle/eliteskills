@@ -1,0 +1,12 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { CheckoutForm } from '@/modules/checkout';
+---
+
+<BaseLayout
+	title="Checkout — Teams — Elite Skills"
+	description="Get all Elite AI Skills for your entire team with unlimited seats and priority support."
+	noindex
+>
+	<CheckoutForm productId="teams" productName="Elite AI Skills - Teams" price={299} />
+</BaseLayout>

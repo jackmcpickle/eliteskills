@@ -37,7 +37,7 @@ const productJsonLd = pricing.map((tier) => ({
 		price: tier.data.price,
 		priceCurrency: 'USD',
 		availability: 'https://schema.org/InStock',
-		url: `${SITE_URL}/checkout/${tier.id}`,
+		url: `${SITE_URL}/checkout/${tier.id.replace(/\.md$/, '')}`,
 	},
 }));
 
@@ -65,12 +65,12 @@ const reviewJsonLd = {
 	jsonLd={[websiteJsonLd, ...productJsonLd, reviewJsonLd]}
 >
 	<HeroBanner />
-	<CompatibleTools />
 	<SkillsGrid />
 	<MetricsBar />
 	<ReviewsMarquee />
 	<BenefitsSection />
 	<DifferentiatorSection />
+	<CompatibleTools />
 	<PricingTables />
 	<AiBotSection />
 	<FooterCta />

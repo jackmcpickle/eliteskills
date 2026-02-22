@@ -47,10 +47,10 @@ const tools: Tool[] = [
                             </span>
                         )}
                         <div
-                            class={`flex items-center justify-center size-16 sm:size-20 rounded-2xl border transition-all ${
+                            class={`flex items-center justify-center size-16 sm:size-20 rounded-2xl border transition-all duration-300 ${
                                 tool.recommended
                                     ? "border-neon-cyan bg-neon-cyan-glow shadow-[0_0_30px_var(--color-neon-cyan-glow)]"
-                                    : "border-border bg-surface hover:border-neon-cyan-dim"
+                                    : "border-border bg-surface hover:border-neon-cyan-dim hover:bg-neon-cyan-glow hover:shadow-[0_0_20px_var(--color-neon-cyan-glow)]"
                             }`}
                         >
                             {tool.name === "Claude Code" && <Claude />}
@@ -61,7 +61,7 @@ const tools: Tool[] = [
                             )}
                         </div>
                         <span
-                            class={`font-mono text-xs tracking-wider ${tool.recommended ? "text-neon-cyan" : "text-ghost"}`}
+                            class={`font-mono text-xs tracking-wider transition-colors duration-300 ${tool.recommended ? "text-neon-cyan" : "text-ghost group-hover:text-white"}`}
                         >
                             {tool.name}
                         </span>

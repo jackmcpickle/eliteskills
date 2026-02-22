@@ -40,6 +40,7 @@ const pricing = defineCollection({
         description: z.string(),
         features: z.array(z.string()),
         highlighted: z.boolean().default(false),
+        size: z.enum(['sm', 'default']).default('default'),
         order: z.number(),
     }),
 });

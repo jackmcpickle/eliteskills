@@ -4,10 +4,6 @@ import { sendMail, isMailConfigured, getAdminEmail } from '@/libs/api/mail';
 import { isRateLimited, WEBHOOK_IP } from '@/libs/api/rate-limit';
 import { jsonError, jsonOk } from '@/libs/api/spam';
 import { constructWebhookEvent } from '@/libs/api/stripe';
-import { createDb } from '@/libs/db/client';
-import { createDb } from '@/libs/db/client';
-import { upsertUserByEmail, createPurchase } from '@/libs/db/repo';
-import { upsertUserByEmail, createPurchase } from '@/libs/db/repo';
 
 const SITE_URL = 'https://eliteskills.ai';
 

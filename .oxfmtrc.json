@@ -48,10 +48,6 @@
     "experimentalSortPackageJson": true,
     "ignorePatterns": [
         "dist/**",
-        ".venv/**",
-        ".ruff_cache/**",
-        ".uv-cache/**",
         "node_modules/**",
-        "src/ui-service-desk/src/routeTree.gen.ts"
     ]
 }

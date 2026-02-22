@@ -25,6 +25,8 @@ pnpm-debug.log*
 
 # test coverage
 coverage/
+test-results/
+playwright-report/
 
 # claude local settings
 .claude/settings.local.json

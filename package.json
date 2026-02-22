@@ -2,6 +2,7 @@
   "name": "eliteskills",
   "type": "module",
   "version": "0.0.1",
+  "packageManager": "pnpm@10.29.3",
   "scripts": {
     "test": "pnpm run fmt:check && pnpm run lint && pnpm vitest",
     "test:coverage": "pnpm run fmt:check && pnpm run lint && vitest run --coverage.enabled",

@@ -7,10 +7,10 @@ const skills = (await getCollection('skills')).sort((a, b) => a.data.order - b.d
 const iconMap = { Database, Layers, Palette, Rocket, ShieldCheck, Sparkles };
 ---
 
-<section id="skills" class="relative py-32 px-6">
+<section id="skills" class="relative py-16 sm:py-24 lg:py-32 px-6">
 	<div class="max-w-6xl mx-auto">
 		<!-- Section header -->
-		<div class="text-center mb-20">
+		<div class="text-center mb-10 sm:mb-16 lg:mb-20">
 			<p class="reveal font-mono text-xs text-neon-cyan tracking-[0.3em] uppercase mb-4">The Arsenal</p>
 			<h2 class="reveal reveal-delay-1 font-display text-4xl sm:text-5xl md:text-6xl font-800 text-white tracking-tight">
 				Skills That Ship

@@ -1,6 +1,7 @@
 ---
 name: backend
 description: Create FastAPI backend features following SubTechnica patterns. Use when building new APIs, services, domain models, or repository functions. Uses SQLModel for DB, Pydantic CamelModel for API types, and Result pattern for error handling.
+version: 1.0.0
 ---
 
 # Backend Development Skill

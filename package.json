@@ -11,14 +11,16 @@
     "vitest": "vitest run --coverage.enabled",
     "test:e2e": "playwright test --grep-invert @llm",
     "test:llm": "playwright test --grep @llm",
+    "test:skills": "playwright test --grep @llm tests/e2e/skill-quality.spec.ts",
     "test:live-agent": "playwright test --grep @live",
+    "build:manifest": "pnpm tsx scripts/build-skills-manifest.ts",
     "test:flow": "pnpm vitest && pnpm test:e2e",
     "test:ci": "pnpm vitest && pnpm test:e2e && pnpm test:llm && pnpm test:live-agent",
     "preview": "wrangler dev",
     "deploy": "pnpm build && wrangler deploy",
     "dev": "astro dev",
     "build:skills": "node --import tsx scripts/build-skills-zip.ts",
-    "build": "pnpm build:skills && astro build",
+    "build": "pnpm build:manifest && pnpm build:skills && astro build",
     "astro": "astro"
   },
   "dependencies": {

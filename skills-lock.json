@@ -1,10 +1,38 @@
 {
-  "version": 1,
-  "skills": {
-    "product-marketing-context": {
-      "source": "coreyhaines31/marketingskills",
-      "sourceType": "github",
-      "computedHash": "dc38de01e0af8422124cebe45ec1043ff83d2ce7f61d9a99575a415526861652"
+    "lockVersion": 2,
+    "generatedAt": "2026-02-22T05:41:46.601Z",
+    "skills": {
+        "agent-browser": {
+            "version": "1.0.0",
+            "contentHash": "0f5340637e00efcd23a9e1e51b7d32cb7ab635b5b7a47748353e760777a07f3c",
+            "files": 1
+        },
+        "backend": {
+            "version": "1.0.0",
+            "contentHash": "090f0a7b677f16b2c0113fa14e3c312f69b3212ba340a768dad7ef9ac052cea4",
+            "files": 7
+        },
+        "frontend-coder": {
+            "version": "1.0.0",
+            "contentHash": "cc8ce33122e3bfd5a898759cd81e157a95038c745b1a884ee6a86dce923dd49e",
+            "files": 17
+        },
+        "frontend-design": {
+            "version": "1.0.0",
+            "contentHash": "f4c653b60e635b989402f5fba727d4ee04487bc682be63656e921484e58cb9e7",
+            "files": 1
+        },
+        "product-marketing-context": {
+            "version": "1.0.0",
+            "contentHash": "5f2a1c20630b364eb8c83a7031cf4abc95df2eb5482711c5ecc114eff7672d6f",
+            "files": 1,
+            "source": "coreyhaines31/marketingskills",
+            "sourceType": "github"
+        },
+        "react-doctor": {
+            "version": "1.0.0",
+            "contentHash": "f2b529172abd981e81935156bca043c5783f3c0423c169ae2a5ad42d12a16eb8",
+            "files": 1
+        }
     }
-  }
 }

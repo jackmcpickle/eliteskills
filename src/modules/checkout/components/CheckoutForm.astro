@@ -1,25 +1,29 @@
 ---
+import { formatMoney } from '@/utils/format-money';
+
 interface Props {
 	productId: number;
 	productName: string;
 	price: number;
+	currency: string;
+	locale: string;
 }
 
-const { productId, productName, price } = Astro.props;
+const { productId, productName, price, currency, locale } = Astro.props;
 ---
 
 <section class="relative min-h-screen px-6 py-20">
 	<div class="absolute top-0 left-1/2 -translate-x-1/2 size-[520px] rounded-full bg-neon-cyan/5 blur-[120px] pointer-events-none"></div>
 
 	<div class="relative max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-[1.1fr,1.4fr] gap-8 items-start">
-		<aside class="rounded-2xl border border-border bg-surface p-8 lg:sticky lg:top-8">
+		<aside class="rounded-2xl border border-border bg-surface p-8">
 			<p class="font-mono text-xs tracking-[0.28em] uppercase text-neon-cyan mb-4">Selected Product</p>
 			<h1 class="font-display text-4xl font-800 text-white leading-tight mb-3">{productName}</h1>
 			<p class="text-mist text-sm mb-8">You are checking out the Elite AI Skills pack.</p>
 
 			<div class="rounded-xl border border-neon-cyan-dim bg-neon-cyan-glow p-5">
 				<p class="font-mono text-xs uppercase tracking-[0.24em] text-ghost mb-2">Total</p>
-				<p class="font-display text-5xl font-900 text-neon-cyan">${price}</p>
+				<p class="font-display text-5xl font-900 text-neon-cyan">{formatMoney(price, currency, locale)}</p>
 			</div>
 
 			<ul class="mt-8 space-y-3 text-sm text-cloud">

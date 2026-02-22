@@ -4,6 +4,7 @@ export const prerender = false;
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { createDb } from '@/libs/db/client';
 import { getUserByAccountKey, getPurchasesByUserId, getInstallKeysByPurchaseId, getProductById } from '@/libs/db/repo';
+import { formatMoney, isZeroDecimalCurrency } from '@/utils/format-money';
 
 const { accountKey } = Astro.params;
 
@@ -34,7 +35,14 @@ const purchaseDisplays: PurchaseDisplay[] = await Promise.all(
 			id: p.id,
 			productName: product?.name ?? `Product #${p.productId}`,
 			productId: p.productId,
-			amountPaid: p.amountTotal ? `$${(p.amountTotal / 100).toFixed(2)}` : 'N/A',
+			amountPaid: p.amountTotal
+				? formatMoney(
+						isZeroDecimalCurrency(p.currency ?? 'usd')
+							? p.amountTotal
+							: p.amountTotal / 100,
+						p.currency ?? 'usd',
+					)
+				: 'N/A',
 			date: new Date(p.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }),
 			installKeys: keys.map((k) => ({
 				key: k.key,

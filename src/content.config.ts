@@ -8,6 +8,7 @@ const skills = defineCollection({
         icon: z.string(),
         order: z.number(),
         highlights: z.array(z.string()).default([]),
+        released: z.boolean().default(false),
     }),
 });
 

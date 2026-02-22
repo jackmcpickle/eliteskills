@@ -1,21 +1,48 @@
 import { describe, it, expect } from 'vitest';
-import { BUNDLE_PRODUCT_IDS, SKILL_SLUG_TO_PRODUCT_ID } from '@/constants/products';
+import {
+    BUNDLE_PRODUCT_IDS,
+    SKILL_SLUG_TO_PRODUCT_ID,
+} from '@/constants/products';
 
 describe('Human purchase flow — product catalog', () => {
     // DB seed: 6 skill products (id 1-6), 3 bundle products (id 7-9)
     const bundleProducts = {
-        7: { code: 'bundle-once', name: 'Elite AI Skills — All Skills', price: 29 },
-        8: { code: 'bundle-lifetime', name: 'Elite AI Skills — Lifetime Access', price: 99 },
-        9: { code: 'bundle-teams', name: 'Elite AI Skills — Teams', price: 299 },
+        7: {
+            code: 'bundle-once',
+            name: 'Elite AI Skills — All Skills',
+            price: 29,
+        },
+        8: {
+            code: 'bundle-lifetime',
+            name: 'Elite AI Skills — Lifetime Access',
+            price: 99,
+        },
+        9: {
+            code: 'bundle-teams',
+            name: 'Elite AI Skills — Teams',
+            price: 299,
+        },
     } as const;
 
     const skillProducts = {
         1: { code: 'skill-frontend', name: 'Elite Skill — Frontend', price: 9 },
         2: { code: 'skill-backend', name: 'Elite Skill — Backend', price: 9 },
         3: { code: 'skill-style', name: 'Elite Skill — Style', price: 9 },
-        4: { code: 'skill-code-review', name: 'Elite Skill — Code Review', price: 9 },
-        5: { code: 'skill-feature-enhancer', name: 'Elite Skill — Feature Enhancer', price: 9 },
-        6: { code: 'skill-app-bootstrap', name: 'Elite Skill — App Bootstrap', price: 9 },
+        4: {
+            code: 'skill-code-review',
+            name: 'Elite Skill — Code Review',
+            price: 9,
+        },
+        5: {
+            code: 'skill-feature-enhancer',
+            name: 'Elite Skill — Feature Enhancer',
+            price: 9,
+        },
+        6: {
+            code: 'skill-app-bootstrap',
+            name: 'Elite Skill — App Bootstrap',
+            price: 9,
+        },
     } as const;
 
     it('has 3 bundle products', () => {

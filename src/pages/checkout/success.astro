@@ -5,6 +5,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import { createDb } from '@/libs/db/client';
 import { upsertUserByEmail, createPurchase, getProductById } from '@/libs/db/repo';
 import { isStripeConfigured, getCheckoutSession } from '@/libs/api/stripe';
+import { isZeroDecimalCurrency } from '@/utils/format-money';
 
 const sessionId = Astro.url.searchParams.get('session_id');
 
@@ -28,16 +29,22 @@ if (sessionId && isStripeConfigured()) {
 			const user = await upsertUserByEmail(db, session.customer_email, customerName);
 
 			if (product) {
+				const sessionCurrency = (session.currency as string) ?? 'usd';
+				const zeroDec = isZeroDecimalCurrency(sessionCurrency);
 				await createPurchase(db, {
 					userId: user.id,
 					stripeSessionId: session.id,
 					stripeCustomerEmail: session.customer_email,
 					productId: product.id,
 					amountTotal: session.amount_total,
-					currency: (session.currency as string) ?? 'usd',
+					currency: sessionCurrency,
 					paymentStatus: session.payment_status,
 					pricingContinent: continent,
-					priceSnapshot: session.amount_total ? session.amount_total / 100 : null,
+					priceSnapshot: session.amount_total
+						? zeroDec
+							? session.amount_total
+							: session.amount_total / 100
+						: null,
 					metadata: session.metadata as Record<string, string> | undefined,
 				});
 			}

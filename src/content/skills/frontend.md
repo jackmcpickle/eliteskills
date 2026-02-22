@@ -3,6 +3,7 @@ title: Frontend
 description: React component patterns. Accessibility-first markup. Responsive layouts that don't break.
 icon: Layers
 order: 1
+released: true
 highlights:
   - Compound component patterns with slot-based APIs
   - Accessibility-first markup and ARIA patterns

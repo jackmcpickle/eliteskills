@@ -33,13 +33,16 @@ export const productPrices = sqliteTable(
             .notNull()
             .references(() => products.id),
         continent: text('continent').notNull(),
+        countryCode: text('country_code').notNull().default(''),
         price: real('price').notNull(),
+        currency: text('currency').notNull().default('usd'),
         stripePriceId: text('stripe_price_id'),
     },
     (table) => [
-        uniqueIndex('product_prices_product_continent_idx').on(
+        uniqueIndex('product_prices_product_continent_country_idx').on(
             table.productId,
             table.continent,
+            table.countryCode,
         ),
     ],
 );

@@ -30,6 +30,10 @@
 			"migrations_dir": "drizzle"
 		}
 	],
+	"vars": {
+		"RESEND_FROM_EMAIL": "Elite Skills <eliteskills@updates.mcpickle.com.au>",
+		"RESEND_TO_EMAIL": "jack@mcpickle.com.au"
+	},
 	"observability": {
 		"enabled": true
 	}

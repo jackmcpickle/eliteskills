@@ -1,11 +1,13 @@
 ---
 import { Check } from '@lucide/astro';
+import { formatMoney } from '@/utils/format-money';
 
 interface ProductDisplay {
 	id: number;
 	code: string;
 	name: string;
 	price: number;
+	currency: string;
 	lifetime: number;
 	skillSlug: string | null;
 }
@@ -13,9 +15,10 @@ interface ProductDisplay {
 interface Props {
 	bundleProducts: ProductDisplay[];
 	skillProducts: ProductDisplay[];
+	locale: string;
 }
 
-const { bundleProducts, skillProducts } = Astro.props;
+const { bundleProducts, skillProducts, locale } = Astro.props;
 
 const singleSkill = skillProducts[0];
 const allSkills = bundleProducts.find((p) => p.code === 'bundle-once');
@@ -38,7 +41,7 @@ const middleTiers = [allSkills, lifetimeAccess].filter(Boolean) as ProductDispla
 				Plans for every builder. No subscriptions. No hidden fees. Pay once and build.
 			</p>
 			<p class="reveal reveal-delay-2 mt-2 font-mono text-xs text-ghost">
-				USD &middot; Geographic pricing applied
+				Prices adjusted for your region
 			</p>
 		</div>
 
@@ -66,8 +69,7 @@ const middleTiers = [allSkills, lifetimeAccess].filter(Boolean) as ProductDispla
 
 							<div class="flex items-center gap-3">
 								<div class="flex items-baseline gap-0.5">
-									<span class="font-mono text-xs text-ghost">$</span>
-									<span class="font-display text-3xl font-900 tracking-tight text-white">{singleSkill.price}</span>
+									<span class="font-display text-3xl font-900 tracking-tight text-white">{formatMoney(singleSkill.price, singleSkill.currency, locale)}</span>
 									<span class="font-mono text-xs text-ghost ml-0.5">/ skill</span>
 								</div>
 								<span class="shrink-0 px-4 py-2 rounded-lg border border-slate-mid text-mist font-mono text-xs font-600 tracking-wide uppercase group-hover:border-neon-cyan-dim group-hover:text-neon-cyan transition-all">
@@ -104,9 +106,8 @@ const middleTiers = [allSkills, lifetimeAccess].filter(Boolean) as ProductDispla
 						</p>
 
 						<div class="flex items-baseline gap-1 mb-8">
-							<span class="font-mono text-xs text-ghost">$</span>
 							<span class={`font-display text-5xl sm:text-6xl font-900 tracking-tight ${isLifetime ? 'text-neon-cyan' : 'text-white'}`}>
-								{tier.price}
+								{formatMoney(tier.price, tier.currency, locale)}
 							</span>
 							<span class="font-mono text-sm text-ghost ml-1">/ {isLifetime ? 'lifetime' : 'once'}</span>
 						</div>
@@ -145,8 +146,7 @@ const middleTiers = [allSkills, lifetimeAccess].filter(Boolean) as ProductDispla
 
 						<div class="flex items-center gap-3">
 							<div class="flex items-baseline gap-0.5">
-								<span class="font-mono text-xs text-ghost">$</span>
-								<span class="font-display text-3xl font-900 tracking-tight text-mist">{teams.price}</span>
+								<span class="font-display text-3xl font-900 tracking-tight text-mist">{formatMoney(teams.price, teams.currency, locale)}</span>
 								<span class="font-mono text-xs text-ghost ml-0.5">/ once</span>
 							</div>
 							<span class="shrink-0 px-4 py-2 rounded-lg border border-slate-mid/60 text-ghost font-mono text-xs font-600 tracking-wide uppercase group-hover:border-neon-cyan-dim group-hover:text-neon-cyan transition-all">

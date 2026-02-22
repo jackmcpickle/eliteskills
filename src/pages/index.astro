@@ -17,7 +17,7 @@ import {
 import { getCollection } from 'astro:content';
 import { createDb } from '@/libs/db/client';
 import { listProducts, getProductPrice } from '@/libs/db/repo';
-import { resolveContinent } from '@/libs/geo';
+import { resolveContinent, resolveCountryCode, resolveLocale } from '@/libs/geo';
 
 const reviews = await getCollection('reviews');
 
@@ -25,18 +25,21 @@ const d1 = Astro.locals.runtime.env.DB;
 const db = createDb(d1);
 const dbProducts = await listProducts(db);
 
-const cf = Astro.locals.runtime.cf as { continent?: string } | undefined;
+const cf = Astro.locals.runtime.cf as { continent?: string; country?: string } | undefined;
 const continent = resolveContinent(cf, Astro.request.headers.get('cf-ipcontinent'));
+const countryCode = resolveCountryCode(cf, Astro.request.headers.get('cf-ipcountry'));
+const locale = resolveLocale(countryCode);
 
-// Build product map with geo price
-const productMap = new Map<number, { id: number; code: string; name: string; price: number; lifetime: number; skillSlug: string | null }>();
+// Build product map with geo price + currency
+const productMap = new Map<number, { id: number; code: string; name: string; price: number; currency: string; lifetime: number; skillSlug: string | null }>();
 for (const p of dbProducts) {
-	const priceRow = await getProductPrice(db, p.id, continent);
+	const priceRow = await getProductPrice(db, p.id, continent, countryCode);
 	productMap.set(p.id, {
 		id: p.id,
 		code: p.code,
 		name: p.name,
 		price: priceRow?.price ?? 0,
+		currency: priceRow?.currency ?? 'usd',
 		lifetime: p.lifetime,
 		skillSlug: p.skillSlug,
 	});
@@ -62,7 +65,7 @@ const productJsonLd = bundleProducts.map((p) => ({
 	offers: {
 		'@type': 'Offer',
 		price: p.price,
-		priceCurrency: 'USD',
+		priceCurrency: p.currency.toUpperCase(),
 		availability: 'https://schema.org/InStock',
 		url: `${SITE_URL}/checkout/${p.id}`,
 	},
@@ -92,13 +95,13 @@ const reviewJsonLd = {
 	jsonLd={[websiteJsonLd, ...productJsonLd, reviewJsonLd]}
 >
 	<HeroBanner />
-	<SkillsGrid skillProducts={skillProducts} />
+	<SkillsGrid skillProducts={skillProducts} locale={locale} />
 	<MetricsBar />
 	<ReviewsMarquee />
 	<BenefitsSection />
 	<DifferentiatorSection />
 	<CompatibleTools />
-	<PricingTables bundleProducts={bundleProducts} skillProducts={skillProducts} />
+	<PricingTables bundleProducts={bundleProducts} skillProducts={skillProducts} locale={locale} />
 	<AiBotSection />
 	<FooterCta />
 </BaseLayout>

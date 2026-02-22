@@ -1,5 +1,6 @@
 ---
 import { Check, Database, Layers, Palette, Rocket, ShieldCheck, Sparkles } from '@lucide/astro';
+import { formatMoney } from '@/utils/format-money';
 
 interface Props {
 	title: string;
@@ -10,16 +11,25 @@ interface Props {
 	index: number;
 	slug: string;
 	productId?: number;
+	released?: boolean;
+	price?: number | undefined;
+	currency?: string | undefined;
+	locale?: string;
 }
 
-const { title, description, icon, order, highlights, index, slug, productId } = Astro.props;
+const { title, description, icon, order, highlights, index, slug, productId, released = false, price, currency = 'usd', locale = 'en-US' } = Astro.props;
 const checkoutHref = productId ? `/checkout/${productId}` : '/skills';
 
 const iconMap = { Database, Layers, Palette, Rocket, ShieldCheck, Sparkles };
 const Icon = iconMap[icon as keyof typeof iconMap] ?? Sparkles;
 ---
 
-<div class={`reveal reveal-delay-${(index % 3) + 1} group relative rounded-2xl border border-neon-cyan-dim bg-surface shadow-[0_0_60px_var(--color-neon-cyan-glow)] transition-all hover:bg-surface-hover`}>
+<div class:list={[
+	`reveal reveal-delay-${(index % 3) + 1} group relative rounded-2xl border bg-surface transition-all`,
+	released
+		? 'border-neon-cyan-dim shadow-[0_0_60px_var(--color-neon-cyan-glow)] hover:bg-surface-hover'
+		: 'border-neon-cyan-dim/40 shadow-[0_0_30px_var(--color-neon-cyan-glow)] opacity-70',
+]}>
 	<div class="p-8 sm:p-10">
 		<!-- Header -->
 		<div class="flex items-center gap-4 mb-6">
@@ -30,7 +40,14 @@ const Icon = iconMap[icon as keyof typeof iconMap] ?? Sparkles;
 				<a href={`/skills/${slug}`} class="block font-display text-3xl sm:text-4xl font-800 text-white tracking-tight hover:text-neon-cyan transition-colors">
 					{title}
 				</a>
-				<span class="font-mono text-[10px] text-ghost tracking-[0.3em] uppercase">Skill {String(order).padStart(2, '0')}</span>
+				<div class="flex items-center gap-3">
+					<span class="font-mono text-[10px] text-ghost tracking-[0.3em] uppercase">Skill {String(order).padStart(2, '0')}</span>
+					{!released && (
+						<span class="inline-flex items-center px-2 py-0.5 rounded-full border border-neon-amber/40 bg-neon-amber/10 font-mono text-[10px] text-neon-amber tracking-wider uppercase">
+							Coming Soon
+						</span>
+					)}
+				</div>
 			</div>
 		</div>
 
@@ -55,11 +72,20 @@ const Icon = iconMap[icon as keyof typeof iconMap] ?? Sparkles;
 			</div>
 		)}
 
-		<!-- Buy button -->
+		<!-- Buy button / Coming Soon -->
 		<div class="mt-8">
-			<a href={checkoutHref} class="inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-neon-cyan-dim text-neon-cyan font-mono text-sm font-600 tracking-wide uppercase transition-all hover:border-neon-cyan hover:shadow-[0_0_30px_var(--color-neon-cyan-glow)]">
-				Buy $9
-			</a>
+			{released ? (
+				<div>
+					<a href={checkoutHref} class="inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-neon-cyan-dim text-neon-cyan font-mono text-sm font-600 tracking-wide uppercase transition-all hover:border-neon-cyan hover:shadow-[0_0_30px_var(--color-neon-cyan-glow)]">
+						Buy {price != null ? formatMoney(price, currency, locale) : ''}
+					</a>
+					<span class="block font-mono text-[10px] text-ghost mt-1">Prices adjusted for your region</span>
+				</div>
+			) : (
+				<span class="inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-ghost/30 text-ghost font-mono text-sm font-600 tracking-wide uppercase cursor-default">
+					Coming Soon
+				</span>
+			)}
 		</div>
 	</div>
 

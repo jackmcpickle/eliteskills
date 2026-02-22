@@ -56,14 +56,9 @@ describe('Agent purchase flow — payload validation', () => {
         expect(productId).toBeGreaterThan(0);
     });
 
-    it.each(invalidProductIds)(
-        'rejects invalid productId: %s',
-        (productId) => {
-            expect(
-                !Number.isInteger(productId) || productId <= 0,
-            ).toBe(true);
-        },
-    );
+    it.each(invalidProductIds)('rejects invalid productId: %s', (productId) => {
+        expect(!Number.isInteger(productId) || productId <= 0).toBe(true);
+    });
 
     it('unknown productId would be rejected by DB lookup', () => {
         // 999 is structurally valid but won't exist in DB — server returns 400

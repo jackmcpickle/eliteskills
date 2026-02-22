@@ -1,21 +1,24 @@
 ---
 import { getCollection } from 'astro:content';
 import { Database, Layers, Palette, Rocket, ShieldCheck, Sparkles } from '@lucide/astro';
+import { formatMoney } from '@/utils/format-money';
 
 interface ProductDisplay {
 	id: number;
 	code: string;
 	name: string;
 	price: number;
+	currency: string;
 	lifetime: number;
 	skillSlug: string | null;
 }
 
 interface Props {
 	skillProducts: ProductDisplay[];
+	locale: string;
 }
 
-const { skillProducts } = Astro.props;
+const { skillProducts, locale } = Astro.props;
 
 const skills = (await getCollection('skills')).sort((a, b) => a.data.order - b.data.order);
 
@@ -42,10 +45,14 @@ const slugToProduct = new Map(skillProducts.map((p) => [p.skillSlug, p]));
 				const Icon = iconMap[skill.data.icon as keyof typeof iconMap] ?? Sparkles;
 				const slug = skill.id.replace(/\.md$/, '');
 				const product = slugToProduct.get(slug);
-				const href = product ? `/checkout/${product.id}` : '/skills';
+				const { released } = skill.data;
+				const href = `/skills/${slug}`;
 
 				return (
-				<a href={href} class={`reveal reveal-delay-${i + 1} card-glow group rounded-xl bg-surface p-8 transition-all hover:bg-surface-hover`}>
+				<a href={href} class:list={[
+					`reveal reveal-delay-${i + 1} card-glow group rounded-xl bg-surface p-8 transition-all`,
+					released ? 'hover:bg-surface-hover' : 'opacity-70',
+				]}>
 					<div class="flex items-center justify-center size-12 mb-6 rounded-lg bg-neon-cyan-glow border border-neon-cyan-dim text-neon-cyan">
 						<Icon class="size-5" aria-hidden="true" />
 					</div>
@@ -58,11 +65,18 @@ const slugToProduct = new Map(skillProducts.map((p) => [p.skillSlug, p]));
 						{skill.data.description}
 					</p>
 
-					{product && (
-						<span class="inline-flex items-center gap-1.5 font-mono text-xs text-neon-cyan">
-							<span>${product.price}</span>
-							<span class="text-ghost">&middot;</span>
-							<span>Buy skill</span>
+					{released && product ? (
+						<div>
+							<span class="inline-flex items-center gap-1.5 font-mono text-xs text-neon-cyan">
+								<span>{formatMoney(product.price, product.currency, locale)}</span>
+								<span class="text-ghost">&middot;</span>
+								<span>Buy skill</span>
+							</span>
+							<span class="block font-mono text-[10px] text-ghost mt-1">Prices adjusted for your region</span>
+						</div>
+					) : (
+						<span class="inline-flex items-center px-2 py-0.5 rounded-full border border-neon-amber/40 bg-neon-amber/10 font-mono text-[10px] text-neon-amber tracking-wider uppercase">
+							Coming Soon
 						</span>
 					)}
 

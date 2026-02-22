@@ -11,8 +11,8 @@
 import { spawnSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import Stripe from 'stripe';
 import { config } from 'dotenv';
+import Stripe from 'stripe';
 
 config();
 
@@ -57,10 +57,14 @@ function runD1Query(sql: string): Record<string, unknown>[] {
     });
 
     if (result.status !== 0) {
-        throw new Error(result.stdout || result.stderr || 'wrangler d1 execute failed');
+        throw new Error(
+            result.stdout || result.stderr || 'wrangler d1 execute failed',
+        );
     }
 
-    const parsed = JSON.parse(result.stdout) as WranglerD1Result[] | WranglerD1Result;
+    const parsed = JSON.parse(result.stdout) as
+        | WranglerD1Result[]
+        | WranglerD1Result;
     if (Array.isArray(parsed)) return parsed[0]?.results ?? [];
     return parsed.results ?? [];
 }
@@ -71,10 +75,14 @@ async function main(): Promise<void> {
     const stripe = new Stripe(stripeKey);
 
     const dbName = readDbName();
-    console.log(`Using D1 database: ${dbName} (${isRemote ? 'remote' : 'local'})`);
+    console.log(
+        `Using D1 database: ${dbName} (${isRemote ? 'remote' : 'local'})`,
+    );
     if (isDryRun) console.log('Dry run enabled: no Stripe writes');
 
-    const products = runD1Query('select id, code from products order by id') as ProductRow[];
+    const products = runD1Query(
+        'select id, code from products order by id',
+    ) as ProductRow[];
     const priceRows = runD1Query(
         'select product_id, stripe_price_id from product_prices where stripe_price_id is not null',
     ) as ProductPriceRow[];
@@ -82,7 +90,8 @@ async function main(): Promise<void> {
     const expectedPriceIdsByProduct = new Map<number, Set<string>>();
     for (const row of priceRows) {
         if (!row.stripe_price_id) continue;
-        const set = expectedPriceIdsByProduct.get(row.product_id) ?? new Set<string>();
+        const set =
+            expectedPriceIdsByProduct.get(row.product_id) ?? new Set<string>();
         set.add(row.stripe_price_id);
         expectedPriceIdsByProduct.set(row.product_id, set);
     }
@@ -99,7 +108,8 @@ async function main(): Promise<void> {
 
         if (stripeProducts.length <= 1) continue;
 
-        const expectedPriceIds = expectedPriceIdsByProduct.get(dbProduct.id) ?? new Set<string>();
+        const expectedPriceIds =
+            expectedPriceIdsByProduct.get(dbProduct.id) ?? new Set<string>();
 
         // Keep product owning most DB-referenced prices.
         let keeperId = stripeProducts[0].id;
@@ -133,7 +143,10 @@ async function main(): Promise<void> {
         for (const product of stripeProducts) {
             if (product.id === keeperId) continue;
 
-            const prices = await stripe.prices.list({ product: product.id, limit: 100 });
+            const prices = await stripe.prices.list({
+                product: product.id,
+                limit: 100,
+            });
             for (const price of prices.data) {
                 if (price.active) {
                     if (isDryRun) {

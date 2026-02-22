@@ -126,12 +126,29 @@ export async function listBundleProducts(
 
 // ── Product Prices ─────────────────────────────────────────────────
 
-/** Get price for product + continent. */
+/** Get price for product + continent + country. Country row > continent default. */
 export async function getProductPrice(
     db: AppDb,
     productId: number,
     continent: string,
+    countryCode: string = '',
 ): Promise<typeof productPrices.$inferSelect | undefined> {
+    // Try exact country match first
+    if (countryCode) {
+        const exact = await db
+            .select()
+            .from(productPrices)
+            .where(
+                and(
+                    eq(productPrices.productId, productId),
+                    eq(productPrices.continent, continent),
+                    eq(productPrices.countryCode, countryCode),
+                ),
+            )
+            .get();
+        if (exact) return exact;
+    }
+    // Fallback: continent default (country_code = '')
     return db
         .select()
         .from(productPrices)
@@ -139,6 +156,7 @@ export async function getProductPrice(
             and(
                 eq(productPrices.productId, productId),
                 eq(productPrices.continent, continent),
+                eq(productPrices.countryCode, ''),
             ),
         )
         .get();

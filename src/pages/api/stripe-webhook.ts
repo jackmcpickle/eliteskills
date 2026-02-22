@@ -11,6 +11,7 @@ import {
     getProductById,
     getProductByCode,
 } from '@/libs/db/repo';
+import { formatMoney, isZeroDecimalCurrency } from '@/utils/format-money';
 
 const SITE_URL = 'https://eliteskills.ai';
 
@@ -46,8 +47,15 @@ async function handleCheckoutCompleted(
     const source = session.metadata?.source ?? 'unknown';
     const email = session.customer_email ?? 'no-email';
     const continent = session.metadata?.continent ?? 'NA';
+    const priceCurrency =
+        session.metadata?.priceCurrency ?? session.currency ?? 'usd';
     const amountPaid = session.amount_total
-        ? `$${(session.amount_total / 100).toFixed(2)}`
+        ? formatMoney(
+              isZeroDecimalCurrency(priceCurrency)
+                  ? session.amount_total
+                  : session.amount_total / 100,
+              priceCurrency,
+          )
         : 'unknown';
 
     // Resolve product id from metadata
@@ -74,17 +82,21 @@ async function handleCheckoutCompleted(
 
     // Persist user + purchase
     const user = await upsertUserByEmail(db, email, customerName);
+    const purchaseCurrency = session.currency ?? 'usd';
+    const zeroDec = isZeroDecimalCurrency(purchaseCurrency);
     await createPurchase(db, {
         userId: user.id,
         stripeSessionId: session.id,
         stripeCustomerEmail: email,
         productId: product.id,
         amountTotal: session.amount_total,
-        currency: session.currency ?? 'usd',
+        currency: purchaseCurrency,
         paymentStatus: session.payment_status,
         pricingContinent: continent,
         priceSnapshot: session.amount_total
-            ? session.amount_total / 100
+            ? zeroDec
+                ? session.amount_total
+                : session.amount_total / 100
             : null,
         metadata: session.metadata,
     });

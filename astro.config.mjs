@@ -25,22 +25,17 @@ export default defineConfig({
 
     env: {
         schema: {
-            MAILGUN_API_KEY: envField.string({
+            RESEND_API_KEY: envField.string({
                 context: 'server',
                 access: 'secret',
                 optional: true,
             }),
-            MAILGUN_DOMAIN: envField.string({
+            RESEND_FROM_EMAIL: envField.string({
                 context: 'server',
                 access: 'secret',
                 optional: true,
             }),
-            MAILGUN_FROM_EMAIL: envField.string({
-                context: 'server',
-                access: 'secret',
-                optional: true,
-            }),
-            MAILGUN_TO_EMAIL: envField.string({
+            RESEND_TO_EMAIL: envField.string({
                 context: 'server',
                 access: 'secret',
                 optional: true,
@@ -51,16 +46,6 @@ export default defineConfig({
                 optional: true,
             }),
             STRIPE_WEBHOOK_SECRET: envField.string({
-                context: 'server',
-                access: 'secret',
-                optional: true,
-            }),
-            STRIPE_PRICE_ONCE: envField.string({
-                context: 'server',
-                access: 'secret',
-                optional: true,
-            }),
-            STRIPE_PRICE_LIFETIME: envField.string({
                 context: 'server',
                 access: 'secret',
                 optional: true,

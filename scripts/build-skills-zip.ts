@@ -23,7 +23,11 @@ const SKILL_SLUG_TO_DIR: Record<string, string> = {
 };
 
 /** Dirs excluded from all zips (internal / not sold) */
-const IGNORED_DIRS = new Set(['agent-browser', 'product-marketing-context', 'react-doctor']);
+const IGNORED_DIRS = new Set([
+    'agent-browser',
+    'product-marketing-context',
+    'react-doctor',
+]);
 
 function collectFiles(
     dir: string,
@@ -70,10 +74,7 @@ for (const [slug, dirName] of Object.entries(SKILL_SLUG_TO_DIR)) {
         throw new Error(`Missing mapped skill dir for "${slug}" -> ${dirName}`);
     }
 
-    const skillFiles = collectFiles(
-        skillDir,
-        `.claude/skills/${dirName}`,
-    );
+    const skillFiles = collectFiles(skillDir, `.claude/skills/${dirName}`);
     const zipped = zipSync(skillFiles);
     const outPath = join(OUTPUT_DIR, `skills-${slug}.zip`);
     writeFileSync(outPath, zipped);

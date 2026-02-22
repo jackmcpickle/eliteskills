@@ -7,7 +7,8 @@ import { verifyToken } from '@/libs/api/tokens';
 import { isStripeConfigured, getCheckoutSession } from '@/libs/api/stripe';
 import { createDb } from '@/libs/db/client';
 import { getProductById, getProductPrice } from '@/libs/db/repo';
-import { resolveContinent } from '@/libs/geo';
+import { resolveContinent, resolveCountryCode, resolveLocale } from '@/libs/geo';
+import { formatMoney } from '@/utils/format-money';
 
 type PayState = 'loading' | 'unpaid' | 'paid' | 'expired' | 'error';
 
@@ -15,6 +16,7 @@ let state: PayState = 'error';
 let stripeUrl = '';
 let productName = '';
 let productPrice = 0;
+let productCurrency = 'usd';
 let customerEmail = '';
 let errorMessage = 'Invalid or expired payment link.';
 
@@ -37,10 +39,12 @@ if (token && PAY_TOKEN_SECRET && isStripeConfigured()) {
 
 			// Resolve geo price ahead of branching to avoid nesting
 			if (product) {
-				const cf = Astro.locals.runtime.cf as { continent?: string } | undefined;
+				const cf = Astro.locals.runtime.cf as { continent?: string; country?: string } | undefined;
 				const continent = resolveContinent(cf, Astro.request.headers.get('cf-ipcontinent'));
-				const priceRow = await getProductPrice(db, product.id, continent);
+				const payCountryCode = resolveCountryCode(cf, Astro.request.headers.get('cf-ipcountry'));
+				const priceRow = await getProductPrice(db, product.id, continent, payCountryCode);
 				productPrice = priceRow?.price ?? 0;
+				productCurrency = priceRow?.currency ?? 'usd';
 			}
 
 			if (session.payment_status === 'paid') {
@@ -82,7 +86,7 @@ if (token && PAY_TOKEN_SECRET && isStripeConfigured()) {
 
 				<div class="rounded-xl border border-neon-cyan-dim bg-neon-cyan-glow p-5 mb-8 inline-block">
 					<p class="font-mono text-xs uppercase tracking-[0.24em] text-ghost mb-2">Total</p>
-					<p class="font-display text-5xl font-900 text-neon-cyan">${productPrice}</p>
+					<p class="font-display text-5xl font-900 text-neon-cyan">{formatMoney(productPrice, productCurrency)}</p>
 				</div>
 
 				{customerEmail && (

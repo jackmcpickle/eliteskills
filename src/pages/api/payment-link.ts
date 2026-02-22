@@ -12,7 +12,8 @@ import { isStripeConfigured, createCheckoutSession } from '@/libs/api/stripe';
 import { verifyToken, createToken } from '@/libs/api/tokens';
 import { createDb } from '@/libs/db/client';
 import { getProductById, getProductPrice } from '@/libs/db/repo';
-import { resolveContinent } from '@/libs/geo';
+import { resolveContinent, resolveCountryCode } from '@/libs/geo';
+import { formatMoney } from '@/utils/format-money';
 
 const SITE_URL = 'https://eliteskills.ai';
 
@@ -82,11 +83,14 @@ async function sendPaymentEmails(
     body: PaymentLinkBody,
     productName: string,
     productPrice: number,
+    priceCurrency: string,
     productId: number,
     stripeSessionId: string,
     paymentUrl: string,
 ): Promise<void> {
     if (!isMailConfigured()) return;
+
+    const formattedPrice = formatMoney(productPrice, priceCurrency);
 
     try {
         await sendMail({
@@ -95,7 +99,7 @@ async function sendPaymentEmails(
             text: [
                 `Hi ${body.name.trim()},`,
                 '',
-                `Here is your payment link for ${productName} ($${productPrice}):`,
+                `Here is your payment link for ${productName} (${formattedPrice}):`,
                 '',
                 paymentUrl,
                 '',
@@ -113,7 +117,7 @@ async function sendPaymentEmails(
                 'Payment link created via agent API',
                 '',
                 `Product: ${productName} (${productId})`,
-                `Price: $${productPrice}`,
+                `Price: ${formattedPrice}`,
                 `Buyer: ${body.name.trim()}`,
                 `Email: ${body.email.trim()}`,
                 `Purchase type: ${body.purchaseKind ?? 'personal'}`,
@@ -128,11 +132,7 @@ async function sendPaymentEmails(
     }
 }
 
-export const POST: APIRoute = async ({
-    request,
-    clientAddress,
-    locals,
-}) => {
+export const POST: APIRoute = async ({ request, clientAddress, locals }) => {
     if (!SESSION_TOKEN_SECRET || !PAY_TOKEN_SECRET || !isStripeConfigured()) {
         return jsonError('Payment service not configured.', 500);
     }
@@ -174,13 +174,24 @@ export const POST: APIRoute = async ({
     const product = await getProductById(db, body.productId);
     if (!product) return jsonError('Invalid product.', 400);
 
-    const cf = locals.runtime.cf as { continent?: string } | undefined;
+    const cf = locals.runtime.cf as
+        | { continent?: string; country?: string }
+        | undefined;
     const continent = resolveContinent(
         cf,
         request.headers.get('cf-ipcontinent'),
     );
+    const countryCode = resolveCountryCode(
+        cf,
+        request.headers.get('cf-ipcountry'),
+    );
 
-    const priceRow = await getProductPrice(db, product.id, continent);
+    const priceRow = await getProductPrice(
+        db,
+        product.id,
+        continent,
+        countryCode,
+    );
     if (!priceRow?.stripePriceId) {
         return jsonError('Product not available in your region.', 400);
     }
@@ -200,7 +211,11 @@ export const POST: APIRoute = async ({
         customerName: body.name.trim(),
         payUrl: tempPayUrl,
         continent,
-        metadata: buildMetadata(body),
+        metadata: {
+            ...buildMetadata(body),
+            countryCode,
+            priceCurrency: priceRow.currency,
+        },
     });
 
     const { token: finalPayToken } = await createToken(
@@ -216,6 +231,7 @@ export const POST: APIRoute = async ({
         body,
         product.name,
         priceRow.price,
+        priceRow.currency,
         product.id,
         stripeSession.id,
         paymentUrl,

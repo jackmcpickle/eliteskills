@@ -9,14 +9,38 @@
 import { spawnSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import Stripe from 'stripe';
 import { config } from 'dotenv';
+import Stripe from 'stripe';
 
 config();
 
 const ROOT = join(import.meta.dirname ?? '.', '..');
 const isRemote = process.argv.includes('--remote');
 const isDryRun = process.argv.includes('--dry-run');
+
+/** Zero-decimal currencies where unit_amount = face value (no *100). */
+const ZERO_DECIMAL = new Set([
+    'bif',
+    'clp',
+    'djf',
+    'gnf',
+    'jpy',
+    'kmf',
+    'krw',
+    'mga',
+    'pyg',
+    'rwf',
+    'ugx',
+    'vnd',
+    'vuv',
+    'xaf',
+    'xof',
+    'xpf',
+]);
+
+function isZeroDecimal(currency: string): boolean {
+    return ZERO_DECIMAL.has(currency.toLowerCase());
+}
 
 interface WranglerD1Result {
     success: boolean;
@@ -33,7 +57,9 @@ interface ProductPriceRow {
     id: number;
     product_id: number;
     continent: string;
+    country_code: string;
     price: number;
+    currency: string;
     stripe_price_id: string | null;
 }
 
@@ -59,10 +85,14 @@ function runD1Query(sql: string): Record<string, unknown>[] {
     });
 
     if (result.status !== 0) {
-        throw new Error(result.stdout || result.stderr || 'wrangler d1 execute failed');
+        throw new Error(
+            result.stdout || result.stderr || 'wrangler d1 execute failed',
+        );
     }
 
-    const parsed = JSON.parse(result.stdout) as WranglerD1Result[] | WranglerD1Result;
+    const parsed = JSON.parse(result.stdout) as
+        | WranglerD1Result[]
+        | WranglerD1Result;
     if (Array.isArray(parsed)) return parsed[0]?.results ?? [];
     return parsed.results ?? [];
 }
@@ -71,10 +101,21 @@ function esc(value: string): string {
     return value.replace(/'/g, "''");
 }
 
+/** Format price label for log output. */
+function priceLabel(row: ProductPriceRow): string {
+    const region = row.country_code
+        ? `${row.continent}/${row.country_code}`
+        : row.continent;
+    return `${region} [${row.currency.toUpperCase()}] ${row.price}`;
+}
+
 async function main(): Promise<void> {
     const dbName = readDbName();
-    console.log(`Using D1 database: ${dbName} (${isRemote ? 'remote' : 'local'})`);
-    if (isDryRun) console.log('Dry run enabled: no Stripe writes, no DB updates');
+    console.log(
+        `Using D1 database: ${dbName} (${isRemote ? 'remote' : 'local'})`,
+    );
+    if (isDryRun)
+        console.log('Dry run enabled: no Stripe writes, no DB updates');
 
     const stripeKey = process.env.STRIPE_SECRET_KEY;
     if (!stripeKey) throw new Error('Set STRIPE_SECRET_KEY env var');
@@ -113,16 +154,22 @@ async function main(): Promise<void> {
         }
 
         const prices = runD1Query(
-            `select id, product_id, continent, price, stripe_price_id from product_prices where product_id = ${product.id} order by id`,
+            `select id, product_id, continent, country_code, price, currency, stripe_price_id from product_prices where product_id = ${product.id} order by id`,
         ) as ProductPriceRow[];
 
         for (const priceRow of prices) {
             if (priceRow.stripe_price_id) {
                 try {
-                    const existing = await stripe.prices.retrieve(priceRow.stripe_price_id);
-                    if (existing.active) {
+                    const existing = await stripe.prices.retrieve(
+                        priceRow.stripe_price_id,
+                    );
+                    // Currency is immutable on Stripe Prices — recreate if mismatch
+                    if (
+                        existing.active &&
+                        existing.currency === priceRow.currency.toLowerCase()
+                    ) {
                         console.log(
-                            `  ${priceRow.continent}: $${priceRow.price} -> ${priceRow.stripe_price_id} (exists)`,
+                            `  ${priceLabel(priceRow)} -> ${priceRow.stripe_price_id} (exists)`,
                         );
                         continue;
                     }
@@ -133,17 +180,22 @@ async function main(): Promise<void> {
 
             if (isDryRun) {
                 console.log(
-                    `  ${priceRow.continent}: $${priceRow.price} -> Dry run: would create Stripe Price`,
+                    `  ${priceLabel(priceRow)} -> Dry run: would create Stripe Price`,
                 );
                 continue;
             }
 
+            const unitAmount = isZeroDecimal(priceRow.currency)
+                ? Math.round(priceRow.price)
+                : Math.round(priceRow.price * 100);
+
             const createdPrice = await stripe.prices.create({
                 product: stripeProductId,
-                unit_amount: Math.round(priceRow.price * 100),
-                currency: 'usd',
+                unit_amount: unitAmount,
+                currency: priceRow.currency.toLowerCase(),
                 metadata: {
                     continent: priceRow.continent,
+                    country_code: priceRow.country_code,
                     db_product_id: String(product.id),
                 },
             });
@@ -153,7 +205,7 @@ async function main(): Promise<void> {
             );
 
             console.log(
-                `  ${priceRow.continent}: $${priceRow.price} -> ${createdPrice.id} (created)`,
+                `  ${priceLabel(priceRow)} -> ${createdPrice.id} (created)`,
             );
         }
 

@@ -8,13 +8,13 @@ const metrics = [
 ---
 
 <section class="relative py-10 sm:py-16 px-6">
-	<div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-neon-cyan-dim to-transparent"></div>
-	<div class="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-neon-cyan-dim to-transparent"></div>
+	<div class="absolute inset-x-0 top-0 h-px border-flow"></div>
+	<div class="absolute inset-x-0 bottom-0 h-px border-flow"></div>
 
 	<div class="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-8 text-center">
 		{metrics.map((metric, i) => (
 			<div class={`reveal reveal-delay-${i + 1}`}>
-				<p class="font-display text-3xl sm:text-4xl font-900 text-neon-cyan tracking-tight">{metric.value}</p>
+				<p class="font-display text-3xl sm:text-4xl font-900 text-neon-cyan tracking-tight"><span class="metric-pulse" style={`animation-delay: ${i * 1.25}s`}>{metric.value}</span></p>
 				<p class="mt-1 font-mono text-xs text-ghost tracking-widest uppercase">{metric.label}</p>
 			</div>
 		))}

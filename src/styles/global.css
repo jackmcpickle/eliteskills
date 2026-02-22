@@ -178,6 +178,258 @@ button:focus-visible {
         inset 0 0 30px var(--color-neon-cyan-glow);
 }
 
+/* ── Electron border orbit ─────────────────────────────── */
+
+@keyframes electron-orbit {
+    from {
+        --electron-angle: 0deg;
+    }
+    to {
+        --electron-angle: 360deg;
+    }
+}
+
+@property --electron-angle {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+}
+
+.electron-border {
+    position: relative;
+    overflow: hidden;
+}
+
+.electron-border::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    background: conic-gradient(
+        from var(--electron-angle),
+        transparent 0%,
+        transparent 70%,
+        var(--color-neon-cyan) 85%,
+        transparent 100%
+    );
+    mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    opacity: 0.3;
+    animation: electron-orbit 4s linear infinite;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.electron-border:hover::before {
+    opacity: 1;
+}
+
+/* ── Scan line ─────────────────────────────────────────── */
+
+@keyframes scan-line {
+    0% {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+}
+
+.scan-line {
+    position: relative;
+    overflow: hidden;
+}
+
+.scan-line::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    height: 1px;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        var(--color-neon-cyan-dim),
+        var(--color-neon-cyan),
+        var(--color-neon-cyan-dim),
+        transparent
+    );
+    box-shadow: 0 0 12px var(--color-neon-cyan-dim);
+    animation: scan-line 8s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* ── Shimmer sweep ─────────────────────────────────────── */
+
+@keyframes shimmer-sweep {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+.shimmer {
+    position: relative;
+    overflow: hidden;
+}
+
+.shimmer::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        110deg,
+        transparent 25%,
+        rgba(255, 255, 255, 0.15) 50%,
+        transparent 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer-sweep 3s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* ── Breathing glow ring ───────────────────────────────── */
+
+@keyframes glow-breathe {
+    0%,
+    100% {
+        box-shadow: 0 0 8px var(--color-neon-cyan-glow);
+    }
+    50% {
+        box-shadow:
+            0 0 16px var(--color-neon-cyan-dim),
+            0 0 32px var(--color-neon-cyan-glow);
+    }
+}
+
+.glow-breathe {
+    animation: glow-breathe 4s ease-in-out infinite;
+}
+
+.glow-breathe-delay-1 {
+    animation-delay: 1s;
+}
+.glow-breathe-delay-2 {
+    animation-delay: 2s;
+}
+.glow-breathe-delay-3 {
+    animation-delay: 3s;
+}
+
+/* ── Metrics pulse ─────────────────────────────────────── */
+
+@keyframes metric-pulse {
+    0%,
+    100% {
+        transform: scale(1);
+        text-shadow: none;
+    }
+    50% {
+        transform: scale(1.05);
+        text-shadow: 0 0 20px var(--color-neon-cyan-dim);
+    }
+}
+
+.metric-pulse {
+    animation: metric-pulse 5s ease-in-out infinite;
+    display: inline-block;
+}
+
+/* ── Gradient border flow ──────────────────────────────── */
+
+@keyframes border-flow {
+    0% {
+        background-position: 0% 50%;
+    }
+    100% {
+        background-position: 200% 50%;
+    }
+}
+
+.border-flow {
+    background: linear-gradient(
+        90deg,
+        transparent,
+        var(--color-neon-cyan-dim),
+        var(--color-neon-cyan),
+        var(--color-neon-cyan-dim),
+        transparent,
+        var(--color-neon-cyan-dim),
+        var(--color-neon-cyan),
+        var(--color-neon-cyan-dim),
+        transparent
+    );
+    background-size: 200% 100%;
+    animation: border-flow 6s linear infinite;
+}
+
+/* ── Hero particle float ───────────────────────────────── */
+
+@keyframes particle-float-1 {
+    0%,
+    100% {
+        transform: translate(0, 0);
+    }
+    33% {
+        transform: translate(30px, -20px);
+    }
+    66% {
+        transform: translate(-15px, 15px);
+    }
+}
+
+@keyframes particle-float-2 {
+    0%,
+    100% {
+        transform: translate(0, 0);
+    }
+    33% {
+        transform: translate(-25px, 25px);
+    }
+    66% {
+        transform: translate(20px, -10px);
+    }
+}
+
+.particle {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: var(--color-neon-cyan);
+    box-shadow: 0 0 6px var(--color-neon-cyan-dim);
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+.particle-1 {
+    animation: particle-float-1 7s ease-in-out infinite;
+}
+.particle-2 {
+    animation: particle-float-2 9s ease-in-out infinite;
+}
+.particle-3 {
+    animation: particle-float-1 6s ease-in-out infinite reverse;
+}
+.particle-4 {
+    animation: particle-float-2 8s ease-in-out infinite reverse;
+}
+
 /* ── Selection ──────────────────────────────────────────── */
 
 ::selection {

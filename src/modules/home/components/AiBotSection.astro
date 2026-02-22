@@ -60,8 +60,8 @@ await requestApproval({
 				{features.map((feature, i) => {
 					const Icon = iconMap[feature.icon as keyof typeof iconMap];
 					return (
-						<div class={`reveal reveal-delay-${i + 1} group relative flex gap-5 rounded-2xl border border-border bg-surface p-6 transition-all hover:border-neon-cyan-dim hover:bg-surface-hover`}>
-							<div class="flex shrink-0 items-center justify-center size-12 rounded-full bg-neon-cyan-glow border border-neon-cyan-dim text-neon-cyan transition-shadow group-hover:shadow-[0_0_30px_var(--color-neon-cyan-glow)]">
+						<div class={`reveal reveal-delay-${i + 1} electron-border group relative flex gap-5 rounded-2xl border border-border bg-surface p-6 transition-all hover:border-neon-cyan-dim hover:bg-surface-hover`}>
+							<div class={`flex shrink-0 items-center justify-center size-12 rounded-full bg-neon-cyan-glow border border-neon-cyan-dim text-neon-cyan glow-breathe glow-breathe-delay-${i + 1} transition-shadow group-hover:shadow-[0_0_30px_var(--color-neon-cyan-glow)]`}>
 								<Icon class="size-6" aria-hidden="true" />
 							</div>
 							<div>
@@ -75,7 +75,7 @@ await requestApproval({
 			</div>
 
 			<!-- Code preview -->
-			<div class="reveal reveal-delay-2 relative rounded-2xl border border-border bg-surface overflow-hidden">
+			<div class="reveal reveal-delay-2 scan-line relative rounded-2xl border border-border bg-surface overflow-hidden">
 				<!-- Terminal header -->
 				<div class="flex items-center gap-2 px-5 py-3 border-b border-border bg-surface-hover">
 					<div class="size-3 rounded-full bg-red-400/60"></div>

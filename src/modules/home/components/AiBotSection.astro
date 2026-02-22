@@ -1,0 +1,96 @@
+---
+import { Bot, Code, ShieldCheck } from '@lucide/astro';
+
+const features = [
+	{
+		icon: 'Code',
+		title: 'API Access',
+		description:
+			'Integrate Elite Skills directly into your AI agent pipelines. Fetch, configure, and deploy skills programmatically via our REST API.',
+	},
+	{
+		icon: 'ShieldCheck',
+		title: 'Human-in-the-Loop Purchases',
+		description:
+			'Bots can browse and select skills, then hand off to a human for secure purchase approval. No unauthorized spending.',
+	},
+	{
+		icon: 'Bot',
+		title: 'Agent-Ready Skills',
+		description:
+			'Skills are structured for machine consumption. Your AI agents parse, apply, and chain them without manual setup.',
+	},
+];
+
+const iconMap = { Code, ShieldCheck, Bot };
+
+const codeSnippet = `// Fetch available skills
+const res = await fetch('https://api.eliteskills.ai/v1/skills', {
+  headers: { Authorization: \`Bearer \${API_KEY}\` },
+});
+const skills = await res.json();
+
+// Request human approval for purchase
+await requestApproval({
+  skill: skills[0],
+  callback: 'https://your-app.com/approve',
+});`;
+---
+
+<section class="relative py-32 px-6">
+	<!-- Ambient glow -->
+	<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-[600px] rounded-full bg-neon-violet/5 blur-[140px] pointer-events-none"></div>
+
+	<div class="relative max-w-5xl mx-auto">
+		<!-- Section header -->
+		<div class="text-center mb-20">
+			<p class="reveal font-mono text-xs text-neon-cyan tracking-[0.3em] uppercase mb-4">AI Agent Integration</p>
+			<h2 class="reveal reveal-delay-1 font-display text-4xl sm:text-5xl md:text-6xl font-800 text-white tracking-tight">
+				Built for Bots, Approved&nbsp;by&nbsp;Humans
+			</h2>
+			<p class="reveal reveal-delay-2 mt-4 max-w-xl mx-auto text-mist">
+				Let your AI agents discover, evaluate, and use Elite Skills via API&mdash;with human approval for purchases.
+			</p>
+		</div>
+
+		<!-- Two-column layout: features + code -->
+		<div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
+			<!-- Feature cards -->
+			<div class="space-y-6">
+				{features.map((feature, i) => {
+					const Icon = iconMap[feature.icon as keyof typeof iconMap];
+					return (
+						<div class={`reveal reveal-delay-${i + 1} group relative flex gap-5 rounded-2xl border border-border bg-surface p-6 transition-all hover:border-neon-cyan-dim hover:bg-surface-hover`}>
+							<div class="flex shrink-0 items-center justify-center size-12 rounded-full bg-neon-cyan-glow border border-neon-cyan-dim text-neon-cyan transition-shadow group-hover:shadow-[0_0_30px_var(--color-neon-cyan-glow)]">
+								<Icon class="size-6" aria-hidden="true" />
+							</div>
+							<div>
+								<h3 class="font-display text-lg font-700 text-white mb-1">{feature.title}</h3>
+								<p class="text-sm text-mist leading-relaxed">{feature.description}</p>
+							</div>
+							<div class="absolute bottom-0 inset-x-6 h-px bg-gradient-to-r from-transparent via-neon-cyan-dim to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+						</div>
+					);
+				})}
+			</div>
+
+			<!-- Code preview -->
+			<div class="reveal reveal-delay-2 relative rounded-2xl border border-border bg-surface overflow-hidden">
+				<!-- Terminal header -->
+				<div class="flex items-center gap-2 px-5 py-3 border-b border-border bg-surface-hover">
+					<div class="size-3 rounded-full bg-red-400/60"></div>
+					<div class="size-3 rounded-full bg-neon-amber/60"></div>
+					<div class="size-3 rounded-full bg-neon-green/60"></div>
+					<span class="ml-2 font-mono text-[11px] text-ghost">agent.ts</span>
+				</div>
+				<!-- Code content -->
+				<pre class="p-5 overflow-x-auto font-mono text-xs leading-relaxed text-cloud"><code set:text={codeSnippet} /></pre>
+			</div>
+		</div>
+
+		<!-- Bottom text -->
+		<p class="reveal reveal-delay-4 text-center mt-12 font-mono text-xs text-ghost tracking-wider">
+			Full API docs available after purchase. Your bots browse&mdash;your team approves.
+		</p>
+	</div>
+</section>

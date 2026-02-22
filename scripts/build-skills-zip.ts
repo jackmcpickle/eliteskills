@@ -14,10 +14,7 @@ const OUTPUT = join(
     'skills-bundle.zip',
 );
 
-function collectFiles(
-    dir: string,
-    base: string,
-): Record<string, Uint8Array> {
+function collectFiles(dir: string, base: string): Record<string, Uint8Array> {
     const files: Record<string, Uint8Array> = {};
     const entries = readdirSync(dir);
 
@@ -41,4 +38,6 @@ const zipped = zipSync(files);
 writeFileSync(OUTPUT, zipped);
 
 const sizeKb = (zipped.length / 1024).toFixed(1);
-console.log(`Built skills-bundle.zip (${sizeKb} KB, ${Object.keys(files).length} files)`);
+console.log(
+    `Built skills-bundle.zip (${sizeKb} KB, ${Object.keys(files).length} files)`,
+);

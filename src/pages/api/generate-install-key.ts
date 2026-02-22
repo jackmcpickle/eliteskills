@@ -1,11 +1,11 @@
 import type { APIRoute } from 'astro';
+import { jsonError } from '@/libs/api/spam';
 import { createDb } from '@/libs/db/client';
 import {
     getUserByAccountKey,
     getPurchasesByUserId,
     createInstallKey,
 } from '@/libs/db/repo';
-import { jsonError } from '@/libs/api/spam';
 
 export const POST: APIRoute = async ({ request, locals }) => {
     const d1 = locals.runtime.env.DB;

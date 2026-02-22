@@ -1,11 +1,28 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
 import { SkillsHero, SkillsList, SkillsFooter } from '@/modules/skills';
+
+const skills = (await getCollection('skills')).sort((a, b) => a.data.order - b.data.order);
+
+const jsonLd = {
+	'@context': 'https://schema.org',
+	'@type': 'ItemList',
+	name: 'Elite AI Skills',
+	description: 'Precision-engineered AI instruction sets for builders.',
+	itemListElement: skills.map((skill, i) => ({
+		'@type': 'ListItem',
+		position: i + 1,
+		name: skill.data.title,
+		description: skill.data.description,
+	})),
+};
 ---
 
 <BaseLayout
 	title="Skills — Elite Skills"
-	description="Browse all /elite skills. Production-grade AI instruction sets for React, Python, and more."
+	description="Six precision-engineered AI instruction sets covering frontend, backend, style, code review, app bootstrap, and feature enhancement."
+	jsonLd={jsonLd}
 >
 	<SkillsHero />
 	<SkillsList />

@@ -1,62 +1,19 @@
 ---
+import { getCollection } from 'astro:content';
 import SkillCard from './SkillCard.astro';
 
-const skills = [
-	{
-		name: 'React',
-		command: '/elite react',
-		description:
-			'Production-grade React from the first line. Component architecture, state management, data fetching, forms — all wired with patterns from real apps serving real users.',
-		template: [
-			'React 19 + TypeScript',
-			'TanStack Router (file-based)',
-			'TanStack Query + Form + Table',
-			'Tailwind CSS 4',
-			'shadcn/ui components',
-		],
-		features: [
-			'Compound component patterns with slot-based APIs',
-			'Query key factories with stale-time hierarchies',
-			'Form state machines: idle → validating → submitting → success/error',
-			'API error boundaries with retry + optimistic rollback',
-			'Accessibility-first markup and focus management',
-			'Responsive layouts that never break',
-		],
-	},
-	{
-		name: 'Python',
-		command: '/elite python',
-		description:
-			'Clean, idiomatic Python for APIs, CLIs, and data pipelines. Type-safe patterns, async architectures, and production-hardened error handling.',
-		template: [
-			'Python 3.12+',
-			'FastAPI / Pydantic v2',
-			'SQLAlchemy 2.0',
-			'Pytest + Coverage',
-		],
-		features: [
-			'Domain-driven project structure',
-			'Type-safe API contracts with Pydantic',
-			'Repository pattern for data access',
-			'Async-first architecture patterns',
-			'Structured logging and error handling',
-			'CLI scaffolding with Click/Typer',
-		],
-		comingSoon: true,
-	},
-];
+const skills = (await getCollection('skills')).sort((a, b) => a.data.order - b.data.order);
 ---
 
-<section class="relative pb-32 px-6">
+<section id="main-content" class="relative pb-32 px-6">
 	<div class="max-w-4xl mx-auto space-y-8">
 		{skills.map((skill, i) => (
 			<SkillCard
-				name={skill.name}
-				command={skill.command}
-				description={skill.description}
-				template={skill.template}
-				features={skill.features}
-				comingSoon={skill.comingSoon ?? false}
+				title={skill.data.title}
+				description={skill.data.description}
+				icon={skill.data.icon}
+				order={skill.data.order}
+				highlights={skill.data.highlights}
 				index={i}
 			/>
 		))}

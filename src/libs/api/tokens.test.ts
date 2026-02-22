@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, afterEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { createToken, verifyToken } from './tokens';
 
 const SECRET = 'test-secret-key-for-tokens';

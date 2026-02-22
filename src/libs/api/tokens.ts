@@ -18,8 +18,8 @@ interface TokenPayload {
 
 const encoder = new TextEncoder();
 
-function toBase64Url(buf: ArrayBuffer): string {
-    const bytes = new Uint8Array(buf);
+function toBase64Url(buf: Uint8Array | ArrayBuffer): string {
+    const bytes = buf instanceof Uint8Array ? buf : new Uint8Array(buf);
     let binary = '';
     for (const b of bytes) binary += String.fromCharCode(b);
     return btoa(binary)
@@ -59,7 +59,12 @@ async function hmacVerify(
 ): Promise<boolean> {
     const key = await getKey(secret);
     const sigBytes = fromBase64Url(signature);
-    return crypto.subtle.verify('HMAC', key, sigBytes, encoder.encode(payload));
+    return crypto.subtle.verify(
+        'HMAC',
+        key,
+        sigBytes.buffer as ArrayBuffer,
+        encoder.encode(payload),
+    );
 }
 
 function generateJti(): string {
@@ -81,7 +86,7 @@ export async function createToken(
         iat: now,
         exp: now + ttlSeconds,
         scope,
-        data,
+        ...(data !== undefined && { data }),
     };
     const payloadB64 = toBase64Url(encoder.encode(JSON.stringify(payload)));
     const signature = await hmacSign(payloadB64, secret);

@@ -24,9 +24,10 @@ const iconMap = { Database, Layers, Palette, Rocket, ShieldCheck, Sparkles };
 		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
 			{skills.map((skill, i) => {
 				const Icon = iconMap[skill.data.icon as keyof typeof iconMap] ?? Sparkles;
+				const slug = skill.id.replace(/\.md$/, '');
 
 				return (
-				<div class={`reveal reveal-delay-${i + 1} card-glow group rounded-xl bg-surface p-8 transition-all hover:bg-surface-hover`}>
+				<a href={`/skills/${slug}`} class={`reveal reveal-delay-${i + 1} card-glow group rounded-xl bg-surface p-8 transition-all hover:bg-surface-hover`}>
 					<!-- Icon -->
 					<div class="flex items-center justify-center size-12 mb-6 rounded-lg bg-neon-cyan-glow border border-neon-cyan-dim text-neon-cyan">
 						<Icon class="size-5" aria-hidden="true" />
@@ -46,7 +47,7 @@ const iconMap = { Database, Layers, Palette, Rocket, ShieldCheck, Sparkles };
 					<div class="absolute top-0 right-0 size-16 opacity-0 group-hover:opacity-100 transition-opacity">
 						<div class="absolute top-3 right-3 size-1 rounded-full bg-neon-amber"></div>
 					</div>
-				</div>
+				</a>
 				);
 			})}
 		</div>

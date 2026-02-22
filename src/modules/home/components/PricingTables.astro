@@ -30,7 +30,7 @@ const bottomTier = allTiers.find((t) => slug(t.id) === 'teams');
 		<div class="flex flex-col gap-6">
 			<!-- Top row: Single Skill (compact, full-width) -->
 			{topTier && (
-				<a href={`/checkout/${slug(topTier.id)}`} class="reveal reveal-delay-1 group relative rounded-xl border border-border bg-surface hover:border-neon-cyan-dim p-5 sm:p-6 transition-all">
+				<a href="/skills" class="reveal reveal-delay-1 group relative rounded-xl border border-border bg-surface hover:border-neon-cyan-dim p-5 sm:p-6 transition-all">
 					<div class="flex flex-col gap-4">
 						<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
 							<div class="flex-1 min-w-0">

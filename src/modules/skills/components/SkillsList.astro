@@ -15,6 +15,7 @@ const skills = (await getCollection('skills')).sort((a, b) => a.data.order - b.d
 				order={skill.data.order}
 				highlights={skill.data.highlights}
 				index={i}
+				slug={skill.id.replace(/\.md$/, '')}
 			/>
 		))}
 	</div>

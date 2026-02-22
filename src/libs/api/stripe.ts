@@ -6,7 +6,7 @@ import {
 	STRIPE_PRICE_LIFETIME,
 } from 'astro:env/server';
 
-const SITE_URL = 'https://eliteskills.dev';
+const SITE_URL = 'https://eliteskills.ai';
 
 export interface ProductInfo {
 	name: string;

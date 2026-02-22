@@ -1,16 +1,22 @@
 {
 	"main": "dist/_worker.js/index.js",
 	"name": "eliteskills",
-  "compatibility_date": "2026-02-21",
-  "compatibility_flags": [
-    "nodejs_compat",
-    "global_fetch_strictly_public"
-  ],
+	"compatibility_date": "2026-02-21",
+	"compatibility_flags": [
+		"nodejs_compat",
+		"global_fetch_strictly_public"
+	],
+	"workers_dev": false,
+	"preview_urls": false,
+	"routes": [
+		{ "pattern": "eliteskills.ai", "custom_domain": true },
+		{ "pattern": "www.eliteskills.ai", "custom_domain": true }
+	],
 	"assets": {
 		"binding": "ASSETS",
 		"directory": "./dist"
 	},
 	"observability": {
-    "enabled": true
-  }
+		"enabled": true
+	}
 }

@@ -18,9 +18,9 @@
   "dependencies": {
     "@astrojs/cloudflare": "^12.6.12",
     "@astrojs/sitemap": "^3.7.0",
+    "@lucide/astro": "^0.575.0",
     "@tailwindcss/vite": "^4.2.0",
     "astro": "^5.17.1",
-    "lucide-astro": "^0.556.0",
     "mailgun.js": "^12.7.0",
     "stripe": "^20.3.1",
     "tailwindcss": "^4.2.0"
@@ -30,6 +30,7 @@
     "oxfmt": "^0.34.0",
     "oxlint": "^1.49.0",
     "oxlint-tsgolint": "^0.14.2",
-    "vitest": "^4.0.18"
+    "vitest": "^4.0.18",
+    "wrangler": "^4.67.0"
   }
 }

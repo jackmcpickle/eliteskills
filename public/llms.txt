@@ -65,7 +65,7 @@ Authenticate with the agent API key to get a short-lived session token (expires 
 **Body:** none
 
 ```bash
-curl -X POST https://eliteskills.dev/api/payment-session \
+curl -X POST https://eliteskills.ai/api/payment-session \
   -H "Authorization: Bearer YOUR_AGENT_API_KEY"
 ```
 
@@ -105,7 +105,7 @@ Use the session token to create a Stripe checkout session. The API returns a pay
 #### Example: personal purchase
 
 ```bash
-curl -X POST https://eliteskills.dev/api/payment-link \
+curl -X POST https://eliteskills.ai/api/payment-link \
   -H "Authorization: Bearer SESSION_TOKEN_FROM_STEP_1" \
   -H "Content-Type: application/json" \
   -d '{
@@ -118,7 +118,7 @@ curl -X POST https://eliteskills.dev/api/payment-link \
 #### Example: company purchase with receipt
 
 ```bash
-curl -X POST https://eliteskills.dev/api/payment-link \
+curl -X POST https://eliteskills.ai/api/payment-link \
   -H "Authorization: Bearer SESSION_TOKEN_FROM_STEP_1" \
   -H "Content-Type: application/json" \
   -d '{
@@ -139,7 +139,7 @@ curl -X POST https://eliteskills.dev/api/payment-link \
 ```json
 {
   "ok": true,
-  "paymentUrl": "https://eliteskills.dev/pay?token=eyJ..."
+  "paymentUrl": "https://eliteskills.ai/pay?token=eyJ..."
 }
 ```
 
@@ -163,5 +163,5 @@ All error responses follow the format `{"error": "..."}` with appropriate HTTP s
 
 ## Pages
 
-- [Home](https://eliteskills.dev/): Landing page with skills overview, reviews, pricing, and purchase links
-- [Contact](https://eliteskills.dev/contact): Contact form for support questions
+- [Home](https://eliteskills.ai/): Landing page with skills overview, reviews, pricing, and purchase links
+- [Contact](https://eliteskills.ai/contact): Contact form for support questions

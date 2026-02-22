@@ -1,6 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
-import { Database, Layers, Palette, Rocket, ShieldCheck, Sparkles } from 'lucide-astro';
+import { Database, Layers, Palette, Rocket, ShieldCheck, Sparkles } from '@lucide/astro';
 
 const skills = (await getCollection('skills')).sort((a, b) => a.data.order - b.data.order);
 

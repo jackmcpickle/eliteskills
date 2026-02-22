@@ -1,6 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
-import { Check } from 'lucide-astro';
+import { Check } from '@lucide/astro';
 
 const tiers = (await getCollection('pricing')).sort((a, b) => a.data.order - b.data.order);
 ---

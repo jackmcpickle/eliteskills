@@ -15,7 +15,7 @@ import {
 } from '@/libs/api/stripe';
 import { sendMail, isMailConfigured, getAdminEmail } from '@/libs/api/mail';
 
-const SITE_URL = 'https://eliteskills.dev';
+const SITE_URL = 'https://eliteskills.ai';
 
 /** Pay token TTL: 1 hour */
 const PAY_TOKEN_TTL_SECONDS = 3600;

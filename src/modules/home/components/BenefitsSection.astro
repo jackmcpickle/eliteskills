@@ -1,6 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
-import { BadgeCheck, LockKeyhole, Minimize2 } from 'lucide-astro';
+import { BadgeCheck, LockKeyhole, Minimize2 } from '@lucide/astro';
 
 const benefits = (await getCollection('benefits')).sort((a, b) => a.data.order - b.data.order);
 

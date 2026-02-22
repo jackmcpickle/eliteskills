@@ -8,7 +8,7 @@ import cloudflare from '@astrojs/cloudflare';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://eliteskills.dev',
+  site: 'https://eliteskills.ai',
 
   integrations: [
     sitemap({

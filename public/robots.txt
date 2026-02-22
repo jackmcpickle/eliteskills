@@ -5,4 +5,4 @@ Disallow: /api/
 Disallow: /checkout/
 Disallow: /pay
 
-Sitemap: https://eliteskills.dev/sitemap-index.xml
+Sitemap: https://eliteskills.ai/sitemap-index.xml

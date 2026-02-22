@@ -5,7 +5,7 @@ import { isRateLimited, CREATE_CHECKOUT_IP, CREATE_CHECKOUT_EMAIL } from '@/libs
 import { createToken } from '@/libs/api/tokens';
 import { isStripeConfigured, getProduct, createCheckoutSession } from '@/libs/api/stripe';
 
-const SITE_URL = 'https://eliteskills.dev';
+const SITE_URL = 'https://eliteskills.ai';
 
 /** Pay token TTL: 1 hour */
 const PAY_TOKEN_TTL_SECONDS = 3600;

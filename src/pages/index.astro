@@ -2,7 +2,9 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import {
 	HeroBanner,
+	CompatibleTools,
 	SkillsGrid,
+	MetricsBar,
 	ReviewsMarquee,
 	BenefitsSection,
 	PricingTables,
@@ -20,7 +22,7 @@ const websiteJsonLd = {
 	'@type': 'WebSite',
 	name: 'Elite Skills',
 	url: SITE_URL,
-	description: 'Elite AI Skills for programmers and vibe coders. 20 years of engineering distilled into precision-crafted AI instruction sets.',
+	description: 'Elite AI Skills for vibe coders, founders, and builders. 20 years of engineering distilled into precision-crafted AI instruction sets.',
 };
 
 const productJsonLd = pricing.map((tier) => ({
@@ -57,11 +59,13 @@ const reviewJsonLd = {
 
 <BaseLayout
 	title="Elite Skills — AI Skills for Builders"
-	description="Elite AI Skills for programmers and vibe coders. 20 years of engineering distilled into precision-crafted AI instruction sets."
+	description="Elite AI Skills for vibe coders, founders, and builders. 20 years of engineering distilled into precision-crafted AI instruction sets."
 	jsonLd={[websiteJsonLd, ...productJsonLd, reviewJsonLd]}
 >
 	<HeroBanner />
+	<CompatibleTools />
 	<SkillsGrid />
+	<MetricsBar />
 	<ReviewsMarquee />
 	<BenefitsSection />
 	<PricingTables />

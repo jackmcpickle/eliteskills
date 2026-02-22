@@ -77,9 +77,14 @@ Based on this content, output the exact steps an AI agent must follow to complet
 
         const result = JSON.parse(jsonMatch![0]);
 
-        // === Human checkout URLs ===
-        expect(result.humanCheckoutUrls).toContain('/checkout/once');
-        expect(result.humanCheckoutUrls).toContain('/checkout/lifetime');
+        // === Human checkout URLs (may be full or relative) ===
+        const urls = result.humanCheckoutUrls as string[];
+        expect(urls.some((u: string) => u.includes('/checkout/once'))).toBe(
+            true,
+        );
+        expect(urls.some((u: string) => u.includes('/checkout/lifetime'))).toBe(
+            true,
+        );
 
         // === Agent API flow ===
         const steps = result.agentApiFlow.steps;

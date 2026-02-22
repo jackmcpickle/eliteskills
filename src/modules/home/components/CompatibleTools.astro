@@ -1,0 +1,88 @@
+---
+import { Ellipsis } from "@lucide/astro";
+import GoogleAntiGravity from "./logos/GoogleAntiGravity.astro";
+import Claude from "./logos/Claude.astro";
+import Cursor from "./logos/Cursor.astro";
+import OpenAi from "./logos/OpenAI.astro";
+
+interface Tool {
+    name: string;
+    recommended?: boolean;
+}
+
+const tools: Tool[] = [
+    { name: "Claude Code", recommended: true },
+    { name: "OpenAI Codex" },
+    { name: "Cursor" },
+    { name: "Google Antigravity" },
+];
+---
+
+<section class='relative py-20 px-6'>
+    <div class='max-w-5xl mx-auto text-center'>
+        <p
+            class='reveal font-mono text-xs text-neon-cyan tracking-[0.3em] uppercase mb-4'
+        >
+            Compatible With
+        </p>
+        <h2
+            class='reveal reveal-delay-1 font-display text-3xl sm:text-4xl font-800 text-white tracking-tight mb-4'
+        >
+            Works With Your AI Tools
+        </h2>
+        <p class='reveal reveal-delay-2 max-w-lg mx-auto text-mist mb-14'>
+            Drop skills into any AI coding tool. Instant upgrade, zero
+            lock&#8209;in.
+        </p>
+
+        <div
+            class='reveal reveal-delay-3 flex flex-wrap items-center justify-center gap-6 md:gap-10'
+        >
+            {
+                tools.map((tool) => (
+                    <div class='relative flex flex-col items-center gap-3 group'>
+                        {tool.recommended && (
+                            <span class='absolute -top-6 px-2.5 py-0.5 rounded-full bg-neon-cyan/10 border border-neon-cyan-dim font-mono text-[10px] text-neon-cyan tracking-wider uppercase'>
+                                Recommended
+                            </span>
+                        )}
+                        <div
+                            class={`flex items-center justify-center size-16 sm:size-20 rounded-2xl border transition-all ${
+                                tool.recommended
+                                    ? "border-neon-cyan bg-neon-cyan-glow shadow-[0_0_30px_var(--color-neon-cyan-glow)]"
+                                    : "border-border bg-surface hover:border-neon-cyan-dim"
+                            }`}
+                        >
+                            {tool.name === "Claude Code" && <Claude />}
+                            {tool.name === "OpenAI Codex" && <OpenAi />}
+                            {tool.name === "Cursor" && <Cursor />}
+                            {tool.name === "Google Antigravity" && (
+                                <GoogleAntiGravity />
+                            )}
+                        </div>
+                        <span
+                            class={`font-mono text-xs tracking-wider ${tool.recommended ? "text-neon-cyan" : "text-ghost"}`}
+                        >
+                            {tool.name}
+                        </span>
+                    </div>
+                ))
+            }
+
+            <!-- And more -->
+            <div class='flex flex-col items-center gap-3'>
+                <div
+                    class='flex items-center justify-center size-16 sm:size-20 rounded-2xl border border-dashed border-border bg-transparent'
+                >
+                    <Ellipsis
+                        class='size-6 text-ghost'
+                        aria-hidden='true'
+                    />
+                </div>
+                <span class='font-mono text-xs tracking-wider text-ghost'
+                    >& more</span
+                >
+            </div>
+        </div>
+    </div>
+</section>

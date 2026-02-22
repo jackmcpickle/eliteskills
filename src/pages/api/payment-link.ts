@@ -1,3 +1,5 @@
+export const prerender = false;
+
 import type { APIRoute } from 'astro';
 import { SESSION_TOKEN_SECRET, PAY_TOKEN_SECRET } from 'astro:env/server';
 import { sendMail, isMailConfigured, getAdminEmail } from '@/libs/api/mail';

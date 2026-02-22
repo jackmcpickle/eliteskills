@@ -1,3 +1,5 @@
+export const prerender = false;
+
 import type { APIRoute } from 'astro';
 import { PAY_TOKEN_SECRET } from 'astro:env/server';
 import {

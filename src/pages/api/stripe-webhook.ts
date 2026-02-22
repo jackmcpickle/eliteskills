@@ -1,3 +1,5 @@
+export const prerender = false;
+
 import type { APIRoute } from 'astro';
 import { STRIPE_WEBHOOK_SECRET } from 'astro:env/server';
 import { sendMail, isMailConfigured, getAdminEmail } from '@/libs/api/mail';

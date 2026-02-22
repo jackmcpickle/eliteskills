@@ -1,3 +1,5 @@
+export const prerender = false;
+
 import type { APIRoute } from 'astro';
 import { jsonError } from '@/libs/api/spam';
 import { createDb } from '@/libs/db/client';

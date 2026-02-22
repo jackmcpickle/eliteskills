@@ -1,3 +1,5 @@
+export const prerender = false;
+
 import type { APIRoute } from 'astro';
 import { sendMail, isMailConfigured, getAdminEmail } from '@/libs/api/mail';
 import {

@@ -1,3 +1,5 @@
+export const prerender = false;
+
 import type { APIRoute } from 'astro';
 import { AGENT_API_KEY, SESSION_TOKEN_SECRET } from 'astro:env/server';
 import {

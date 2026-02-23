@@ -19,7 +19,7 @@ export interface CreateSessionOptions {
     stripePriceId: string;
     customerEmail: string;
     customerName: string;
-    payUrl: string;
+    cancelUrl: string;
     continent: string;
     metadata?: Record<string, string>;
 }
@@ -35,7 +35,7 @@ export async function createCheckoutSession(
         customer_email: opts.customerEmail,
         line_items: [{ price: opts.stripePriceId, quantity: 1 }],
         success_url: `${SITE_URL}/checkout/success?product=${opts.productId}&session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: opts.payUrl,
+        cancel_url: opts.cancelUrl,
         metadata: {
             productId: String(opts.productId),
             customerName: opts.customerName,

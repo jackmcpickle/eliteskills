@@ -211,7 +211,7 @@ export const POST: APIRoute = async ({ request, clientAddress, locals }) => {
         stripePriceId: priceRow.stripePriceId,
         customerEmail: body.email.trim(),
         customerName: body.name.trim(),
-        payUrl: tempPayUrl,
+        cancelUrl: tempPayUrl,
         continent,
         metadata: {
             ...buildMetadata(body),

@@ -1,7 +1,6 @@
 export const prerender = false;
 
 import type { APIRoute } from 'astro';
-import { PAY_TOKEN_SECRET } from 'astro:env/server';
 import {
     isRateLimited,
     CREATE_CHECKOUT_IP,
@@ -14,15 +13,11 @@ import {
     jsonOk,
 } from '@/libs/api/spam';
 import { isStripeConfigured, createCheckoutSession } from '@/libs/api/stripe';
-import { createToken } from '@/libs/api/tokens';
 import { createDb } from '@/libs/db/client';
 import { getProductById, getProductPrice } from '@/libs/db/repo';
 import { resolveContinent, resolveCountryCode } from '@/libs/geo';
 
 const SITE_URL = 'https://eliteskills.ai';
-
-/** Pay token TTL: 1 hour */
-const PAY_TOKEN_TTL_SECONDS = 3600;
 
 interface CheckoutPayload {
     productId: number;
@@ -98,7 +93,7 @@ function buildMetadata(payload: CheckoutPayload): Record<string, string> {
 }
 
 export const POST: APIRoute = async ({ request, clientAddress, locals }) => {
-    if (!PAY_TOKEN_SECRET || !isStripeConfigured()) {
+    if (!isStripeConfigured()) {
         return jsonError('Payment service not configured.', 500);
     }
 
@@ -153,20 +148,13 @@ export const POST: APIRoute = async ({ request, clientAddress, locals }) => {
 
     let stripeSession;
     try {
-        const { token: tempToken } = await createToken(
-            PAY_TOKEN_SECRET,
-            'pay',
-            PAY_TOKEN_TTL_SECONDS,
-        );
-        const tempPayUrl = `${SITE_URL}/pay?token=${encodeURIComponent(tempToken)}`;
-
         stripeSession = await createCheckoutSession({
             productId: product.id,
             productName: product.name,
             stripePriceId: priceRow.stripePriceId,
             customerEmail: payload.email,
             customerName: payload.name,
-            payUrl: tempPayUrl,
+            cancelUrl: `${SITE_URL}/checkout/${product.id}`,
             continent,
             metadata: {
                 ...buildMetadata(payload),
@@ -179,14 +167,5 @@ export const POST: APIRoute = async ({ request, clientAddress, locals }) => {
         return jsonError('Unable to create checkout. Please try again.', 502);
     }
 
-    const { token: payToken } = await createToken(
-        PAY_TOKEN_SECRET,
-        'pay',
-        PAY_TOKEN_TTL_SECONDS,
-        stripeSession.id,
-    );
-
-    const paymentUrl = `${SITE_URL}/pay?token=${encodeURIComponent(payToken)}`;
-
-    return jsonOk({ ok: true, paymentUrl });
+    return jsonOk({ ok: true, paymentUrl: stripeSession.url });
 };

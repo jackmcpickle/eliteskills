@@ -1,0 +1,43 @@
+---
+interface Props {
+    title: string;
+    examples: { label: string; command: string }[];
+}
+
+const { examples, title } = Astro.props;
+---
+
+<section class="mt-12">
+    <h2
+        class="font-mono text-xs text-neon-amber tracking-[0.3em] uppercase mb-5"
+    >
+        Example Prompts
+    </h2>
+    <div class="grid grid-cols-1 gap-4">
+        {
+            examples.map((example) => (
+                <div class="scan-line relative rounded-2xl border border-border bg-surface overflow-hidden">
+                    <div class="flex items-center gap-2 px-5 py-3 border-b border-border bg-surface-hover">
+                        <div class="size-3 rounded-full bg-red-400/60" />
+                        <div class="size-3 rounded-full bg-neon-amber/60" />
+                        <div class="size-3 rounded-full bg-neon-green/60" />
+                        <span class="ml-2 font-mono text-[11px] text-ghost">
+                            {example.label}
+                        </span>
+                    </div>
+                    <pre class="p-5 font-mono text-xs leading-relaxed text-cloud">
+                        <code class="whitespace-pre">
+                            <>
+                                <span class="text-neon-cyan select-none">
+                                    &gt;
+                                </span>
+                                <span>/elite-{title.toLowerCase()}</span>
+                            </>{" "}
+                            {example.command}
+                        </code>
+                    </pre>
+                </div>
+            ))
+        }
+    </div>
+</section>

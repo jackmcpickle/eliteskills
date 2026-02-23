@@ -1,0 +1,20 @@
+---
+interface Props {
+	slug: string;
+}
+
+const { slug } = Astro.props;
+---
+
+<section class="mt-16">
+	<h2 class="font-mono text-xs text-neon-amber tracking-[0.3em] uppercase mb-5">Install</h2>
+	<div class="scan-line relative rounded-2xl border border-border bg-surface overflow-hidden">
+		<div class="flex items-center gap-2 px-5 py-3 border-b border-border bg-surface-hover">
+			<div class="size-3 rounded-full bg-red-400/60"></div>
+			<div class="size-3 rounded-full bg-neon-amber/60"></div>
+			<div class="size-3 rounded-full bg-neon-green/60"></div>
+			<span class="ml-2 font-mono text-[11px] text-ghost">Terminal</span>
+		</div>
+		<pre class="p-5 font-mono text-sm text-cloud"><code><span class="text-neon-cyan">$</span> npx elite-skills install {slug}</code></pre>
+	</div>
+</section>

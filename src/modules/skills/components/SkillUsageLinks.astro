@@ -1,0 +1,56 @@
+---
+import Claude from "@/modules/home/components/logos/Claude.astro";
+import OpenAI from "@/modules/home/components/logos/OpenAI.astro";
+import GoogleAntiGravity from "@/modules/home/components/logos/GoogleAntiGravity.astro";
+import Cursor from "@/modules/home/components/logos/Cursor.astro";
+
+const tools = [
+    {
+        name: "Claude Code",
+        href: "https://code.claude.com/docs/en/skills",
+        Logo: Claude,
+    },
+    {
+        name: "OpenAI Codex",
+        href: "https://developers.openai.com/codex/skills/",
+        Logo: OpenAI,
+    },
+    {
+        name: "Antigravity",
+        href: "https://antigravity.google/docs/skills",
+        Logo: GoogleAntiGravity,
+    },
+    {
+        name: "Cursor",
+        href: "https://cursor.com/docs/context/skills",
+        Logo: Cursor,
+    },
+];
+---
+
+<section class="mt-12">
+    <h2
+        class="font-mono text-xs text-neon-amber tracking-[0.3em] uppercase mb-5"
+    >
+        Compatible Tools
+    </h2>
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        {
+            tools.map((tool) => (
+                <a
+                    href={tool.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="group flex flex-col items-center gap-3 rounded-2xl border border-border bg-surface p-6 transition-all hover:border-neon-cyan-dim hover:bg-surface-hover"
+                >
+                    <div class="size-10 text-cloud group-hover:text-neon-cyan transition-colors">
+                        <tool.Logo />
+                    </div>
+                    <span class="font-mono text-xs text-ghost group-hover:text-neon-cyan transition-colors">
+                        {tool.name}
+                    </span>
+                </a>
+            ))
+        }
+    </div>
+</section>

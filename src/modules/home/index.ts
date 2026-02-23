@@ -8,3 +8,4 @@ export { default as DifferentiatorSection } from './components/DifferentiatorSec
 export { default as PricingTables } from './components/PricingTables.astro';
 export { default as AiBotSection } from './components/AiBotSection.astro';
 export { default as FooterCta } from './components/FooterCta.astro';
+export { default as WhatAreSkills } from './components/WhatAreSkills.astro';

@@ -1,0 +1,60 @@
+---
+interface Props {
+    slug: string;
+    structure: string[];
+}
+
+const { slug, structure } = Astro.props;
+
+function buildTree(paths: string[]): string {
+    const lines: string[] = [];
+    lines.push(`.claude/skills/${slug}/`);
+
+    for (let i = 0; i < paths.length; i++) {
+        const path = paths[i];
+        const depth = path.split("/").length - 1;
+        const isLast =
+            i === paths.length - 1 ||
+            !paths[i + 1]?.startsWith(
+                path.split("/").slice(0, -1).join("/") + "/",
+            );
+        const isDir = path.endsWith("/");
+        const name = isDir
+            ? path.split("/").filter(Boolean).pop() + "/"
+            : path.split("/").pop();
+        const indent =
+            depth > 0
+                ? "│   ".repeat(depth - 1) + (isLast ? "└── " : "├── ")
+                : i === paths.length - 1
+                  ? "└── "
+                  : "├── ";
+        lines.push(indent + name);
+    }
+
+    return lines.join("\n");
+}
+
+const treeOutput = buildTree(structure);
+---
+
+<section class="mt-12">
+    <h2
+        class="font-mono text-xs text-neon-amber tracking-[0.3em] uppercase mb-5"
+    >
+        Skill Structure
+    </h2>
+    <div
+        class="scan-line relative rounded-2xl border border-border bg-surface overflow-hidden"
+    >
+        <div
+            class="flex items-center gap-2 px-5 py-3 border-b border-border bg-surface-hover"
+        >
+            <div class="size-3 rounded-full bg-red-400/60"></div>
+            <div class="size-3 rounded-full bg-neon-amber/60"></div>
+            <div class="size-3 rounded-full bg-neon-green/60"></div>
+            <span class="ml-2 font-mono text-[11px] text-ghost">tree</span>
+        </div>
+        <pre
+            class="p-5 font-mono text-xs leading-relaxed text-cloud"><code set:text={treeOutput} /></pre>
+    </div>
+</section>

@@ -13,6 +13,7 @@ import {
 	PricingTables,
 	AiBotSection,
 	FooterCta,
+	WhatAreSkills,
 } from '@/modules/home';
 import { getCollection } from 'astro:content';
 import { createDb } from '@/libs/db/client';
@@ -97,6 +98,7 @@ const reviewJsonLd = {
 	<HeroBanner />
 	<SkillsGrid skillProducts={skillProducts} locale={locale} />
 	<MetricsBar />
+	<WhatAreSkills />
 	<ReviewsMarquee />
 	<BenefitsSection />
 	<DifferentiatorSection />

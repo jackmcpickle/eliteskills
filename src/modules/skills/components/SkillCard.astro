@@ -1,94 +1,147 @@
 ---
-import { Check, Database, Layers, Palette, Rocket, ShieldCheck, Sparkles } from '@lucide/astro';
-import { formatMoney } from '@/utils/format-money';
+import {
+    Check,
+    Database,
+    Layers,
+    Palette,
+    Rocket,
+    ShieldCheck,
+    Sparkles,
+} from "@lucide/astro";
+import { formatMoney } from "@/utils/format-money";
 
 interface Props {
-	title: string;
-	description: string;
-	icon: string;
-	order: number;
-	highlights: string[];
-	index: number;
-	slug: string;
-	productId?: number;
-	released?: boolean;
-	price?: number | undefined;
-	currency?: string | undefined;
-	locale?: string;
+    title: string;
+    description: string;
+    icon: string;
+    order: number;
+    highlights: string[];
+    index: number;
+    slug: string;
+    productId?: number;
+    released?: boolean;
+    price?: number | undefined;
+    currency?: string | undefined;
+    locale?: string;
 }
 
-const { title, description, icon, order, highlights, index, slug, productId, released = false, price, currency = 'usd', locale = 'en-US' } = Astro.props;
-const checkoutHref = productId ? `/checkout/${productId}` : '/skills';
+const {
+    title,
+    description,
+    icon,
+    order,
+    highlights,
+    index,
+    slug,
+    productId,
+    released = false,
+    price,
+    currency = "usd",
+    locale = "en-US",
+} = Astro.props;
+const checkoutHref = productId ? `/checkout/${productId}` : "/skills";
 
 const iconMap = { Database, Layers, Palette, Rocket, ShieldCheck, Sparkles };
 const Icon = iconMap[icon as keyof typeof iconMap] ?? Sparkles;
 ---
 
-<div class:list={[
-	`reveal reveal-delay-${(index % 3) + 1} group relative rounded-2xl border bg-surface transition-all`,
-	released
-		? 'border-neon-cyan-dim shadow-[0_0_60px_var(--color-neon-cyan-glow)] hover:bg-surface-hover'
-		: 'border-neon-cyan-dim/40 shadow-[0_0_30px_var(--color-neon-cyan-glow)] opacity-70',
-]}>
-	<div class="p-8 sm:p-10">
-		<!-- Header -->
-		<div class="flex items-center gap-4 mb-6">
-			<div class="flex items-center justify-center size-14 rounded-xl bg-neon-cyan-glow border border-neon-cyan-dim text-neon-cyan transition-shadow group-hover:shadow-[0_0_30px_var(--color-neon-cyan-glow)]">
-				<Icon class="size-6" aria-hidden="true" />
-			</div>
-			<div>
-				<a href={`/skills/${slug}`} class="block font-display text-3xl sm:text-4xl font-800 text-white tracking-tight hover:text-neon-cyan transition-colors">
-					{title}
-				</a>
-				<div class="flex items-center gap-3">
-					<span class="font-mono text-[10px] text-ghost tracking-[0.3em] uppercase">Skill {String(order).padStart(2, '0')}</span>
-					{!released && (
-						<span class="inline-flex items-center px-2 py-0.5 rounded-full border border-neon-amber/40 bg-neon-amber/10 font-mono text-[10px] text-neon-amber tracking-wider uppercase">
-							Coming Soon
-						</span>
-					)}
-				</div>
-			</div>
-		</div>
+<div
+    class:list={[
+        `reveal reveal-delay-${(index % 3) + 1} group relative rounded-2xl border bg-surface transition-all`,
+        released
+            ? "border-neon-cyan-dim shadow-[0_0_60px_var(--color-neon-cyan-glow)] hover:bg-surface-hover"
+            : "border-neon-cyan-dim/40 shadow-[0_0_30px_var(--color-neon-cyan-glow)] opacity-70",
+    ]}
+>
+    <div class="p-8 sm:p-10">
+        <!-- Header -->
+        <div class="flex items-center gap-4 mb-6">
+            <div
+                class="flex items-center justify-center size-14 rounded-xl bg-neon-cyan-glow border border-neon-cyan-dim text-neon-cyan transition-shadow group-hover:shadow-[0_0_30px_var(--color-neon-cyan-glow)]"
+            >
+                <Icon class="size-6" aria-hidden="true" />
+            </div>
+            <div>
+                <a
+                    href={`/skills/${slug}`}
+                    class="block font-display text-3xl sm:text-4xl font-800 text-white tracking-tight hover:text-neon-cyan transition-colors"
+                >
+                    {title}
+                </a>
+                <div class="flex items-center gap-3">
+                    <span
+                        class="font-mono text-[10px] text-ghost tracking-[0.3em] uppercase"
+                        >Skill {String(order).padStart(2, "0")}</span
+                    >
+                    {
+                        !released && (
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full border border-neon-amber/40 bg-neon-amber/10 font-mono text-[10px] text-neon-amber tracking-wider uppercase">
+                                Coming Soon
+                            </span>
+                        )
+                    }
+                </div>
+            </div>
+        </div>
 
-		<p class="text-mist text-lg leading-relaxed mb-10 max-w-2xl">
-			{description}
-		</p>
+        <p class="text-mist text-lg leading-relaxed mb-10 max-w-2xl">
+            {description}
+        </p>
 
-		<!-- Highlights -->
-		{highlights.length > 0 && (
-			<div>
-				<h3 class="font-mono text-xs text-neon-amber tracking-[0.3em] uppercase mb-5">What It Covers</h3>
-				<ul class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-					{highlights.map((highlight) => (
-						<li class="flex items-start gap-3 text-sm">
-							<div class="flex items-center justify-center size-6 rounded bg-neon-cyan-glow text-neon-cyan shrink-0 mt-0.5">
-								<Check class="size-3.5" aria-hidden="true" />
-							</div>
-							<span class="text-cloud">{highlight}</span>
-						</li>
-					))}
-				</ul>
-			</div>
-		)}
+        <!-- Highlights -->
+        {
+            highlights.length > 0 && (
+                <div>
+                    <h3 class="font-mono text-xs text-neon-amber tracking-[0.3em] uppercase mb-5">
+                        What It Covers
+                    </h3>
+                    <ul class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        {highlights.map((highlight) => (
+                            <li class="flex items-start gap-3 text-sm">
+                                <div class="flex items-center justify-center size-6 rounded bg-neon-cyan-glow text-neon-cyan shrink-0 mt-0.5">
+                                    <Check
+                                        class="size-3.5"
+                                        aria-hidden="true"
+                                    />
+                                </div>
+                                <span class="text-cloud">{highlight}</span>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )
+        }
 
-		<!-- Buy button / Coming Soon -->
-		<div class="mt-8">
-			{released ? (
-				<div>
-					<a href={checkoutHref} class="inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-neon-cyan-dim text-neon-cyan font-mono text-sm font-600 tracking-wide uppercase transition-all hover:border-neon-cyan hover:shadow-[0_0_30px_var(--color-neon-cyan-glow)]">
-						Buy {price != null ? formatMoney(price, currency, locale) : ''}
-					</a>
-					<span class="block font-mono text-[10px] text-ghost mt-1">Prices adjusted for your region</span>
-				</div>
-			) : (
-				<span class="inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-ghost/30 text-ghost font-mono text-sm font-600 tracking-wide uppercase cursor-default">
-					Coming Soon
-				</span>
-			)}
-		</div>
-	</div>
+        <!-- Buy button / Coming Soon -->
+        <div class="mt-8">
+            {
+                released ? (
+                    <div>
+                        <a
+                            href={checkoutHref}
+                            class="inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-neon-cyan-dim text-neon-cyan font-mono text-sm font-600 tracking-wide uppercase transition-all hover:border-neon-cyan hover:shadow-[0_0_30px_var(--color-neon-cyan-glow)]"
+                        >
+                            Buy{" "}
+                            {price != null
+                                ? formatMoney(price, currency, locale)
+                                : ""}
+                        </a>
+                        <span class="block font-mono text-[10px] text-ghost mt-1">
+                            Prices adjusted for your region
+                        </span>
+                    </div>
+                ) : (
+                    <span class="inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-ghost/30 text-ghost font-mono text-sm font-600 tracking-wide uppercase cursor-default">
+                        Coming Soon
+                    </span>
+                )
+            }
+        </div>
+    </div>
 
-	<!-- Bottom accent -->
-	<div class="absolute bottom-0 inset-x-6 h-px bg-gradient-to-r from-transparent via-neon-cyan-dim to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+    <!-- Bottom accent -->
+    <div
+        class="absolute bottom-0 inset-x-6 h-px bg-gradient-to-r from-transparent via-neon-cyan-dim to-transparent opacity-0 group-hover:opacity-100 transition-opacity"
+    >
+    </div>
 </div>

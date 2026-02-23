@@ -1,0 +1,29 @@
+---
+import { Check } from "@lucide/astro";
+
+interface Props {
+    bestPractices: string[];
+}
+
+const { bestPractices } = Astro.props;
+---
+
+<section class="mt-12">
+    <h2
+        class="font-mono text-xs text-neon-amber tracking-[0.3em] uppercase mb-5"
+    >
+        Best Practices
+    </h2>
+    <ul class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {
+            bestPractices.map((practice) => (
+                <li class="flex items-start gap-3 text-sm">
+                    <div class="flex items-center justify-center size-6 rounded bg-neon-cyan-glow text-neon-cyan shrink-0 mt-0.5">
+                        <Check class="size-3.5" aria-hidden="true" />
+                    </div>
+                    <span class="text-cloud">{practice}</span>
+                </li>
+            ))
+        }
+    </ul>
+</section>

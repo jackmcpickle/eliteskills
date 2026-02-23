@@ -1,0 +1,112 @@
+---
+import { FileText, Wrench, Cpu } from '@lucide/astro';
+
+const features = [
+	{
+		icon: 'FileText',
+		title: 'Drop-in Instructions',
+		description:
+			'Skills are .md files in .claude/skills/. Your AI reads them before writing code.',
+	},
+	{
+		icon: 'Wrench',
+		title: 'Tool-Agnostic',
+		description:
+			'Works with Claude Code, Codex, Cursor, Antigravity. Same file, any tool.',
+	},
+	{
+		icon: 'Cpu',
+		title: 'Architecture, Not Vibes',
+		description:
+			'Encodes real patterns — component structures, state machines, error handling — not generic prompts.',
+	},
+];
+
+const iconMap = { FileText, Wrench, Cpu };
+
+const skillSnippet = `# React Component Skill
+
+## Component Structure
+- Use named exports, never default
+- One component per file, PascalCase filename
+- Props interface above component declaration
+
+## Patterns
+- Compound components with slot-based APIs
+- forwardRef on all interactive elements
+- Error boundaries at route level
+
+## Accessibility
+- Semantic HTML first, ARIA only when needed
+- Keyboard navigation on all interactive elements
+- Focus management on route transitions`;
+
+const docLinks = [
+	{ label: 'Claude Code Skills', href: 'https://code.claude.com/docs/en/skills' },
+	{ label: 'OpenAI Codex Skills', href: 'https://developers.openai.com/codex/skills/' },
+	{ label: 'Google Antigravity Skills', href: 'https://antigravity.google/docs/skills' },
+	{ label: 'Cursor Skills', href: 'https://cursor.com/docs/context/skills' },
+];
+---
+
+<section class="relative py-32 px-6">
+	<!-- Ambient glow -->
+	<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-[600px] rounded-full bg-neon-cyan/5 blur-[140px] pointer-events-none"></div>
+
+	<div class="relative max-w-5xl mx-auto">
+		<!-- Section header -->
+		<div class="text-center mb-20">
+			<p class="reveal font-mono text-xs text-neon-cyan tracking-[0.3em] uppercase mb-4">How It Works</p>
+			<h2 class="reveal reveal-delay-1 font-display text-4xl sm:text-5xl md:text-6xl font-800 text-white tracking-tight">
+				What Are Skills?
+			</h2>
+			<p class="reveal reveal-delay-2 mt-4 max-w-xl mx-auto text-mist">
+				Markdown files that teach your AI how to write code the way you want. Drop them in, and every generation follows your architecture.
+			</p>
+		</div>
+
+		<!-- Two-column layout: features + terminal -->
+		<div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
+			<!-- Feature cards -->
+			<div class="space-y-6">
+				{features.map((feature, i) => {
+					const Icon = iconMap[feature.icon as keyof typeof iconMap];
+					return (
+						<div class={`reveal reveal-delay-${i + 1} electron-border group relative flex gap-5 rounded-2xl border border-border bg-surface p-6 transition-all hover:border-neon-cyan-dim hover:bg-surface-hover`}>
+							<div class={`flex shrink-0 items-center justify-center size-12 rounded-full bg-neon-cyan-glow border border-neon-cyan-dim text-neon-cyan glow-breathe glow-breathe-delay-${i + 1} transition-shadow group-hover:shadow-[0_0_30px_var(--color-neon-cyan-glow)]`}>
+								<Icon class="size-6" aria-hidden="true" />
+							</div>
+							<div>
+								<h3 class="font-display text-lg font-700 text-white mb-1">{feature.title}</h3>
+								<p class="text-sm text-mist leading-relaxed">{feature.description}</p>
+							</div>
+							<div class="absolute bottom-0 inset-x-6 h-px bg-gradient-to-r from-transparent via-neon-cyan-dim to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+						</div>
+					);
+				})}
+			</div>
+
+			<!-- Terminal preview -->
+			<div class="reveal reveal-delay-2 scan-line relative rounded-2xl border border-border bg-surface overflow-hidden">
+				<!-- Terminal header -->
+				<div class="flex items-center gap-2 px-5 py-3 border-b border-border bg-surface-hover">
+					<div class="size-3 rounded-full bg-red-400/60"></div>
+					<div class="size-3 rounded-full bg-neon-amber/60"></div>
+					<div class="size-3 rounded-full bg-neon-green/60"></div>
+					<span class="ml-2 font-mono text-[11px] text-ghost">.claude/skills/react/SKILL.md</span>
+				</div>
+				<!-- Skill content -->
+				<pre class="p-5 overflow-x-auto font-mono text-xs leading-relaxed text-cloud"><code set:text={skillSnippet} /></pre>
+			</div>
+		</div>
+
+		<!-- Doc links -->
+		<div class="reveal reveal-delay-4 flex flex-wrap justify-center gap-x-8 gap-y-3 mt-16">
+			{docLinks.map((link) => (
+				<a href={link.href} target="_blank" rel="noopener noreferrer" class="font-mono text-xs text-ghost hover:text-neon-cyan transition-colors">
+					{link.label} &rarr;
+				</a>
+			))}
+		</div>
+	</div>
+</section>

@@ -21,6 +21,7 @@
     "deploy": "pnpm build && wrangler deploy",
     "dev": "astro dev",
     "build:skills": "pnpm exec vite-node scripts/build-skills-zip.ts",
+    "update:structure": "pnpm exec vite-node scripts/update-skill-structure.ts",
     "stripe:sync": "pnpm exec vite-node scripts/sync-stripe-products.ts",
     "stripe:cleanup": "pnpm exec vite-node scripts/cleanup-stripe-duplicates.ts",
     "build": "pnpm build:manifest && pnpm build:skills && astro build",

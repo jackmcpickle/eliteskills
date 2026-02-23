@@ -1,125 +1,224 @@
 ---
 export const prerender = false;
 
-import { getCollection } from 'astro:content';
-import { Check, Database, Layers, Palette, Rocket, ShieldCheck, Sparkles } from '@lucide/astro';
-import BaseLayout from '@/layouts/BaseLayout.astro';
-import { BUNDLE_PRODUCT_IDS, SKILL_SLUG_TO_PRODUCT_ID } from '@/constants/products';
-import { createDb } from '@/libs/db/client';
-import { listProducts, getProductPrice } from '@/libs/db/repo';
-import { resolveContinent, resolveCountryCode, resolveLocale } from '@/libs/geo';
-import { formatMoney } from '@/utils/format-money';
+import { getCollection } from "astro:content";
+import {
+    Check,
+    Database,
+    Layers,
+    Palette,
+    Rocket,
+    ShieldCheck,
+    Sparkles,
+} from "@lucide/astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import {
+    BUNDLE_PRODUCT_IDS,
+    SKILL_SLUG_TO_PRODUCT_ID,
+} from "@/constants/products";
+import { createDb } from "@/libs/db/client";
+import { listProducts, getProductPrice } from "@/libs/db/repo";
+import {
+    resolveContinent,
+    resolveCountryCode,
+    resolveLocale,
+} from "@/libs/geo";
+import { formatMoney } from "@/utils/format-money";
+import {
+    SkillInstall,
+    SkillStructure,
+    SkillExamples,
+    SkillBestPractices,
+    SkillUsageLinks,
+} from "@/modules/skills";
 
 const { slug } = Astro.params;
-const skills = await getCollection('skills');
-const skill = skills.find((s) => s.id.replace(/\.md$/, '') === slug);
+const skills = await getCollection("skills");
+const skill = skills.find((s) => s.id.replace(/\.md$/, "") === slug);
 
-if (!skill) return Astro.redirect('/skills');
+if (!skill) return Astro.redirect("/skills");
 
-const { title, description, icon, order, highlights, released } = skill.data;
-const skillProductId = SKILL_SLUG_TO_PRODUCT_ID[slug as keyof typeof SKILL_SLUG_TO_PRODUCT_ID];
-const skillCheckoutHref = skillProductId ? `/checkout/${skillProductId}` : '/skills';
+const {
+    title,
+    description,
+    icon,
+    order,
+    highlights,
+    released,
+    examples,
+    bestPractices,
+    structure,
+} = skill.data;
+const skillProductId =
+    SKILL_SLUG_TO_PRODUCT_ID[slug as keyof typeof SKILL_SLUG_TO_PRODUCT_ID];
+const skillCheckoutHref = skillProductId
+    ? `/checkout/${skillProductId}`
+    : "/skills";
 const bundleCheckoutHref = `/checkout/${BUNDLE_PRODUCT_IDS.allSkills}`;
 
 // Resolve geo prices
 const d1 = Astro.locals.runtime.env.DB;
 const db = createDb(d1);
-const cf = Astro.locals.runtime.cf as { continent?: string; country?: string } | undefined;
-const continent = resolveContinent(cf, Astro.request.headers.get('cf-ipcontinent'));
-const countryCode = resolveCountryCode(cf, Astro.request.headers.get('cf-ipcountry'));
+const cf = Astro.locals.runtime.cf as
+    | { continent?: string; country?: string }
+    | undefined;
+const continent = resolveContinent(
+    cf,
+    Astro.request.headers.get("cf-ipcontinent"),
+);
+const countryCode = resolveCountryCode(
+    cf,
+    Astro.request.headers.get("cf-ipcountry"),
+);
 const locale = resolveLocale(countryCode);
 
 const dbProducts = await listProducts(db);
 
 let skillPrice: number | null = null;
-let skillCurrency = 'usd';
+let skillCurrency = "usd";
 let bundlePrice: number | null = null;
-let bundleCurrency = 'usd';
+let bundleCurrency = "usd";
 
 for (const p of dbProducts) {
-	const priceRow = await getProductPrice(db, p.id, continent, countryCode);
-	if (p.skillSlug && p.id === skillProductId) {
-		skillPrice = priceRow?.price ?? null;
-		skillCurrency = priceRow?.currency ?? 'usd';
-	}
-	if (p.code === 'bundle-once') {
-		bundlePrice = priceRow?.price ?? null;
-		bundleCurrency = priceRow?.currency ?? 'usd';
-	}
+    const priceRow = await getProductPrice(db, p.id, continent, countryCode);
+    if (p.skillSlug && p.id === skillProductId) {
+        skillPrice = priceRow?.price ?? null;
+        skillCurrency = priceRow?.currency ?? "usd";
+    }
+    if (p.code === "bundle-once") {
+        bundlePrice = priceRow?.price ?? null;
+        bundleCurrency = priceRow?.currency ?? "usd";
+    }
 }
 
 const iconMap = { Database, Layers, Palette, Rocket, ShieldCheck, Sparkles };
 const Icon = iconMap[icon as keyof typeof iconMap] ?? Sparkles;
 ---
 
-<BaseLayout
-	title={`${title} — Elite Skills`}
-	description={description}
->
-	<main id="main-content" class="relative py-16 sm:py-24 lg:py-32 px-6">
-		<!-- Ambient glow -->
-		<div class="absolute top-0 left-1/2 -translate-x-1/2 size-[500px] rounded-full bg-neon-cyan/5 blur-[140px] pointer-events-none"></div>
+<BaseLayout title={`${title} — Elite Skills`} description={description}>
+    <main id="main-content" class="relative py-16 sm:py-24 lg:py-32 px-6">
+        <!-- Ambient glow -->
+        <div
+            class="absolute top-0 left-1/2 -translate-x-1/2 size-125 rounded-full bg-neon-cyan/5 blur-[140px] pointer-events-none"
+        >
+        </div>
 
-		<div class="relative max-w-3xl mx-auto">
-			<!-- Header -->
-			<div class="flex items-center gap-4 mb-8">
-				<div class="flex items-center justify-center size-16 rounded-xl bg-neon-cyan-glow border border-neon-cyan-dim text-neon-cyan">
-					<Icon class="size-7" aria-hidden="true" />
-				</div>
-				<div>
-					<div class="flex items-center gap-3">
-						<h1 class="font-display text-4xl sm:text-5xl font-800 text-white tracking-tight">
-							{title}
-						</h1>
-						{!released && (
-							<span class="inline-flex items-center px-2.5 py-1 rounded-full border border-neon-amber/40 bg-neon-amber/10 font-mono text-xs text-neon-amber tracking-wider uppercase">
-								Coming Soon
-							</span>
-						)}
-					</div>
-					<span class="font-mono text-[10px] text-ghost tracking-[0.3em] uppercase">Skill {String(order).padStart(2, '0')}</span>
-				</div>
-			</div>
+        <div class="relative max-w-3xl mx-auto">
+            <!-- Header -->
+            <div class="flex items-center gap-4 mb-8">
+                <div
+                    class="flex items-center justify-center size-16 rounded-xl bg-neon-cyan-glow border border-neon-cyan-dim text-neon-cyan"
+                >
+                    <Icon class="size-7" aria-hidden="true" />
+                </div>
+                <div>
+                    <div class="flex items-center gap-3">
+                        <h1
+                            class="font-display text-4xl sm:text-5xl font-800 text-white tracking-tight"
+                        >
+                            {title}
+                        </h1>
+                        {
+                            !released && (
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-full border border-neon-amber/40 bg-neon-amber/10 font-mono text-xs text-neon-amber tracking-wider uppercase">
+                                    Coming Soon
+                                </span>
+                            )
+                        }
+                    </div>
+                    <span
+                        class="font-mono text-[10px] text-ghost tracking-[0.3em] uppercase"
+                        >Skill {String(order).padStart(2, "0")}</span
+                    >
+                </div>
+            </div>
 
-			<p class="text-mist text-lg leading-relaxed mb-12 max-w-2xl">
-				{description}
-			</p>
+            <p class="text-mist text-lg leading-relaxed mb-12 max-w-2xl">
+                {description}
+            </p>
 
-			<!-- Highlights -->
-			{highlights.length > 0 && (
-				<div class="mb-12">
-					<h2 class="font-mono text-xs text-neon-amber tracking-[0.3em] uppercase mb-5">What It Covers</h2>
-					<ul class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-						{highlights.map((highlight) => (
-							<li class="flex items-start gap-3 text-sm">
-								<div class="flex items-center justify-center size-6 rounded bg-neon-cyan-glow text-neon-cyan shrink-0 mt-0.5">
-									<Check class="size-3.5" aria-hidden="true" />
-								</div>
-								<span class="text-cloud">{highlight}</span>
-							</li>
-						))}
-					</ul>
-				</div>
-			)}
+            <!-- Highlights -->
+            {
+                highlights.length > 0 && (
+                    <div class="mb-12">
+                        <h2 class="font-mono text-xs text-neon-amber tracking-[0.3em] uppercase mb-5">
+                            What It Covers
+                        </h2>
+                        <ul class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            {highlights.map((highlight) => (
+                                <li class="flex items-start gap-3 text-sm">
+                                    <div class="flex items-center justify-center size-6 rounded bg-neon-cyan-glow text-neon-cyan shrink-0 mt-0.5">
+                                        <Check
+                                            class="size-3.5"
+                                            aria-hidden="true"
+                                        />
+                                    </div>
+                                    <span class="text-cloud">{highlight}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                )
+            }
 
-			<!-- CTAs -->
-			{released ? (
-				<div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-					<a href={skillCheckoutHref} class="inline-flex items-center gap-2 px-8 py-4 rounded-lg bg-neon-cyan text-void font-mono font-700 text-sm tracking-wide uppercase transition-all hover:shadow-[0_0_40px_var(--color-neon-cyan-dim)]">
-						Buy This Skill &mdash; {skillPrice != null ? formatMoney(skillPrice, skillCurrency, locale) : ''}
-					</a>
-					<a href={bundleCheckoutHref} class="font-mono text-sm text-mist hover:text-neon-cyan transition-colors">
-						Or get all skills for {bundlePrice != null ? formatMoney(bundlePrice, bundleCurrency, locale) : ''} &rarr;
-					</a>
-				</div>
-			) : (
-				<span class="inline-flex items-center gap-2 px-8 py-4 rounded-lg border border-ghost/30 text-ghost font-mono font-700 text-sm tracking-wide uppercase cursor-default">
-						Coming Soon
-					</span>
-			)}
-			<p class="mt-3 font-mono text-[10px] text-ghost">
-				Prices adjusted for your region
-			</p>
-		</div>
-	</main>
+            <!-- CTAs -->
+            {
+                released ? (
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                        <a
+                            href={skillCheckoutHref}
+                            class="inline-flex items-center gap-2 px-8 py-4 rounded-lg bg-neon-cyan text-void font-mono font-700 text-sm tracking-wide uppercase transition-all hover:shadow-[0_0_40px_var(--color-neon-cyan-dim)]"
+                        >
+                            Buy This Skill &mdash;{" "}
+                            {skillPrice != null
+                                ? formatMoney(skillPrice, skillCurrency, locale)
+                                : ""}
+                        </a>
+                        <a
+                            href={bundleCheckoutHref}
+                            class="font-mono text-sm text-mist hover:text-neon-cyan transition-colors"
+                        >
+                            Or get all skills for{" "}
+                            {bundlePrice != null
+                                ? formatMoney(
+                                      bundlePrice,
+                                      bundleCurrency,
+                                      locale,
+                                  )
+                                : ""}{" "}
+                            &rarr;
+                        </a>
+                    </div>
+                ) : (
+                    <span class="inline-flex items-center gap-2 px-8 py-4 rounded-lg border border-ghost/30 text-ghost font-mono font-700 text-sm tracking-wide uppercase cursor-default">
+                        Coming Soon
+                    </span>
+                )
+            }
+            <p class="mt-3 font-mono text-[10px] text-ghost">
+                Prices adjusted for your region
+            </p>
+
+            {
+                released && (
+                    <>
+                        <SkillInstall slug={slug!} />
+                        {structure.length > 0 && (
+                            <SkillStructure
+                                slug={slug!}
+                                structure={structure}
+                            />
+                        )}
+                        {examples.length > 0 && (
+                            <SkillExamples title={title} examples={examples} />
+                        )}
+                        {bestPractices.length > 0 && (
+                            <SkillBestPractices bestPractices={bestPractices} />
+                        )}
+                        <SkillUsageLinks />
+                    </>
+                )
+            }
+        </div>
+    </main>
 </BaseLayout>

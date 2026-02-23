@@ -9,6 +9,16 @@ const skills = defineCollection({
         order: z.number(),
         highlights: z.array(z.string()).default([]),
         released: z.boolean().default(false),
+        examples: z
+            .array(
+                z.object({
+                    label: z.string(),
+                    command: z.string(),
+                }),
+            )
+            .default([]),
+        bestPractices: z.array(z.string()).default([]),
+        structure: z.array(z.string()).default([]),
     }),
 });
 

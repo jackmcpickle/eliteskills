@@ -151,27 +151,33 @@ export const POST: APIRoute = async ({ request, clientAddress, locals }) => {
         return jsonError('Product not available in your region.', 400);
     }
 
-    const { token: tempToken } = await createToken(
-        PAY_TOKEN_SECRET,
-        'pay',
-        PAY_TOKEN_TTL_SECONDS,
-    );
-    const tempPayUrl = `${SITE_URL}/pay?token=${encodeURIComponent(tempToken)}`;
+    let stripeSession;
+    try {
+        const { token: tempToken } = await createToken(
+            PAY_TOKEN_SECRET,
+            'pay',
+            PAY_TOKEN_TTL_SECONDS,
+        );
+        const tempPayUrl = `${SITE_URL}/pay?token=${encodeURIComponent(tempToken)}`;
 
-    const stripeSession = await createCheckoutSession({
-        productId: product.id,
-        productName: product.name,
-        stripePriceId: priceRow.stripePriceId,
-        customerEmail: payload.email,
-        customerName: payload.name,
-        payUrl: tempPayUrl,
-        continent,
-        metadata: {
-            ...buildMetadata(payload),
-            countryCode,
-            priceCurrency: priceRow.currency,
-        },
-    });
+        stripeSession = await createCheckoutSession({
+            productId: product.id,
+            productName: product.name,
+            stripePriceId: priceRow.stripePriceId,
+            customerEmail: payload.email,
+            customerName: payload.name,
+            payUrl: tempPayUrl,
+            continent,
+            metadata: {
+                ...buildMetadata(payload),
+                countryCode,
+                priceCurrency: priceRow.currency,
+            },
+        });
+    } catch (err) {
+        console.error('Stripe checkout error:', err);
+        return jsonError('Unable to create checkout. Please try again.', 502);
+    }
 
     const { token: payToken } = await createToken(
         PAY_TOKEN_SECRET,

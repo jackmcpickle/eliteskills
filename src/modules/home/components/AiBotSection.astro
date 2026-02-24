@@ -24,6 +24,8 @@ const features = [
 
 const iconMap = { Code, ShieldCheck, Bot };
 
+const agentPrompt = `Search eliteskills.ai for agent skills that can help with my current task and install them.`;
+
 const codeSnippet = `// Fetch available skills
 const res = await fetch('https://api.eliteskills.ai/v1/skills', {
   headers: { Authorization: \`Bearer \${API_KEY}\` },
@@ -88,9 +90,43 @@ await requestApproval({
 			</div>
 		</div>
 
-		<!-- Bottom text -->
-		<p class="reveal reveal-delay-4 text-center mt-12 font-mono text-xs text-ghost tracking-wider">
-			Full API docs available after purchase. Your bots browse&mdash;your team approves.
-		</p>
+		<!-- Agent prompt panel -->
+		<div class="reveal reveal-delay-4 mt-12 mx-auto max-w-2xl electron-border scroll-sheen neon-hover rounded-2xl border border-border bg-surface p-6">
+			<p class="font-mono text-xs text-ghost tracking-wider mb-3">Tell your agent:</p>
+			<div class="flex items-center gap-3 rounded-lg border border-slate-mid bg-abyss px-4 py-3">
+				<code class="flex-1 font-mono text-sm text-neon-cyan select-all">{agentPrompt}</code>
+				<button
+					type="button"
+					class="copy-btn shrink-0 rounded border border-slate-mid px-2.5 py-1.5 font-mono text-xs text-ghost hover:border-neon-cyan-dim hover:text-neon-cyan transition-all"
+					data-copy={agentPrompt}
+				>
+					Copy
+				</button>
+			</div>
+		</div>
 	</div>
 </section>
+
+<script>
+	document.querySelectorAll<HTMLButtonElement>('.copy-btn').forEach((btn) => {
+		btn.addEventListener('click', async () => {
+			const text = btn.dataset.copy;
+			if (!text) return;
+			try {
+				await navigator.clipboard.writeText(text);
+				const original = btn.textContent;
+				btn.textContent = 'Copied!';
+				setTimeout(() => { btn.textContent = original; }, 1500);
+			} catch {
+				const code = btn.previousElementSibling;
+				if (code) {
+					const range = document.createRange();
+					range.selectNodeContents(code);
+					const sel = window.getSelection();
+					sel?.removeAllRanges();
+					sel?.addRange(range);
+				}
+			}
+		});
+	});
+</script>

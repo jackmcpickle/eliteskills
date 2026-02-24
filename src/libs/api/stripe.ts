@@ -32,6 +32,7 @@ export async function createCheckoutSession(
 
     return stripe.checkout.sessions.create({
         mode: 'payment',
+        allow_promotion_codes: true,
         customer_email: opts.customerEmail,
         line_items: [{ price: opts.stripePriceId, quantity: 1 }],
         success_url: `${SITE_URL}/checkout/success?product=${opts.productId}&session_id={CHECKOUT_SESSION_ID}`,

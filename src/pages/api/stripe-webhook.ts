@@ -43,6 +43,10 @@ interface CheckoutSessionData {
     currency: string | null;
     payment_status: string;
     metadata: Record<string, string>;
+    total_details?: {
+        amount_discount: number;
+        amount_tax: number;
+    } | null;
 }
 
 function resolveAmountPaid(session: CheckoutSessionData): string {
@@ -100,6 +104,11 @@ async function handleCheckoutCompleted(
     // Persist user + purchase
     const user = await upsertUserByEmail(db, email, customerName);
     const purchaseCurrency = session.currency ?? 'usd';
+    const discountAmount = session.total_details?.amount_discount ?? 0;
+    const purchaseMetadata: Record<string, string> = { ...session.metadata };
+    if (discountAmount > 0) {
+        purchaseMetadata.discountAmount = String(discountAmount);
+    }
     await createPurchase(db, {
         userId: user.id,
         stripeSessionId: session.id,
@@ -113,7 +122,7 @@ async function handleCheckoutCompleted(
             session.amount_total,
             purchaseCurrency,
         ),
-        metadata: session.metadata,
+        metadata: purchaseMetadata,
     });
 
     const accountUrl = `${SITE_URL}/account/${user.accountKey}`;

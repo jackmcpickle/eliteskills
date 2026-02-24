@@ -357,15 +357,25 @@ body::after {
 .neon-hover,
 .snake-cell {
     background:
-        radial-gradient(ellipse at top left, rgba(45, 226, 196, 0) 0%, transparent 70%),
+        radial-gradient(
+            ellipse at top left,
+            rgba(45, 226, 196, 0) 0%,
+            transparent 70%
+        ),
         var(--color-surface);
-    transition: background 0.4s ease, box-shadow 0.4s ease;
+    transition:
+        background 0.4s ease,
+        box-shadow 0.4s ease;
 }
 
 .neon-hover:hover,
 .snake-cell:hover {
     background:
-        radial-gradient(ellipse at top left, rgba(45, 226, 196, 0.08) 0%, transparent 70%),
+        radial-gradient(
+            ellipse at top left,
+            rgba(45, 226, 196, 0.08) 0%,
+            transparent 70%
+        ),
         var(--color-surface-hover);
     box-shadow: inset 0 0 40px rgba(45, 226, 196, 0.04);
 }

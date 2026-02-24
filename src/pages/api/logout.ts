@@ -7,7 +7,8 @@ export const GET: APIRoute = () => {
         status: 302,
         headers: {
             Location: '/',
-            'Set-Cookie': 'account_key=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0',
+            'Set-Cookie':
+                'account_key=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0',
         },
     });
 };

@@ -2,13 +2,22 @@ export const prerender = false;
 
 import type { APIRoute } from 'astro';
 import { SESSION_TOKEN_SECRET } from 'astro:env/server';
+import { buildLoginEmail } from '@/libs/api/email-templates';
 import { isMailConfigured, sendMail } from '@/libs/api/mail';
+import {
+    isRateLimited,
+    LOGIN_LINK_IP,
+    LOGIN_LINK_EMAIL,
+} from '@/libs/api/rate-limit';
+import {
+    checkHoneypot,
+    parseFormField,
+    jsonError,
+    jsonOk,
+} from '@/libs/api/spam';
 import { createToken } from '@/libs/api/tokens';
-import { isRateLimited, LOGIN_LINK_IP, LOGIN_LINK_EMAIL } from '@/libs/api/rate-limit';
-import { checkHoneypot, parseFormField, jsonError, jsonOk } from '@/libs/api/spam';
 import { createDb } from '@/libs/db/client';
 import { getUserByEmail } from '@/libs/db/repo';
-import { buildLoginEmail } from '@/libs/api/email-templates';
 
 const SITE_URL = 'https://eliteskills.ai';
 
@@ -40,7 +49,12 @@ export const POST: APIRoute = async ({ request, clientAddress, locals }) => {
     // Always return success to avoid email enumeration
     if (!user) return jsonOk({ sent: true });
 
-    const { token } = await createToken(SESSION_TOKEN_SECRET, 'login', 900, email);
+    const { token } = await createToken(
+        SESSION_TOKEN_SECRET,
+        'login',
+        900,
+        email,
+    );
     const loginUrl = `${SITE_URL}/api/verify-login?token=${encodeURIComponent(token)}`;
     const { text, html } = buildLoginEmail(loginUrl);
 

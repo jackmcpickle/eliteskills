@@ -10,7 +10,6 @@ features:
   - Community Discord access
   - All future updates included
   - New skills as they launch
-  - Priority support
 highlighted: true
 order: 2
 ---

@@ -1,5 +1,9 @@
 In all interaction and commit messages be extremely concise.
 
+# EliteSkill.ai
+
+An Astro site with tailwindcss, deployed to cloudflare using drizzle and cloudflare d1 for database.
+
 ## Commands
 
 ```bash

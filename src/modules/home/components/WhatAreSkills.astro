@@ -72,7 +72,7 @@ const docLinks = [
 				{features.map((feature, i) => {
 					const Icon = iconMap[feature.icon as keyof typeof iconMap];
 					return (
-						<div class={`reveal reveal-delay-${i + 1} scroll-sheen electron-border group relative flex gap-5 rounded-2xl border border-border bg-surface p-6 transition-all hover:border-neon-cyan-dim hover:bg-surface-hover`} style={`--scroll-delay: ${i * 60}ms`}>
+						<div class={`reveal reveal-delay-${i + 1} scroll-sheen electron-border neon-hover group relative flex gap-5 rounded-2xl border border-border p-6 hover:border-neon-cyan-dim`} style={`--scroll-delay: ${i * 60}ms`}>
 							<div class={`flex shrink-0 items-center justify-center size-12 rounded-full bg-neon-cyan-glow border border-neon-cyan-dim text-neon-cyan glow-breathe glow-breathe-delay-${i + 1} transition-shadow group-hover:shadow-[0_0_30px_var(--color-neon-cyan-glow)]`}>
 								<Icon class="size-6" aria-hidden="true" />
 							</div>

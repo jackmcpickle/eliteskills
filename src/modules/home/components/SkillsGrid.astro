@@ -40,7 +40,7 @@ const slugToProduct = new Map(skillProducts.map((p) => [p.skillSlug, p]));
 			</p>
 		</div>
 
-		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+		<div class="snake-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px rounded-xl border border-border overflow-hidden bg-border">
 			{skills.map((skill, i) => {
 				const Icon = iconMap[skill.data.icon as keyof typeof iconMap] ?? Sparkles;
 				const slug = skill.id.replace(/\.md$/, '');
@@ -50,9 +50,9 @@ const slugToProduct = new Map(skillProducts.map((p) => [p.skillSlug, p]));
 
 				return (
 				<a href={href} class:list={[
-					`reveal reveal-delay-${i + 1} scroll-sheen card-glow electron-border group rounded-xl bg-surface p-8 transition-all`,
-					released ? 'hover:bg-surface-hover' : 'opacity-70',
-				]} style={`--scroll-delay: ${i * 50}ms`}>
+					'snake-cell group relative p-8',
+					!released && 'opacity-70',
+				]}>
 					<div class={`flex items-center justify-center size-12 mb-6 rounded-lg bg-neon-cyan-glow border border-neon-cyan-dim text-neon-cyan glow-breathe glow-breathe-delay-${(i % 3) + 1}`}>
 						<Icon class="size-5" aria-hidden="true" />
 					</div>

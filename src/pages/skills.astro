@@ -21,9 +21,15 @@ const locale = resolveLocale(countryCode);
 const dbProducts = await listProducts(db);
 const skillProducts: { id: number; code: string; name: string; price: number; currency: string; lifetime: number; skillSlug: string | null }[] = [];
 
-for (const p of dbProducts) {
-	if (!p.skillSlug) continue;
-	const priceRow = await getProductPrice(db, p.id, continent, countryCode);
+const skillDbProducts = dbProducts.filter((p) => p.skillSlug);
+const priceRows = await Promise.all(
+	skillDbProducts.map((p) => getProductPrice(db, p.id, continent, countryCode)),
+);
+
+for (let i = 0; i < skillDbProducts.length; i += 1) {
+	const p = skillDbProducts[i];
+	if (!p) continue;
+	const priceRow = priceRows[i];
 	skillProducts.push({
 		id: p.id,
 		code: p.code,

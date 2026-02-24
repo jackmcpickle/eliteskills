@@ -32,7 +32,7 @@ const renderedReviews = await Promise.all(
 		<div class="absolute right-0 top-0 bottom-0 w-16 sm:w-32 z-10 bg-gradient-to-l from-void to-transparent pointer-events-none"></div>
 
 		<!-- Track (doubled for seamless loop) -->
-		<div class="marquee-track flex gap-6 w-max">
+		<div class="marquee-track flex gap-6 w-max" data-marquee>
 			{[...renderedReviews, ...renderedReviews].map((review) => (
 				<div class="flex-shrink-0 w-[min(85vw,380px)] rounded-xl border border-border bg-surface p-6 hover:border-neon-cyan-dim transition-colors">
 				<!-- Stars -->
@@ -62,3 +62,68 @@ const renderedReviews = await Promise.all(
 		</div>
 	</div>
 </section>
+
+<script>
+	const track = document.querySelector<HTMLElement>('[data-marquee]');
+	if (track) {
+		const el = track;
+		let startX = 0;
+		let currentTranslate = 0;
+		let dragging = false;
+
+		function getTranslateX(node: HTMLElement): number {
+			const style = window.getComputedStyle(node);
+			const matrix = new DOMMatrix(style.transform);
+			return matrix.m41;
+		}
+
+		function startDrag(x: number): void {
+			dragging = true;
+			startX = x;
+			currentTranslate = getTranslateX(el);
+			el.style.animation = 'none';
+			el.style.transform = `translateX(${currentTranslate}px)`;
+		}
+
+		function moveDrag(x: number): void {
+			if (!dragging) return;
+			const delta = x - startX;
+			const halfWidth = el.scrollWidth / 2;
+			let next = currentTranslate + delta;
+			if (next > 0) next -= halfWidth;
+			if (next < -halfWidth) next += halfWidth;
+			el.style.transform = `translateX(${next}px)`;
+		}
+
+		function endDrag(): void {
+			if (!dragging) return;
+			dragging = false;
+			const pos = getTranslateX(el);
+			const halfWidth = el.scrollWidth / 2;
+			const progress = Math.abs(pos) / halfWidth;
+			el.style.transform = '';
+			el.style.animation = '';
+			el.style.animationDelay = `-${progress * 40}s`;
+		}
+
+		// Touch events
+		el.addEventListener('touchstart', (e) => { if (e.touches[0]) startDrag(e.touches[0].clientX); }, { passive: true });
+		el.addEventListener('touchmove', (e) => { if (e.touches[0]) moveDrag(e.touches[0].clientX); }, { passive: true });
+		el.addEventListener('touchend', endDrag, { passive: true });
+
+		// Mouse events
+		el.style.cursor = 'grab';
+		el.addEventListener('mousedown', (e) => {
+			e.preventDefault();
+			el.style.cursor = 'grabbing';
+			startDrag(e.clientX);
+		});
+		window.addEventListener('mousemove', (e) => moveDrag(e.clientX));
+		window.addEventListener('mouseup', () => {
+			if (dragging) {
+				el.style.cursor = 'grab';
+				endDrag();
+			}
+		});
+	}
+</script>

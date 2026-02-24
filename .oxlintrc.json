@@ -6,7 +6,10 @@
         "no-console": [
             "warn",
             {
-                "allow": ["warn", "error"]
+                "allow": [
+                    "warn",
+                    "error"
+                ]
             }
         ],
         "no-void": [
@@ -26,7 +29,10 @@
         "import/no-unassigned-import": [
             "warn",
             {
-                "allow": ["**/*.css", "**/*.svg"]
+                "allow": [
+                    "**/*.css",
+                    "**/*.svg"
+                ]
             }
         ],
         "max-lines": "off",
@@ -76,7 +82,10 @@
         "react/jsx-filename-extension": [
             "warn",
             {
-                "extensions": [".jsx", ".tsx"]
+                "extensions": [
+                    ".jsx",
+                    ".tsx"
+                ]
             }
         ]
     },
@@ -110,7 +119,9 @@
     ],
     "overrides": [
         {
-            "files": ["*.stories.*"],
+            "files": [
+                "*.stories.*"
+            ],
             "rules": {
                 "no-console": "off",
                 "no-array-index-key": "off",
@@ -120,7 +131,9 @@
             }
         },
         {
-            "files": ["**/ui-core/src/**"],
+            "files": [
+                "**/ui-core/src/**"
+            ],
             "rules": {
                 "no-array-index-key": "off",
                 "jsx-no-jsx-as-prop": "off",
@@ -130,7 +143,9 @@
             }
         },
         {
-            "files": ["**/ui-superit-api/**"],
+            "files": [
+                "**/ui-superit-api/**"
+            ],
             "rules": {
                 "no-unused-vars": "off",
                 "typescript/no-unused-vars": "off"

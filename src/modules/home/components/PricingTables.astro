@@ -46,8 +46,60 @@ const middleTiers = [allSkills, lifetimeAccess].filter(Boolean) as ProductDispla
 		</div>
 
 		<div class="flex flex-col gap-6">
+			<div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
+				{middleTiers.map((tier, i) => {
+					const isLifetime = tier.code === 'bundle-lifetime';
+					const features = isLifetime
+						? ['All 6 elite skills included', 'Instant download', 'Use with any AI coding tool', 'Community Discord access', 'All future updates included', 'New skills as they launch', 'Priority support']
+						: ['All 6 elite skills included', 'Instant download', 'Use with any AI coding tool', 'Community Discord access', 'Current version snapshot'];
+
+					return (
+						<div class={`reveal reveal-delay-${i + 1} relative rounded-2xl p-8 sm:p-10 transition-all flex flex-col ${
+							isLifetime
+								? 'border-2 border-neon-cyan bg-surface shadow-[0_0_60px_var(--color-neon-cyan-glow)]'
+								: 'border border-border bg-surface hover:border-neon-cyan-dim'
+						}`}>
+						{isLifetime && (
+							<div class="shimmer absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-neon-cyan text-void font-mono text-xs font-700 tracking-wider uppercase">
+								Best Value
+							</div>
+						)}
+
+						<h3 class="font-display text-xl font-700 text-white mb-2">{tier.name}</h3>
+						<p class="text-sm text-ghost mb-8">
+							{isLifetime ? 'Every update, every new skill, forever.' : 'Get the full skill pack as it exists today.'}
+						</p>
+
+						<div class="flex items-baseline gap-1 mb-8">
+							<span class={`font-display text-5xl sm:text-6xl font-900 tracking-tight ${isLifetime ? 'text-neon-cyan' : 'text-white'}`}>
+								{formatMoney(tier.price, tier.currency, locale)}
+							</span>
+							<span class="font-mono text-sm text-ghost ml-1">/ {isLifetime ? 'lifetime' : 'once'}</span>
+						</div>
+
+						<ul class="space-y-3 mb-10 flex-1">
+							{features.map((feature) => (
+								<li class="flex items-start gap-3 text-sm">
+									<Check class={`size-4 mt-0.5 ${isLifetime ? 'text-neon-cyan' : 'text-neon-green'}`} aria-hidden="true" />
+									<span class="text-cloud">{feature}</span>
+								</li>
+							))}
+						</ul>
+
+						<a href={`/checkout/${tier.id}`} class={`block w-full text-center py-4 rounded-lg font-mono text-sm font-600 tracking-wide uppercase transition-all ${
+							isLifetime
+								? 'bg-neon-cyan text-void hover:shadow-[0_0_40px_var(--color-neon-cyan-dim)]'
+								: 'border border-slate-mid text-mist hover:border-neon-cyan-dim hover:text-neon-cyan'
+						}`}>
+							{isLifetime ? 'Get Lifetime Access' : 'Buy Now'}
+						</a>
+						</div>
+					);
+				})}
+			</div>
+
 			{singleSkill && (
-				<a href={`/checkout/${singleSkill.id}`} class="reveal reveal-delay-1 group relative rounded-xl border border-border bg-surface hover:border-neon-cyan-dim p-5 sm:p-6 transition-all">
+				<a href={`/checkout/${singleSkill.id}`} class="reveal reveal-delay-3 group relative rounded-xl border border-border bg-surface hover:border-neon-cyan-dim p-5 sm:p-6 transition-all">
 					<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
 						<div class="flex-1 min-w-0">
 							<h3 class="font-display text-lg font-700 text-white">Single Skill</h3>
@@ -80,58 +132,6 @@ const middleTiers = [allSkills, lifetimeAccess].filter(Boolean) as ProductDispla
 					</div>
 				</a>
 			)}
-
-			<div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-				{middleTiers.map((tier, i) => {
-					const isLifetime = tier.code === 'bundle-lifetime';
-					const features = isLifetime
-						? ['All 6 elite skills included', 'Instant download', 'Use with any AI coding tool', 'Community Discord access', 'All future updates included', 'New skills as they launch', 'Priority support']
-						: ['All 6 elite skills included', 'Instant download', 'Use with any AI coding tool', 'Community Discord access', 'Current version snapshot'];
-
-					return (
-						<div class={`reveal reveal-delay-${i + 2} relative rounded-2xl p-8 sm:p-10 transition-all ${
-							isLifetime
-								? 'border-2 border-neon-cyan bg-surface shadow-[0_0_60px_var(--color-neon-cyan-glow)]'
-								: 'border border-border bg-surface hover:border-neon-cyan-dim'
-						}`}>
-						{isLifetime && (
-							<div class="shimmer absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-neon-cyan text-void font-mono text-xs font-700 tracking-wider uppercase">
-								Best Value
-							</div>
-						)}
-
-						<h3 class="font-display text-xl font-700 text-white mb-2">{tier.name}</h3>
-						<p class="text-sm text-ghost mb-8">
-							{isLifetime ? 'Every update, every new skill, forever.' : 'Get the full skill pack as it exists today.'}
-						</p>
-
-						<div class="flex items-baseline gap-1 mb-8">
-							<span class={`font-display text-5xl sm:text-6xl font-900 tracking-tight ${isLifetime ? 'text-neon-cyan' : 'text-white'}`}>
-								{formatMoney(tier.price, tier.currency, locale)}
-							</span>
-							<span class="font-mono text-sm text-ghost ml-1">/ {isLifetime ? 'lifetime' : 'once'}</span>
-						</div>
-
-						<ul class="space-y-3 mb-10">
-							{features.map((feature) => (
-								<li class="flex items-start gap-3 text-sm">
-									<Check class={`size-4 mt-0.5 ${isLifetime ? 'text-neon-cyan' : 'text-neon-green'}`} aria-hidden="true" />
-									<span class="text-cloud">{feature}</span>
-								</li>
-							))}
-						</ul>
-
-						<a href={`/checkout/${tier.id}`} class={`block w-full text-center py-4 rounded-lg font-mono text-sm font-600 tracking-wide uppercase transition-all ${
-							isLifetime
-								? 'bg-neon-cyan text-void hover:shadow-[0_0_40px_var(--color-neon-cyan-dim)]'
-								: 'border border-slate-mid text-mist hover:border-neon-cyan-dim hover:text-neon-cyan'
-						}`}>
-							{isLifetime ? 'Get Lifetime Access' : 'Buy Now'}
-						</a>
-						</div>
-					);
-				})}
-			</div>
 
 			{teams && (
 				<a href={`/checkout/${teams.id}`} class="reveal reveal-delay-4 group relative rounded-xl border border-border/60 bg-surface/50 hover:border-neon-cyan-dim p-5 sm:p-6 transition-all">

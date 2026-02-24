@@ -7,7 +7,7 @@ import { verifyToken } from '@/libs/api/tokens';
 import { isStripeConfigured, getCheckoutSession } from '@/libs/api/stripe';
 import { createDb } from '@/libs/db/client';
 import { getProductById, getProductPrice } from '@/libs/db/repo';
-import { resolveContinent, resolveCountryCode, resolveLocale } from '@/libs/geo';
+import { resolveContinent, resolveCountryCode } from '@/libs/geo';
 import { formatMoney } from '@/utils/format-money';
 
 type PayState = 'loading' | 'unpaid' | 'paid' | 'expired' | 'error';

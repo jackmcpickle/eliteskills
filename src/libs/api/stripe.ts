@@ -54,11 +54,11 @@ export async function getCheckoutSession(
 }
 
 /** Construct and verify a Stripe webhook event. */
-export async function constructWebhookEvent(
+export function constructWebhookEvent(
     body: string,
     signature: string,
     webhookSecret: string,
-): Promise<StripeTypes.Event> {
+): StripeTypes.Event {
     const stripe = getStripeClient();
     return stripe.webhooks.constructEvent(body, signature, webhookSecret);
 }

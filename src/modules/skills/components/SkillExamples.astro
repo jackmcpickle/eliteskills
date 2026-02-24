@@ -1,10 +1,13 @@
 ---
+import { skillSlashCommand } from "@/utils/skill-command";
+
 interface Props {
     title: string;
     examples: { label: string; command: string }[];
 }
 
 const { examples, title } = Astro.props;
+const command = skillSlashCommand(title);
 ---
 
 <section class="mt-12">
@@ -25,17 +28,7 @@ const { examples, title } = Astro.props;
                             {example.label}
                         </span>
                     </div>
-                    <pre class="p-5 font-mono text-xs leading-relaxed text-cloud">
-                        <code class="whitespace-pre">
-                            <>
-                                <span class="text-neon-cyan select-none">
-                                    &gt;
-                                </span>
-                                <span>/elite-{title.toLowerCase()}</span>
-                            </>{" "}
-                            {example.command}
-                        </code>
-                    </pre>
+                    <pre class="p-5 font-mono text-xs leading-relaxed text-cloud"><code><span class="text-neon-cyan select-none">&gt; </span>{command} {example.command}</code></pre>
                 </div>
             ))
         }

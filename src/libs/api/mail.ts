@@ -9,6 +9,7 @@ interface SendMailOptions {
     to: string[];
     subject: string;
     text: string;
+    html?: string;
 }
 
 function isConfigured(): boolean {
@@ -31,6 +32,7 @@ export async function sendMail(options: SendMailOptions): Promise<void> {
         to: options.to,
         subject: options.subject,
         text: options.text,
+        ...(options.html ? { html: options.html } : {}),
     });
 }
 

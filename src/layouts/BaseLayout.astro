@@ -22,6 +22,13 @@ const {
 	jsonLd,
 	noindex = false,
 } = Astro.props;
+
+let hasSession = false;
+try {
+	hasSession = Boolean(Astro.cookies.get('account_key')?.value);
+} catch {
+	// Cookies unavailable on prerendered pages
+}
 ---
 
 <html lang="en">
@@ -62,6 +69,7 @@ const {
 		<!-- JSON-LD structured data -->
 		{jsonLd && (
 			<script
+				is:inline
 				type="application/ld+json"
 				set:html={JSON.stringify(Array.isArray(jsonLd) ? jsonLd : [jsonLd])}
 			/>
@@ -71,6 +79,11 @@ const {
 		<a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:rounded-lg focus:bg-neon-cyan focus:px-4 focus:py-2 focus:font-mono focus:text-sm focus:text-void">
 			Skip to content
 		</a>
+		<nav class="fixed top-0 right-0 z-40 flex items-center gap-4 px-6 py-4">
+			{hasSession && <a href="/account" class="font-mono text-xs uppercase tracking-wide text-mist hover:text-neon-cyan transition-colors">Account</a>}
+			{hasSession && <a href="/api/logout" class="font-mono text-xs uppercase tracking-wide text-mist hover:text-neon-cyan transition-colors">Logout</a>}
+			{!hasSession && <a href="/login" class="font-mono text-xs uppercase tracking-wide text-mist hover:text-neon-cyan transition-colors">Login</a>}
+		</nav>
 		<slot />
 	</body>
 </html>

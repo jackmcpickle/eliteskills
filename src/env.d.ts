@@ -10,8 +10,8 @@ type CloudflareBindings = {
 declare global {
     namespace App {
         // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-        interface Locals extends Runtime<CloudflareBindings> {}
+        interface Locals extends Runtime<CloudflareBindings> { }
     }
 }
 
-export {};
+export { };

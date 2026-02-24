@@ -24,6 +24,7 @@ import {
     resolveLocale,
 } from "@/libs/geo";
 import { formatMoney } from "@/utils/format-money";
+import { skillSlug } from "@/utils/skill-command";
 import {
     SkillInstall,
     SkillStructure,
@@ -79,8 +80,14 @@ let skillCurrency = "usd";
 let bundlePrice: number | null = null;
 let bundleCurrency = "usd";
 
-for (const p of dbProducts) {
-    const priceRow = await getProductPrice(db, p.id, continent, countryCode);
+const priceRows = await Promise.all(
+    dbProducts.map((p) => getProductPrice(db, p.id, continent, countryCode)),
+);
+
+for (let i = 0; i < dbProducts.length; i += 1) {
+    const p = dbProducts[i];
+    if (!p) continue;
+    const priceRow = priceRows[i];
     if (p.skillSlug && p.id === skillProductId) {
         skillPrice = priceRow?.price ?? null;
         skillCurrency = priceRow?.currency ?? "usd";
@@ -114,9 +121,9 @@ const Icon = iconMap[icon as keyof typeof iconMap] ?? Sparkles;
                 <div>
                     <div class="flex items-center gap-3">
                         <h1
-                            class="font-display text-4xl sm:text-5xl font-800 text-white tracking-tight"
+                            class="font-display text-4xl sm:text-5xl font-800 tracking-tight"
                         >
-                            {title}
+                            <span class="text-white">/elite-</span><span class="text-neon-cyan">{skillSlug(title)}</span>
                         </h1>
                         {
                             !released && (

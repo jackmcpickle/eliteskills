@@ -149,7 +149,7 @@ const { productId, productName, price, currency, locale } = Astro.props;
 					body: formData,
 				});
 
-				const result = await response.json();
+				const result = (await response.json()) as { paymentUrl?: string; error?: string };
 
 				if (!response.ok) {
 					statusNode.textContent = result.error || 'Checkout failed.';

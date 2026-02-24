@@ -32,9 +32,15 @@ const countryCode = resolveCountryCode(cf, Astro.request.headers.get('cf-ipcount
 const locale = resolveLocale(countryCode);
 
 // Build product map with geo price + currency
+const priceRows = await Promise.all(
+	dbProducts.map((p) => getProductPrice(db, p.id, continent, countryCode)),
+);
+
 const productMap = new Map<number, { id: number; code: string; name: string; price: number; currency: string; lifetime: number; skillSlug: string | null }>();
-for (const p of dbProducts) {
-	const priceRow = await getProductPrice(db, p.id, continent, countryCode);
+for (let i = 0; i < dbProducts.length; i += 1) {
+	const p = dbProducts[i];
+	if (!p) continue;
+	const priceRow = priceRows[i];
 	productMap.set(p.id, {
 		id: p.id,
 		code: p.code,
@@ -96,9 +102,9 @@ const reviewJsonLd = {
 	jsonLd={[websiteJsonLd, ...productJsonLd, reviewJsonLd]}
 >
 	<HeroBanner />
+	<WhatAreSkills />
 	<SkillsGrid skillProducts={skillProducts} locale={locale} />
 	<MetricsBar />
-	<WhatAreSkills />
 	<ReviewsMarquee />
 	<BenefitsSection />
 	<DifferentiatorSection />

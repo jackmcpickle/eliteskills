@@ -10,8 +10,9 @@ function buildTree(paths: string[]): string {
     const lines: string[] = [];
     lines.push(`.claude/skills/${slug}/`);
 
-    for (let i = 0; i < paths.length; i++) {
+    for (let i = 0; i < paths.length; i += 1) {
         const path = paths[i];
+        if (!path) continue;
         const depth = path.split("/").length - 1;
         const isLast =
             i === paths.length - 1 ||

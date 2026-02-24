@@ -3,7 +3,7 @@ export const prerender = false;
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { createDb } from '@/libs/db/client';
-import { getUserByAccountKey, getPurchasesByUserId, getInstallKeysByPurchaseId, getProductById } from '@/libs/db/repo';
+import { getUserByAccountKey, getPurchasesByUserId, getInstallKeysByPurchaseId, getProductById, listSkillProducts } from '@/libs/db/repo';
 import { formatMoney, isZeroDecimalCurrency } from '@/utils/format-money';
 
 const { accountKey } = Astro.params;
@@ -16,7 +16,17 @@ const user = await getUserByAccountKey(db, accountKey);
 
 if (!user) return Astro.redirect('/404');
 
+// Set session cookie on visit
+Astro.cookies.set('account_key', accountKey, {
+	httpOnly: true,
+	secure: true,
+	sameSite: 'lax',
+	path: '/',
+	maxAge: 60 * 60 * 24 * 30,
+});
+
 const purchases = await getPurchasesByUserId(db, user.id);
+const allSkillProducts = await listSkillProducts(db);
 
 type PurchaseDisplay = {
 	id: string;
@@ -24,6 +34,8 @@ type PurchaseDisplay = {
 	productId: number;
 	amountPaid: string;
 	date: string;
+	skillSlug: string | null;
+	installCommands: string[];
 	installKeys: Array<{ key: string; downloadCount: number; createdAt: string }>;
 };
 
@@ -31,10 +43,22 @@ const purchaseDisplays: PurchaseDisplay[] = await Promise.all(
 	purchases.map(async (p) => {
 		const product = await getProductById(db, p.productId);
 		const keys = await getInstallKeysByPurchaseId(db, p.id);
+
+		// Build install commands
+		let installCommands: string[] = [];
+		if (product?.skillSlug) {
+			installCommands = [`npx elite-skills install ${product.skillSlug}`];
+		} else if (product) {
+			// Bundle — list all individual skill install commands
+			installCommands = allSkillProducts.map((sp) => `npx elite-skills install ${sp.skillSlug}`);
+		}
+
 		return {
 			id: p.id,
 			productName: product?.name ?? `Product #${p.productId}`,
 			productId: p.productId,
+			skillSlug: product?.skillSlug ?? null,
+			installCommands,
 			amountPaid: p.amountTotal
 				? formatMoney(
 						isZeroDecimalCurrency(p.currency ?? 'usd')
@@ -63,7 +87,30 @@ const purchaseDisplays: PurchaseDisplay[] = await Promise.all(
 		<div class="max-w-3xl mx-auto">
 			<p class="font-mono text-xs tracking-[0.28em] uppercase text-neon-cyan mb-4">Account</p>
 			<h1 class="font-display text-4xl font-800 text-white mb-2">{user.name ?? 'Your Account'}</h1>
-			<p class="text-mist text-sm mb-10">{user.email}</p>
+			<p class="text-mist text-sm mb-4">{user.email}</p>
+
+			<!-- Name edit form -->
+			<form method="POST" action="/api/update-profile" class="mb-10 flex items-end gap-3">
+				<input type="hidden" name="accountKey" value={accountKey} />
+				<div class="flex-1">
+					<label for="name" class="mb-1 block text-xs text-ghost font-mono uppercase tracking-wide">Name</label>
+					<input
+						id="name"
+						name="name"
+						type="text"
+						value={user.name ?? ''}
+						required
+						maxlength="100"
+						class="w-full rounded-lg border border-slate-mid bg-abyss px-4 py-2.5 text-sm text-white placeholder:text-ghost focus:border-neon-cyan focus:outline-none"
+					/>
+				</div>
+				<button
+					type="submit"
+					class="rounded-lg border border-slate-mid px-5 py-2.5 font-mono text-xs uppercase tracking-wide text-mist hover:border-neon-cyan-dim hover:text-neon-cyan transition-all"
+				>
+					Update
+				</button>
+			</form>
 
 			{purchaseDisplays.length === 0 && (
 				<div class="rounded-2xl border border-border bg-surface p-10 text-center">
@@ -90,6 +137,25 @@ const purchaseDisplays: PurchaseDisplay[] = await Promise.all(
 						</form>
 					</div>
 
+					{/* Install commands */}
+					{purchase.installCommands.length > 0 && (
+						<div class="mb-6 space-y-2">
+							<p class="font-mono text-xs uppercase tracking-[0.2em] text-ghost">Install command{purchase.installCommands.length > 1 ? 's' : ''}</p>
+							{purchase.installCommands.map((cmd) => (
+								<div class="flex items-center gap-2 rounded-lg border border-slate-mid bg-abyss px-4 py-3">
+									<code class="flex-1 text-sm text-neon-green break-all select-all">{cmd}</code>
+									<button
+										type="button"
+										class="copy-btn shrink-0 rounded border border-slate-mid px-2.5 py-1.5 font-mono text-xs text-ghost hover:border-neon-cyan-dim hover:text-neon-cyan transition-all"
+										data-copy={cmd}
+									>
+										Copy
+									</button>
+								</div>
+							))}
+						</div>
+					)}
+
 					{purchase.installKeys.length > 0 && (
 						<div class="space-y-3">
 							<p class="font-mono text-xs uppercase tracking-[0.2em] text-ghost">Install URLs</p>
@@ -112,7 +178,33 @@ const purchaseDisplays: PurchaseDisplay[] = await Promise.all(
 			<div class="mt-10 flex gap-3">
 				<a href="/" class="rounded-lg border border-slate-mid px-6 py-3 font-mono text-xs uppercase tracking-wide text-mist hover:border-neon-cyan-dim hover:text-neon-cyan">Back home</a>
 				<a href="/contact" class="rounded-lg border border-slate-mid px-6 py-3 font-mono text-xs uppercase tracking-wide text-mist hover:border-neon-cyan-dim hover:text-neon-cyan">Contact</a>
+				<a href="/api/logout" class="rounded-lg border border-slate-mid px-6 py-3 font-mono text-xs uppercase tracking-wide text-mist hover:border-neon-cyan-dim hover:text-neon-cyan">Logout</a>
 			</div>
 		</div>
 	</main>
 </BaseLayout>
+
+<script>
+	document.querySelectorAll('.copy-btn').forEach((btn) => {
+		btn.addEventListener('click', async () => {
+			const text = (btn as HTMLElement).dataset.copy;
+			if (!text) return;
+			try {
+				await navigator.clipboard.writeText(text);
+				const original = btn.textContent;
+				btn.textContent = 'Copied!';
+				setTimeout(() => { btn.textContent = original; }, 1500);
+			} catch {
+				// Fallback: select the code text
+				const code = btn.previousElementSibling;
+				if (code) {
+					const range = document.createRange();
+					range.selectNodeContents(code);
+					const sel = window.getSelection();
+					sel?.removeAllRanges();
+					sel?.addRange(range);
+				}
+			}
+		});
+	});
+</script>

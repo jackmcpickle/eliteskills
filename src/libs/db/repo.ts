@@ -83,6 +83,18 @@ export async function getUserByEmail(
         .get();
 }
 
+/** Update user name by account key. */
+export async function updateUserName(
+    db: AppDb,
+    accountKey: string,
+    name: string,
+): Promise<void> {
+    await db
+        .update(users)
+        .set({ name, updatedAt: now() })
+        .where(eq(users.accountKey, accountKey));
+}
+
 // ── Products ───────────────────────────────────────────────────────
 
 /** Get product by id. */

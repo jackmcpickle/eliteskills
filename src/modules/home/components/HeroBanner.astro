@@ -70,12 +70,18 @@
 			phase: Math.random() * Math.PI * 2,
 			driftRadius: 10 + Math.random() * 15,
 			driftSpeed: 0.2 + Math.random() * 0.4,
-			mouseStrength: 20 + Math.random() * 60, // 20–80px max displacement
-			mouseAngle: Math.random() * Math.PI * 2, // random axis offset
-			mouseRatioX: 0.3 + Math.random() * 0.7, // 0.3–1.0 x sensitivity
-			mouseRatioY: 0.3 + Math.random() * 0.7, // 0.3–1.0 y sensitivity
-			invert: Math.random() > 0.5 ? -1 : 1, // some move opposite
-			lerp: 0.02 + Math.random() * 0.04, // 0.02–0.06 smoothing
+			// 20–80px max displacement
+			mouseStrength: 20 + Math.random() * 60,
+			// random axis offset
+			mouseAngle: Math.random() * Math.PI * 2,
+			// 0.3–1.0 x sensitivity
+			mouseRatioX: 0.3 + Math.random() * 0.7,
+			// 0.3–1.0 y sensitivity
+			mouseRatioY: 0.3 + Math.random() * 0.7,
+			// some move opposite
+			invert: Math.random() > 0.5 ? -1 : 1,
+			// 0.02–0.06 smoothing
+			lerp: 0.02 + Math.random() * 0.04,
 		}));
 		let mouseX = 0;
 		let mouseY = 0;
@@ -88,8 +94,11 @@
 
 		function tick(t: number): void {
 			const s = t * 0.001;
-			for (let i = 0; i < particles.length; i++) {
+			for (let i = 0; i < particles.length; i += 1) {
 				const c = configs[i];
+				const o = offsets[i];
+				const p = particles[i];
+				if (!c || !o || !p) continue;
 				const driftX = Math.sin(s * c.driftSpeed + c.phase) * c.driftRadius;
 				const driftY = Math.cos(s * c.driftSpeed * 0.7 + c.phase) * c.driftRadius;
 				const mx = mouseX * c.mouseRatioX * c.invert;
@@ -98,9 +107,9 @@
 				const rotatedY = mx * Math.sin(c.mouseAngle) + my * Math.cos(c.mouseAngle);
 				const targetX = driftX + rotatedX * c.mouseStrength;
 				const targetY = driftY + rotatedY * c.mouseStrength;
-				offsets[i].x += (targetX - offsets[i].x) * c.lerp;
-				offsets[i].y += (targetY - offsets[i].y) * c.lerp;
-				particles[i].style.transform = `translate(${offsets[i].x}px, ${offsets[i].y}px)`;
+				o.x += (targetX - o.x) * c.lerp;
+				o.y += (targetY - o.y) * c.lerp;
+				p.style.transform = `translate(${o.x}px, ${o.y}px)`;
 			}
 			requestAnimationFrame(tick);
 		}

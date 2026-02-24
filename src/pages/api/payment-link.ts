@@ -2,6 +2,7 @@ export const prerender = false;
 
 import type { APIRoute } from 'astro';
 import { SESSION_TOKEN_SECRET, PAY_TOKEN_SECRET } from 'astro:env/server';
+import { z } from 'zod';
 import { sendMail, isMailConfigured, getAdminEmail } from '@/libs/api/mail';
 import {
     isRateLimited,
@@ -9,11 +10,12 @@ import {
     PAYMENT_LINK_JTI,
     PAYMENT_LINK_EMAIL,
 } from '@/libs/api/rate-limit';
-import { parseBearer, parseJsonBody, jsonError, jsonOk } from '@/libs/api/spam';
+import { parseBearer, jsonError, jsonOk } from '@/libs/api/spam';
 import { isStripeConfigured, createCheckoutSession } from '@/libs/api/stripe';
 import { verifyToken, createToken } from '@/libs/api/tokens';
 import { createDb } from '@/libs/db/client';
 import { getProductById, getProductPrice } from '@/libs/db/repo';
+import type { Continent } from '@/libs/geo';
 import { resolveContinent, resolveCountryCode } from '@/libs/geo';
 import { formatMoney } from '@/utils/format-money';
 
@@ -22,42 +24,44 @@ const SITE_URL = 'https://eliteskills.ai';
 /** Pay token TTL: 1 hour */
 const PAY_TOKEN_TTL_SECONDS = 3600;
 
-interface PaymentLinkBody {
-    productId: number;
-    name: string;
-    email: string;
-    purchaseKind?: string;
-    companyName?: string;
-    addressLine1?: string;
-    addressLine2?: string;
-    city?: string;
-    postalCode?: string;
-    country?: string;
-}
+const CONTINENT_CODES = ['NA', 'SA', 'EU', 'AF', 'AS', 'OC', 'AN'] as const;
 
-function validateBody(body: PaymentLinkBody): string | null {
-    if (!body.productId) return 'Invalid product.';
-    if (!body.name?.trim()) return 'Name required.';
-    if (!body.email?.trim()) return 'Email required.';
+const paymentLinkSchema = z
+    .object({
+        productId: z
+            .number({
+                message:
+                    'productId must be a number (see /llms.txt for valid IDs)',
+            })
+            .int()
+            .positive(),
+        name: z.string().trim().min(1, 'Name required.'),
+        email: z.string().trim().pipe(z.email('Email invalid.')),
+        region: z.enum(CONTINENT_CODES).optional(),
+        purchaseKind: z.enum(['personal', 'company']).default('personal'),
+        companyName: z.string().trim().optional(),
+        addressLine1: z.string().trim().optional(),
+        addressLine2: z.string().trim().optional(),
+        city: z.string().trim().optional(),
+        postalCode: z.string().trim().optional(),
+        country: z.string().trim().optional(),
+    })
+    .refine(
+        (d) =>
+            d.purchaseKind !== 'company' ||
+            (!!d.companyName &&
+                !!d.addressLine1 &&
+                !!d.city &&
+                !!d.postalCode &&
+                !!d.country),
+        {
+            message:
+                'Company name, addressLine1, city, postalCode, and country are required when purchaseKind is "company".',
+            path: ['companyName'],
+        },
+    );
 
-    const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(body.email);
-    if (!emailValid) return 'Email invalid.';
-
-    if (body.purchaseKind === 'company') {
-        if (!body.companyName?.trim())
-            return 'Company name required for receipt.';
-        if (
-            !body.addressLine1?.trim() ||
-            !body.city?.trim() ||
-            !body.postalCode?.trim() ||
-            !body.country?.trim()
-        ) {
-            return 'Complete company address required for receipt.';
-        }
-    }
-
-    return null;
-}
+type PaymentLinkBody = z.infer<typeof paymentLinkSchema>;
 
 function buildMetadata(body: PaymentLinkBody): Record<string, string> {
     const base: Record<string, string> = {
@@ -158,11 +162,21 @@ export const POST: APIRoute = async ({ request, clientAddress, locals }) => {
         return jsonError('Too many requests on this session. Try later.', 429);
     }
 
-    const body = await parseJsonBody<PaymentLinkBody>(request);
-    if (!body) return jsonError('Invalid JSON body.', 400);
+    let raw: unknown;
+    try {
+        raw = await request.json();
+    } catch {
+        return jsonError('Invalid JSON body.', 400);
+    }
 
-    const error = validateBody(body);
-    if (error) return jsonError(error, 400);
+    const parsed = paymentLinkSchema.safeParse(raw);
+    if (!parsed.success) {
+        const issues = parsed.error.issues
+            .map((i) => `${i.path.join('.')}: ${i.message}`)
+            .join('; ');
+        return jsonError(issues, 400);
+    }
+    const body = parsed.data;
 
     if (
         isRateLimited('pl:email', body.email.toLowerCase(), PAYMENT_LINK_EMAIL)
@@ -179,14 +193,12 @@ export const POST: APIRoute = async ({ request, clientAddress, locals }) => {
     const cf = locals.runtime.cf as
         | { continent?: string; country?: string }
         | undefined;
-    const continent = resolveContinent(
-        cf,
-        request.headers.get('cf-ipcontinent'),
-    );
-    const countryCode = resolveCountryCode(
-        cf,
-        request.headers.get('cf-ipcountry'),
-    );
+    const continent: Continent =
+        body.region ??
+        resolveContinent(cf, request.headers.get('cf-ipcontinent'));
+    const countryCode = body.region
+        ? ''
+        : resolveCountryCode(cf, request.headers.get('cf-ipcountry'));
 
     const priceRow = await getProductPrice(
         db,

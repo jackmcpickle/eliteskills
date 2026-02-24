@@ -2,6 +2,11 @@ export const prerender = false;
 
 import type { APIRoute } from 'astro';
 import { STRIPE_WEBHOOK_SECRET } from 'astro:env/server';
+import {
+    type EmailContext,
+    buildAdminEmailText,
+    buildCustomerEmail,
+} from '@/libs/api/email-templates';
 import { sendMail, isMailConfigured, getAdminEmail } from '@/libs/api/mail';
 import { isRateLimited, WEBHOOK_IP } from '@/libs/api/rate-limit';
 import { jsonError, jsonOk } from '@/libs/api/spam';
@@ -40,6 +45,24 @@ interface CheckoutSessionData {
     metadata: Record<string, string>;
 }
 
+function resolveAmountPaid(session: CheckoutSessionData): string {
+    const priceCurrency =
+        session.metadata?.priceCurrency ?? session.currency ?? 'usd';
+    if (!session.amount_total) return 'unknown';
+    const amount = isZeroDecimalCurrency(priceCurrency)
+        ? session.amount_total
+        : session.amount_total / 100;
+    return formatMoney(amount, priceCurrency);
+}
+
+function computePriceSnapshot(
+    amountTotal: number | null,
+    currency: string,
+): number | null {
+    if (!amountTotal) return null;
+    return isZeroDecimalCurrency(currency) ? amountTotal : amountTotal / 100;
+}
+
 async function handleCheckoutCompleted(
     session: CheckoutSessionData,
     d1: D1Database,
@@ -49,16 +72,7 @@ async function handleCheckoutCompleted(
     const source = session.metadata?.source ?? 'unknown';
     const email = session.customer_email ?? 'no-email';
     const continent = session.metadata?.continent ?? 'NA';
-    const priceCurrency =
-        session.metadata?.priceCurrency ?? session.currency ?? 'usd';
-    const amountPaid = session.amount_total
-        ? formatMoney(
-              isZeroDecimalCurrency(priceCurrency)
-                  ? session.amount_total
-                  : session.amount_total / 100,
-              priceCurrency,
-          )
-        : 'unknown';
+    const amountPaid = resolveAmountPaid(session);
 
     // Resolve product id from metadata
     const metaProductId = Number(session.metadata?.productId);
@@ -77,6 +91,7 @@ async function handleCheckoutCompleted(
                 to: [getAdminEmail()],
                 subject: `WARN: Unknown product in payment (${email})`,
                 text: `Session: ${session.id}\nMetadata productId: ${session.metadata?.productId}\nEmail: ${email}`,
+                // non-fatal
             }).catch(() => {});
         }
         return;
@@ -85,7 +100,6 @@ async function handleCheckoutCompleted(
     // Persist user + purchase
     const user = await upsertUserByEmail(db, email, customerName);
     const purchaseCurrency = session.currency ?? 'usd';
-    const zeroDec = isZeroDecimalCurrency(purchaseCurrency);
     await createPurchase(db, {
         userId: user.id,
         stripeSessionId: session.id,
@@ -95,11 +109,10 @@ async function handleCheckoutCompleted(
         currency: purchaseCurrency,
         paymentStatus: session.payment_status,
         pricingContinent: continent,
-        priceSnapshot: session.amount_total
-            ? zeroDec
-                ? session.amount_total
-                : session.amount_total / 100
-            : null,
+        priceSnapshot: computePriceSnapshot(
+            session.amount_total,
+            purchaseCurrency,
+        ),
         metadata: session.metadata,
     });
 
@@ -107,45 +120,31 @@ async function handleCheckoutCompleted(
 
     if (!isMailConfigured()) return;
 
+    const ctx: EmailContext = {
+        session,
+        customerName,
+        email,
+        source,
+        continent,
+        amountPaid,
+        productName: product.name,
+        productCode: product.code,
+        accountUrl,
+    };
+
     try {
         await sendMail({
             to: [getAdminEmail()],
             subject: `Payment received: ${product.name} (${email})`,
-            text: [
-                'Payment completed',
-                '',
-                `Session: ${session.id}`,
-                `Product: ${product.name} (${product.code})`,
-                `Amount: ${amountPaid}`,
-                `Customer: ${customerName}`,
-                `Email: ${email}`,
-                `Source: ${source}`,
-                `Continent: ${continent}`,
-                `Account: ${accountUrl}`,
-                '',
-                `Purchase type: ${session.metadata?.purchaseKind ?? 'personal'}`,
-                session.metadata?.companyName
-                    ? `Company: ${session.metadata.companyName}`
-                    : '',
-            ]
-                .filter(Boolean)
-                .join('\n'),
+            text: buildAdminEmailText(ctx),
         });
 
+        const customerEmail = buildCustomerEmail(ctx);
         await sendMail({
             to: [email],
             subject: 'Payment confirmed — Elite Skills',
-            text: [
-                `Hi ${customerName},`,
-                '',
-                `Your payment of ${amountPaid} has been received.`,
-                '',
-                'Access your account and download your skills here:',
-                accountUrl,
-                '',
-                'Thanks,',
-                'Elite Skills',
-            ].join('\n'),
+            text: customerEmail.text,
+            html: customerEmail.html,
         });
     } catch {
         // Non-fatal: payment is already captured by Stripe
@@ -167,11 +166,7 @@ export const POST: APIRoute = async ({ request, clientAddress, locals }) => {
 
     let event;
     try {
-        event = await constructWebhookEvent(
-            body,
-            signature,
-            STRIPE_WEBHOOK_SECRET,
-        );
+        event = constructWebhookEvent(body, signature, STRIPE_WEBHOOK_SECRET);
     } catch {
         return jsonError('Invalid signature.', 400);
     }

@@ -20,20 +20,11 @@ const encoder = new TextEncoder();
 
 function toBase64Url(buf: Uint8Array | ArrayBuffer): string {
     const bytes = buf instanceof Uint8Array ? buf : new Uint8Array(buf);
-    let binary = '';
-    for (const b of bytes) binary += String.fromCharCode(b);
-    return btoa(binary)
-        .replace(/\+/g, '-')
-        .replace(/\//g, '_')
-        .replace(/=+$/, '');
+    return Buffer.from(bytes).toString('base64url');
 }
 
 function fromBase64Url(str: string): Uint8Array {
-    const padded = str.replace(/-/g, '+').replace(/_/g, '/');
-    const binary = atob(padded);
-    const bytes = new Uint8Array(binary.length);
-    for (let i = 0; i < binary.length; i += 1) bytes[i] = binary.charCodeAt(i);
-    return bytes;
+    return new Uint8Array(Buffer.from(str, 'base64url'));
 }
 
 async function getKey(secret: string): Promise<CryptoKey> {

@@ -45,11 +45,19 @@ if (sessionId && isStripeConfigured()) {
 							? session.amount_total
 							: session.amount_total / 100
 						: null,
-					metadata: session.metadata as Record<string, string> | undefined,
+					...(session.metadata ? { metadata: session.metadata as Record<string, string> } : {}),
 				});
 			}
 
 			accountUrl = `/account/${user.accountKey}`;
+
+			Astro.cookies.set('account_key', user.accountKey, {
+				httpOnly: true,
+				secure: true,
+				sameSite: 'lax',
+				path: '/',
+				maxAge: 60 * 60 * 24 * 30,
+			});
 		}
 	} catch {
 		// Non-fatal: account link not available, user can use email link

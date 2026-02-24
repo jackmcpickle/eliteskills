@@ -69,6 +69,7 @@ export async function timingSafeEqual(a: string, b: string): Promise<boolean> {
     const bufB = new Uint8Array(keyB);
     if (bufA.length !== bufB.length) return false;
     let mismatch = 0;
+    // oxlint-disable-next-line no-bitwise, typescript/no-non-null-assertion -- intentional for timing-safe compare
     for (let i = 0; i < bufA.length; i += 1) mismatch |= bufA[i]! ^ bufB[i]!;
     return mismatch === 0;
 }

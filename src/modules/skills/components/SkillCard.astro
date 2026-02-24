@@ -58,6 +58,7 @@ const Icon = iconMap[icon as keyof typeof iconMap] ?? Sparkles;
         <div class="flex items-center gap-4 mb-6">
             <div
                 class="flex items-center justify-center size-14 rounded-xl bg-neon-cyan-glow border border-neon-cyan-dim text-neon-cyan transition-shadow group-hover:shadow-[0_0_30px_var(--color-neon-cyan-glow)]"
+                transition:name={`skill-icon-${slug}`}
             >
                 <Icon class="size-6" aria-hidden="true" />
             </div>
@@ -65,6 +66,7 @@ const Icon = iconMap[icon as keyof typeof iconMap] ?? Sparkles;
                 <a
                     href={`/skills/${slug}`}
                     class="block font-display text-3xl sm:text-4xl font-800 text-white tracking-tight hover:text-neon-cyan transition-colors"
+                    transition:name={`skill-title-${slug}`}
                 >
                     {title}
                 </a>

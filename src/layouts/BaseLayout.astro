@@ -1,5 +1,7 @@
 ---
 import '@/styles/global.css';
+import { ClientRouter } from 'astro:transitions';
+import neonFade from '@/transitions/neon-fade';
 
 interface Props {
 	title: string;
@@ -29,6 +31,10 @@ try {
 } catch {
 	// Cookies unavailable on prerendered pages
 }
+
+const pathname = Astro.url.pathname;
+const isHome = pathname === '/';
+const isLogin = pathname === '/login';
 ---
 
 <html lang="en">
@@ -74,16 +80,26 @@ try {
 				set:html={JSON.stringify(Array.isArray(jsonLd) ? jsonLd : [jsonLd])}
 			/>
 		)}
+
+		<!-- View Transitions -->
+		<ClientRouter />
 	</head>
 	<body>
 		<a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:rounded-lg focus:bg-neon-cyan focus:px-4 focus:py-2 focus:font-mono focus:text-sm focus:text-void">
 			Skip to content
 		</a>
+		{!isHome && (
+			<nav class="fixed top-0 left-0 z-40 flex items-center gap-4 px-6 py-4">
+				<a href="/" class="font-mono text-xs uppercase tracking-wide text-mist hover:text-neon-cyan transition-colors">Home</a>
+			</nav>
+		)}
 		<nav class="fixed top-0 right-0 z-40 flex items-center gap-4 px-6 py-4">
 			{hasSession && <a href="/account" class="font-mono text-xs uppercase tracking-wide text-mist hover:text-neon-cyan transition-colors">Account</a>}
 			{hasSession && <a href="/api/logout" class="font-mono text-xs uppercase tracking-wide text-mist hover:text-neon-cyan transition-colors">Logout</a>}
-			{!hasSession && <a href="/login" class="font-mono text-xs uppercase tracking-wide text-mist hover:text-neon-cyan transition-colors">Login</a>}
+			{!hasSession && !isLogin && <a href="/login" class="font-mono text-xs uppercase tracking-wide text-mist hover:text-neon-cyan transition-colors">Login</a>}
 		</nav>
-		<slot />
+		<div transition:animate={neonFade}>
+			<slot />
+		</div>
 	</body>
 </html>

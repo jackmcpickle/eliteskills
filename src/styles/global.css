@@ -553,6 +553,28 @@ body::after {
     }
 }
 
+/* ── Neon page-transition fade ────────────────────────────── */
+
+@keyframes neonFadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+        filter: drop-shadow(0 0 20px var(--color-neon-cyan-dim));
+    }
+}
+
+@keyframes neonFadeIn {
+    from {
+        opacity: 0;
+        filter: drop-shadow(0 0 20px var(--color-neon-cyan-dim));
+    }
+    to {
+        opacity: 1;
+    }
+}
+
 /* ── Reduced motion ───────────────────────────────────────── */
 
 @media (prefers-reduced-motion: reduce) {

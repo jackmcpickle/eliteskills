@@ -120,12 +120,15 @@ const reviewJsonLd = {
 					if (entry.isIntersecting) {
 						if (entry.target.classList.contains('snake-grid')) {
 							const cells = entry.target.querySelectorAll('.snake-cell');
-							const cols = getComputedStyle(entry.target).gridTemplateColumns.split(' ').length;
-							cells.forEach((cell, i) => {
-								const row = Math.floor(i / cols);
-								const col = i % cols;
-								const order = row * cols + (row % 2 === 0 ? col : cols - 1 - col);
-								(cell as HTMLElement).style.setProperty('--snake-order', String(order));
+							const cols = window.matchMedia('(min-width: 1024px)').matches ? 3
+								: window.matchMedia('(min-width: 640px)').matches ? 2 : 1;
+							requestAnimationFrame(() => {
+								cells.forEach((cell, i) => {
+									const row = Math.floor(i / cols);
+									const col = i % cols;
+									const order = row * cols + (row % 2 === 0 ? col : cols - 1 - col);
+									(cell as HTMLElement).style.setProperty('--snake-order', String(order));
+								});
 							});
 						}
 						entry.target.classList.add('in-view');

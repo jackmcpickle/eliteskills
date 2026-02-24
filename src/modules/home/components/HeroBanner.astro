@@ -92,7 +92,16 @@
 			mouseY = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
 		});
 
+		let heroVisible = true;
+		let rafId = 0;
+
+		new IntersectionObserver(([entry]) => {
+			heroVisible = !!entry?.isIntersecting;
+			if (heroVisible && !rafId) rafId = requestAnimationFrame(tick);
+		}, { threshold: 0 }).observe(section);
+
 		function tick(t: number): void {
+			if (!heroVisible) { rafId = 0; return; }
 			const s = t * 0.001;
 			for (let i = 0; i < particles.length; i += 1) {
 				const c = configs[i];
@@ -111,7 +120,7 @@
 				o.y += (targetY - o.y) * c.lerp;
 				p.style.transform = `translate(${o.x}px, ${o.y}px)`;
 			}
-			requestAnimationFrame(tick);
+			rafId = requestAnimationFrame(tick);
 		}
 		requestAnimationFrame(tick);
 	}

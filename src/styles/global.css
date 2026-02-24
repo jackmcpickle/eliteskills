@@ -26,25 +26,141 @@
     --color-surface-hover: #1c2540;
     --color-border: #1e293b;
     --color-border-glow: #00f0ff22;
+
+    --animate-reveal-up: reveal-up 0.8s ease-out both;
+    --animate-marquee: marquee 40s linear infinite;
+    --animate-glow-pulse: glow-pulse 3s ease-in-out infinite;
+    --animate-glow-breathe: glow-breathe 4s ease-in-out infinite;
+    --animate-metric-pulse: metric-pulse 5s ease-in-out infinite;
+    --animate-shimmer-sweep: shimmer-sweep 3s ease-in-out infinite;
+    --animate-border-flow: border-flow 6s linear infinite;
+    --animate-scan-line: scan-line 8s ease-in-out infinite;
+    --animate-electron-orbit: electron-orbit 4s linear infinite;
+    --animate-sheen-sweep: sheen-sweep 0.7s ease-out both;
+    --animate-border-trace: border-trace 1s ease-in-out both;
+    --animate-snake-trace: snake-trace 0.6s ease-in-out both;
 }
 
-/* ── Base reset + atmosphere ────────────────────────────── */
+/* ── Base styles ──────────────────────────────────────────── */
 
-html {
-    scroll-behavior: smooth;
-    scrollbar-color: var(--color-slate-mid) var(--color-void);
+@layer base {
+    html {
+        scroll-behavior: smooth;
+        scrollbar-color: var(--color-slate-mid) var(--color-void);
+    }
+
+    body {
+        font-family: var(--font-display);
+        background-color: var(--color-void);
+        color: var(--color-cloud);
+        overflow-x: hidden;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    a:focus-visible,
+    button:focus-visible {
+        outline: 2px solid var(--color-neon-amber);
+        outline-offset: 3px;
+        border-radius: 10px;
+    }
+
+    ::selection {
+        background: var(--color-neon-cyan-dim);
+        color: var(--color-white);
+    }
+
+    @media (max-width: 640px) {
+        html {
+            scrollbar-width: thin;
+        }
+    }
 }
 
-body {
-    font-family: var(--font-display);
-    background-color: var(--color-void);
-    color: var(--color-cloud);
-    overflow-x: hidden;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+/* ── Utilities ────────────────────────────────────────────── */
+
+@utility reveal {
+    animation: var(--animate-reveal-up);
 }
 
-/* ── Noise texture overlay ──────────────────────────────── */
+@utility reveal-delay-1 {
+    animation-delay: 0.1s;
+}
+@utility reveal-delay-2 {
+    animation-delay: 0.2s;
+}
+@utility reveal-delay-3 {
+    animation-delay: 0.3s;
+}
+@utility reveal-delay-4 {
+    animation-delay: 0.4s;
+}
+@utility reveal-delay-5 {
+    animation-delay: 0.5s;
+}
+@utility reveal-delay-6 {
+    animation-delay: 0.6s;
+}
+
+@utility text-neon {
+    color: var(--color-neon-cyan);
+    text-shadow:
+        0 0 7px var(--color-neon-cyan-dim),
+        0 0 20px var(--color-neon-cyan-dim),
+        0 0 42px var(--color-neon-cyan-glow);
+}
+
+@utility glow-pulse {
+    animation: var(--animate-glow-pulse);
+}
+
+@utility glow-breathe {
+    animation: var(--animate-glow-breathe);
+}
+@utility glow-breathe-delay-1 {
+    animation-delay: 1s;
+}
+@utility glow-breathe-delay-2 {
+    animation-delay: 2s;
+}
+@utility glow-breathe-delay-3 {
+    animation-delay: 3s;
+}
+
+@utility metric-pulse {
+    animation: var(--animate-metric-pulse);
+    display: inline-block;
+}
+
+@utility border-flow {
+    background: linear-gradient(
+        90deg,
+        transparent,
+        var(--color-neon-cyan-dim),
+        var(--color-neon-cyan),
+        var(--color-neon-cyan-dim),
+        transparent,
+        var(--color-neon-cyan-dim),
+        var(--color-neon-cyan),
+        var(--color-neon-cyan-dim),
+        transparent
+    );
+    background-size: 200% 100%;
+    animation: var(--animate-border-flow);
+}
+
+@utility particle {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: var(--color-neon-cyan);
+    box-shadow: 0 0 6px var(--color-neon-cyan-dim);
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+/* ── Body overlays (noise + grid) ─────────────────────────── */
 
 body::before {
     content: '';
@@ -57,8 +173,6 @@ body::before {
     background-repeat: repeat;
     background-size: 200px 200px;
 }
-
-/* ── Grid background ────────────────────────────────────── */
 
 body::after {
     content: '';
@@ -73,121 +187,17 @@ body::after {
     mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black, transparent);
 }
 
-/* ── Section reveal animation ───────────────────────────── */
-
-@keyframes reveal-up {
-    from {
-        opacity: 0;
-        transform: translateY(40px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.reveal {
-    animation: reveal-up 0.8s ease-out both;
-}
-
-.reveal-delay-1 {
-    animation-delay: 0.1s;
-}
-.reveal-delay-2 {
-    animation-delay: 0.2s;
-}
-.reveal-delay-3 {
-    animation-delay: 0.3s;
-}
-.reveal-delay-4 {
-    animation-delay: 0.4s;
-}
-.reveal-delay-5 {
-    animation-delay: 0.5s;
-}
-.reveal-delay-6 {
-    animation-delay: 0.6s;
-}
-
-/* ── Marquee ────────────────────────────────────────────── */
-
-@keyframes marquee {
-    0% {
-        transform: translateX(0);
-    }
-    100% {
-        transform: translateX(-50%);
-    }
-}
+/* ── Marquee ──────────────────────────────────────────────── */
 
 .marquee-track {
-    animation: marquee 40s linear infinite;
+    animation: var(--animate-marquee);
 }
 
 .marquee-track:hover {
     animation-play-state: paused;
 }
 
-a:focus-visible,
-button:focus-visible {
-    outline: 2px solid var(--color-neon-amber);
-    outline-offset: 3px;
-    border-radius: 10px;
-}
-
-/* ── Glow pulse ─────────────────────────────────────────── */
-
-@keyframes glow-pulse {
-    0%,
-    100% {
-        opacity: 0.4;
-    }
-    50% {
-        opacity: 1;
-    }
-}
-
-.glow-pulse {
-    animation: glow-pulse 3s ease-in-out infinite;
-}
-
-/* ── Neon text ──────────────────────────────────────────── */
-
-.text-neon {
-    color: var(--color-neon-cyan);
-    text-shadow:
-        0 0 7px var(--color-neon-cyan-dim),
-        0 0 20px var(--color-neon-cyan-dim),
-        0 0 42px var(--color-neon-cyan-glow);
-}
-
-/* ── Card hover glow border ─────────────────────────────── */
-
-.card-glow {
-    position: relative;
-    border: 1px solid var(--color-border);
-    transition:
-        border-color 0.3s ease,
-        box-shadow 0.3s ease;
-}
-
-.card-glow:hover {
-    border-color: var(--color-neon-cyan-dim);
-    box-shadow:
-        0 0 30px var(--color-neon-cyan-glow),
-        inset 0 0 30px var(--color-neon-cyan-glow);
-}
-
-/* ── Electron border orbit ─────────────────────────────── */
-
-@keyframes electron-orbit {
-    from {
-        --electron-angle: 0deg;
-    }
-    to {
-        --electron-angle: 360deg;
-    }
-}
+/* ── Electron border orbit ────────────────────────────────── */
 
 @property --electron-angle {
     syntax: '<angle>';
@@ -218,7 +228,7 @@ button:focus-visible {
         linear-gradient(#000 0 0);
     mask-composite: exclude;
     opacity: 0.3;
-    animation: electron-orbit 4s linear infinite;
+    animation: var(--animate-electron-orbit);
     pointer-events: none;
     z-index: 1;
 }
@@ -227,24 +237,7 @@ button:focus-visible {
     opacity: 1;
 }
 
-/* ── Scan line ─────────────────────────────────────────── */
-
-@keyframes scan-line {
-    0% {
-        transform: translateY(-100%);
-        opacity: 0;
-    }
-    10% {
-        opacity: 1;
-    }
-    90% {
-        opacity: 1;
-    }
-    100% {
-        transform: translateY(100%);
-        opacity: 0;
-    }
-}
+/* ── Scan line ────────────────────────────────────────────── */
 
 .scan-line {
     position: relative;
@@ -266,21 +259,12 @@ button:focus-visible {
         transparent
     );
     box-shadow: 0 0 12px var(--color-neon-cyan-dim);
-    animation: scan-line 8s ease-in-out infinite;
+    animation: var(--animate-scan-line);
     pointer-events: none;
     z-index: 1;
 }
 
-/* ── Shimmer sweep ─────────────────────────────────────── */
-
-@keyframes shimmer-sweep {
-    0% {
-        background-position: -200% 0;
-    }
-    100% {
-        background-position: 200% 0;
-    }
-}
+/* ── Shimmer sweep ────────────────────────────────────────── */
 
 .shimmer {
     position: relative;
@@ -298,156 +282,12 @@ button:focus-visible {
         transparent 75%
     );
     background-size: 200% 100%;
-    animation: shimmer-sweep 3s ease-in-out infinite;
+    animation: var(--animate-shimmer-sweep);
     pointer-events: none;
     z-index: 1;
 }
 
-/* ── Breathing glow ring ───────────────────────────────── */
-
-@keyframes glow-breathe {
-    0%,
-    100% {
-        box-shadow: 0 0 8px var(--color-neon-cyan-glow);
-    }
-    50% {
-        box-shadow:
-            0 0 16px var(--color-neon-cyan-dim),
-            0 0 32px var(--color-neon-cyan-glow);
-    }
-}
-
-.glow-breathe {
-    animation: glow-breathe 4s ease-in-out infinite;
-}
-
-.glow-breathe-delay-1 {
-    animation-delay: 1s;
-}
-.glow-breathe-delay-2 {
-    animation-delay: 2s;
-}
-.glow-breathe-delay-3 {
-    animation-delay: 3s;
-}
-
-/* ── Metrics pulse ─────────────────────────────────────── */
-
-@keyframes metric-pulse {
-    0%,
-    100% {
-        transform: scale(1);
-        text-shadow: none;
-    }
-    50% {
-        transform: scale(1.05);
-        text-shadow: 0 0 20px var(--color-neon-cyan-dim);
-    }
-}
-
-.metric-pulse {
-    animation: metric-pulse 5s ease-in-out infinite;
-    display: inline-block;
-}
-
-/* ── Gradient border flow ──────────────────────────────── */
-
-@keyframes border-flow {
-    0% {
-        background-position: 0% 50%;
-    }
-    100% {
-        background-position: 200% 50%;
-    }
-}
-
-.border-flow {
-    background: linear-gradient(
-        90deg,
-        transparent,
-        var(--color-neon-cyan-dim),
-        var(--color-neon-cyan),
-        var(--color-neon-cyan-dim),
-        transparent,
-        var(--color-neon-cyan-dim),
-        var(--color-neon-cyan),
-        var(--color-neon-cyan-dim),
-        transparent
-    );
-    background-size: 200% 100%;
-    animation: border-flow 6s linear infinite;
-}
-
-/* ── Hero particle float ───────────────────────────────── */
-
-@keyframes particle-float-1 {
-    0%,
-    100% {
-        transform: translate(0, 0);
-    }
-    33% {
-        transform: translate(30px, -20px);
-    }
-    66% {
-        transform: translate(-15px, 15px);
-    }
-}
-
-@keyframes particle-float-2 {
-    0%,
-    100% {
-        transform: translate(0, 0);
-    }
-    33% {
-        transform: translate(-25px, 25px);
-    }
-    66% {
-        transform: translate(20px, -10px);
-    }
-}
-
-.particle {
-    position: absolute;
-    width: 3px;
-    height: 3px;
-    border-radius: 50%;
-    background: var(--color-neon-cyan);
-    box-shadow: 0 0 6px var(--color-neon-cyan-dim);
-    pointer-events: none;
-    opacity: 0.6;
-}
-
-.particle-1 {
-    animation: particle-float-1 7s ease-in-out infinite;
-}
-.particle-2 {
-    animation: particle-float-2 9s ease-in-out infinite;
-}
-.particle-3 {
-    animation: particle-float-1 6s ease-in-out infinite reverse;
-}
-.particle-4 {
-    animation: particle-float-2 8s ease-in-out infinite reverse;
-}
-
-/* ── Scroll-triggered sheen sweep ─────────────────────── */
-
-@keyframes sheen-sweep {
-    0% {
-        transform: translateX(-100%);
-        opacity: 0;
-    }
-    15% {
-        opacity: 1;
-    }
-    85% {
-        opacity: 1;
-    }
-    100% {
-        transform: translateX(450%);
-        opacity: 0;
-    }
-}
+/* ── Scroll-triggered sheen sweep ─────────────────────────── */
 
 .scroll-sheen {
     position: relative;
@@ -470,35 +310,18 @@ button:focus-visible {
         transparent 85%
     );
     border-radius: inherit;
-    animation: sheen-sweep 0.7s ease-out both;
+    animation: var(--animate-sheen-sweep);
     animation-delay: var(--scroll-delay, 0ms);
     pointer-events: none;
     z-index: 2;
 }
 
-/* ── Scroll-triggered border trace ────────────────────── */
+/* ── Scroll-triggered border trace ────────────────────────── */
 
 @property --trace-progress {
     syntax: '<angle>';
     initial-value: 0deg;
     inherits: false;
-}
-
-@keyframes border-trace {
-    0% {
-        --trace-progress: 0deg;
-        opacity: 0;
-    }
-    8% {
-        opacity: 0.6;
-    }
-    70% {
-        opacity: 0.6;
-    }
-    100% {
-        --trace-progress: 360deg;
-        opacity: 0;
-    }
 }
 
 .scroll-border-trace {
@@ -523,13 +346,13 @@ button:focus-visible {
         linear-gradient(#000 0 0) content-box,
         linear-gradient(#000 0 0);
     mask-composite: exclude;
-    animation: border-trace 1s ease-in-out both;
+    animation: var(--animate-border-trace);
     animation-delay: var(--scroll-delay, 0ms);
     pointer-events: none;
     z-index: 1;
 }
 
-/* ── Neon gradient hover ──────────────────────────────── */
+/* ── Neon gradient hover ──────────────────────────────────── */
 
 .neon-hover,
 .snake-cell {
@@ -547,29 +370,12 @@ button:focus-visible {
     box-shadow: inset 0 0 40px rgba(45, 226, 196, 0.04);
 }
 
-/* ── Snake grid trace ─────────────────────────────────── */
+/* ── Snake grid trace ─────────────────────────────────────── */
 
 @property --snake-dot {
     syntax: '<angle>';
     initial-value: 333deg;
     inherits: false;
-}
-
-@keyframes snake-trace {
-    0% {
-        --snake-dot: 333deg;
-        opacity: 0;
-    }
-    8% {
-        opacity: 1;
-    }
-    85% {
-        opacity: 1;
-    }
-    100% {
-        --snake-dot: -27deg;
-        opacity: 0;
-    }
 }
 
 .snake-grid.in-view .snake-cell::after {
@@ -590,24 +396,164 @@ button:focus-visible {
         linear-gradient(#000 0 0) content-box,
         linear-gradient(#000 0 0);
     mask-composite: exclude;
-    animation: snake-trace 0.6s ease-in-out both;
+    animation: var(--animate-snake-trace);
     animation-delay: calc(var(--snake-order, 0) * 100ms);
     pointer-events: none;
     z-index: 1;
 }
 
-/* ── Selection ──────────────────────────────────────────── */
+/* ── Keyframes ────────────────────────────────────────────── */
 
-::selection {
-    background: var(--color-neon-cyan-dim);
-    color: var(--color-white);
-}
-
-@media (max-width: 640px) {
-    html {
-        scrollbar-width: thin;
+@keyframes reveal-up {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
+
+@keyframes marquee {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+@keyframes glow-pulse {
+    0%,
+    100% {
+        opacity: 0.4;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
+@keyframes glow-breathe {
+    0%,
+    100% {
+        box-shadow: 0 0 8px var(--color-neon-cyan-glow);
+    }
+    50% {
+        box-shadow:
+            0 0 16px var(--color-neon-cyan-dim),
+            0 0 32px var(--color-neon-cyan-glow);
+    }
+}
+
+@keyframes metric-pulse {
+    0%,
+    100% {
+        transform: scale(1);
+        text-shadow: none;
+    }
+    50% {
+        transform: scale(1.05);
+        text-shadow: 0 0 20px var(--color-neon-cyan-dim);
+    }
+}
+
+@keyframes border-flow {
+    0% {
+        background-position: 0% 50%;
+    }
+    100% {
+        background-position: 200% 50%;
+    }
+}
+
+@keyframes scan-line {
+    0% {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+}
+
+@keyframes shimmer-sweep {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+@keyframes electron-orbit {
+    from {
+        --electron-angle: 0deg;
+    }
+    to {
+        --electron-angle: 360deg;
+    }
+}
+
+@keyframes sheen-sweep {
+    0% {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    15% {
+        opacity: 1;
+    }
+    85% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(450%);
+        opacity: 0;
+    }
+}
+
+@keyframes border-trace {
+    0% {
+        --trace-progress: 0deg;
+        opacity: 0;
+    }
+    8% {
+        opacity: 0.6;
+    }
+    70% {
+        opacity: 0.6;
+    }
+    100% {
+        --trace-progress: 360deg;
+        opacity: 0;
+    }
+}
+
+@keyframes snake-trace {
+    0% {
+        --snake-dot: 333deg;
+        opacity: 0;
+    }
+    8% {
+        opacity: 1;
+    }
+    85% {
+        opacity: 1;
+    }
+    100% {
+        --snake-dot: -27deg;
+        opacity: 0;
+    }
+}
+
+/* ── Reduced motion ───────────────────────────────────────── */
 
 @media (prefers-reduced-motion: reduce) {
     *,

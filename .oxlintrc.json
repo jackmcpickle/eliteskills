@@ -105,51 +105,9 @@
         "react-perf"
     ],
     "ignorePatterns": [
-        ".venv/",
         "node_modules/",
         "build/",
         "dist/",
-        ".ruff_cache/",
-        "static/",
-        "src/ui-api-client/",
-        "config/tailwind.config.js",
-        "config/postcss.config.mjs",
-        "vite.config.ts",
-        "config/webpack.config.cjs"
-    ],
-    "overrides": [
-        {
-            "files": [
-                "*.stories.*"
-            ],
-            "rules": {
-                "no-console": "off",
-                "no-array-index-key": "off",
-                "import/no-default-export": "off",
-                "typescript/explicit-module-boundary-types": "off",
-                "react-perf/jsx-no-jsx-as-prop": "off"
-            }
-        },
-        {
-            "files": [
-                "**/ui-core/src/**"
-            ],
-            "rules": {
-                "no-array-index-key": "off",
-                "jsx-no-jsx-as-prop": "off",
-                "complexity": "off",
-                "no-multi-comp": "off",
-                "no-relative-parent-imports": "off"
-            }
-        },
-        {
-            "files": [
-                "**/ui-superit-api/**"
-            ],
-            "rules": {
-                "no-unused-vars": "off",
-                "typescript/no-unused-vars": "off"
-            }
-        }
+        "*.astro"
     ]
 }

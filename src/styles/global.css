@@ -47,6 +47,7 @@
     html {
         scroll-behavior: smooth;
         scrollbar-color: var(--color-slate-mid) var(--color-void);
+        overflow-x: clip;
     }
 
     body {

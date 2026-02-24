@@ -118,6 +118,16 @@ const reviewJsonLd = {
 			(entries) => {
 				entries.forEach((entry) => {
 					if (entry.isIntersecting) {
+						if (entry.target.classList.contains('snake-grid')) {
+							const cells = entry.target.querySelectorAll('.snake-cell');
+							const cols = getComputedStyle(entry.target).gridTemplateColumns.split(' ').length;
+							cells.forEach((cell, i) => {
+								const row = Math.floor(i / cols);
+								const col = i % cols;
+								const order = row * cols + (row % 2 === 0 ? col : cols - 1 - col);
+								(cell as HTMLElement).style.setProperty('--snake-order', String(order));
+							});
+						}
 						entry.target.classList.add('in-view');
 						observer.unobserve(entry.target);
 					}
@@ -125,7 +135,7 @@ const reviewJsonLd = {
 			},
 			{ threshold: 0.1, rootMargin: '0px 0px -40px 0px' },
 		);
-		document.querySelectorAll('.scroll-sheen, .scroll-border-trace').forEach((el) => {
+		document.querySelectorAll('.scroll-sheen, .scroll-border-trace, .snake-grid').forEach((el) => {
 			observer.observe(el);
 		});
 	</script>

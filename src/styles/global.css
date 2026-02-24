@@ -529,6 +529,55 @@ button:focus-visible {
     z-index: 1;
 }
 
+/* ── Snake grid trace ─────────────────────────────────── */
+
+@property --snake-dot {
+    syntax: '<angle>';
+    initial-value: 333deg;
+    inherits: false;
+}
+
+@keyframes snake-trace {
+    0% {
+        --snake-dot: 333deg;
+        opacity: 0;
+    }
+    8% {
+        opacity: 1;
+    }
+    85% {
+        opacity: 1;
+    }
+    100% {
+        --snake-dot: -27deg;
+        opacity: 0;
+    }
+}
+
+.snake-grid.in-view .snake-cell::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    background: conic-gradient(
+        from var(--snake-dot),
+        transparent 0%,
+        transparent 85%,
+        rgba(45, 226, 196, 0.1) 92%,
+        rgba(45, 226, 196, 0.35) 97%,
+        transparent 100%
+    );
+    mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    animation: snake-trace 0.6s ease-in-out both;
+    animation-delay: calc(var(--snake-order, 0) * 100ms);
+    pointer-events: none;
+    z-index: 1;
+}
+
 /* ── Selection ──────────────────────────────────────────── */
 
 ::selection {

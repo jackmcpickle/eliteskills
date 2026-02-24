@@ -54,11 +54,11 @@ const middleTiers = [allSkills, lifetimeAccess].filter(Boolean) as ProductDispla
 						: ['All 6 elite skills included', 'Instant download', 'Use with any AI coding tool', 'Community Discord access', 'Current version snapshot'];
 
 					return (
-						<div class={`reveal reveal-delay-${i + 1} relative rounded-2xl p-8 sm:p-10 transition-all flex flex-col ${
+						<div class={`reveal reveal-delay-${i + 1} scroll-border-trace relative rounded-2xl p-8 sm:p-10 transition-all flex flex-col ${
 							isLifetime
 								? 'border-2 border-neon-cyan bg-surface shadow-[0_0_60px_var(--color-neon-cyan-glow)]'
 								: 'border border-border bg-surface hover:border-neon-cyan-dim'
-						}`}>
+						}`} style={`--scroll-delay: ${i * 70}ms`}>
 						{isLifetime && (
 							<div class="shimmer absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-neon-cyan text-void font-mono text-xs font-700 tracking-wider uppercase">
 								Best Value

@@ -29,7 +29,7 @@ const iconMap = { BadgeCheck, LockKeyhole, Minimize2 };
 				const Icon = iconMap[benefit.data.icon as keyof typeof iconMap] ?? BadgeCheck;
 
 				return (
-				<div class={`reveal reveal-delay-${i + 1} electron-border group relative rounded-2xl border border-border bg-surface p-6 sm:p-8 md:p-10 text-center transition-all hover:border-neon-cyan-dim hover:bg-surface-hover`}>
+				<div class={`reveal reveal-delay-${i + 1} scroll-sheen electron-border group relative rounded-2xl border border-border bg-surface p-6 sm:p-8 md:p-10 text-center transition-all hover:border-neon-cyan-dim hover:bg-surface-hover`} style={`--scroll-delay: ${i * 70}ms`}>
 					<!-- Icon circle -->
 					<div class={`mx-auto mb-6 flex items-center justify-center size-16 rounded-full bg-neon-cyan-glow border border-neon-cyan-dim text-neon-cyan glow-breathe glow-breathe-delay-${i + 1} transition-shadow group-hover:shadow-[0_0_30px_var(--color-neon-cyan-glow)]`}>
 						<Icon class="size-7" aria-hidden="true" />

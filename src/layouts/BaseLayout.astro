@@ -99,7 +99,7 @@ const isLogin = pathname === '/login';
 		<nav class="fixed top-0 right-0 z-40 flex items-center gap-4 px-6 py-4">
 			{hasSession && <a href="/account" class="font-mono text-xs uppercase tracking-wide text-mist hover:text-neon-cyan transition-colors">Account</a>}
 			{hasSession && <a href="/api/logout" class="font-mono text-xs uppercase tracking-wide text-mist hover:text-neon-cyan transition-colors">Logout</a>}
-			{!hasSession && !isLogin && <a href="/login" class="font-mono text-xs uppercase tracking-wide text-mist hover:text-neon-cyan transition-colors">Login</a>}
+			{!hasSession && !isLogin && !isHome && <a href="/login" class="font-mono text-xs uppercase tracking-wide text-mist hover:text-neon-cyan transition-colors">Login</a>}
 		</nav>
 		<div transition:animate={neonFade}>
 			<slot />

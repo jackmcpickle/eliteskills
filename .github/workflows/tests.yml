@@ -10,7 +10,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  NODE_VERSION: '22'
+  NODE_VERSION: "22"
 
 jobs:
   lint:
@@ -100,8 +100,6 @@ jobs:
   live-agent:
     name: Live Agent API Smoke Test
     runs-on: ubuntu-latest
-    env:
-      AGENT_API_KEY: ${{ secrets.AGENT_API_KEY }}
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -112,12 +110,6 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - name: Install Playwright browsers
         run: pnpm exec playwright install chromium --with-deps
-      - name: Verify AGENT_API_KEY is set
-        run: |
-          if [ -z "$AGENT_API_KEY" ]; then
-            echo "::error::AGENT_API_KEY secret is required"
-            exit 1
-          fi
       - name: Run live agent flow tests
         run: pnpm test:live-agent
         timeout-minutes: 3

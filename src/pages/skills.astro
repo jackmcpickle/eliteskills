@@ -1,45 +1,15 @@
 ---
-export const prerender = false;
+export const prerender = true;
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 import { SkillsHero, SkillsList, SkillsFooter } from '@/modules/skills';
-import { createDb } from '@/libs/db/client';
-import { listProducts, getProductPrice } from '@/libs/db/repo';
-import { resolveContinent, resolveCountryCode, resolveLocale } from '@/libs/geo';
+import { DEFAULT_SKILL_PRODUCTS, DEFAULT_LOCALE } from '@/constants/default-prices';
 
 const skills = (await getCollection('skills')).sort((a, b) => a.data.order - b.data.order);
 
-// Resolve geo prices
-const d1 = Astro.locals.runtime.env.DB;
-const db = createDb(d1);
-const cf = Astro.locals.runtime.cf as { continent?: string; country?: string } | undefined;
-const continent = resolveContinent(cf, Astro.request.headers.get('cf-ipcontinent'));
-const countryCode = resolveCountryCode(cf, Astro.request.headers.get('cf-ipcountry'));
-const locale = resolveLocale(countryCode);
-
-const dbProducts = await listProducts(db);
-const skillProducts: { id: number; code: string; name: string; price: number; currency: string; lifetime: number; skillSlug: string | null }[] = [];
-
-const skillDbProducts = dbProducts.filter((p) => p.skillSlug);
-const priceRows = await Promise.all(
-	skillDbProducts.map((p) => getProductPrice(db, p.id, continent, countryCode)),
-);
-
-for (let i = 0; i < skillDbProducts.length; i += 1) {
-	const p = skillDbProducts[i];
-	if (!p) continue;
-	const priceRow = priceRows[i];
-	skillProducts.push({
-		id: p.id,
-		code: p.code,
-		name: p.name,
-		price: priceRow?.price ?? 0,
-		currency: priceRow?.currency ?? 'usd',
-		lifetime: p.lifetime,
-		skillSlug: p.skillSlug,
-	});
-}
+const skillProducts = DEFAULT_SKILL_PRODUCTS;
+const locale = DEFAULT_LOCALE;
 
 const jsonLd = {
 	'@context': 'https://schema.org',

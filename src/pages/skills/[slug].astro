@@ -1,5 +1,5 @@
 ---
-export const prerender = false;
+export const prerender = true;
 
 import { getCollection } from "astro:content";
 import {
@@ -16,15 +16,9 @@ import {
     BUNDLE_PRODUCT_IDS,
     SKILL_SLUG_TO_PRODUCT_ID,
 } from "@/constants/products";
-import { createDb } from "@/libs/db/client";
-import { listProducts, getProductPrice } from "@/libs/db/repo";
-import {
-    resolveContinent,
-    resolveCountryCode,
-    resolveLocale,
-} from "@/libs/geo";
+import { DEFAULT_PRODUCTS, DEFAULT_LOCALE } from "@/constants/default-prices";
 import { formatMoney } from "@/utils/format-money";
-import { skillSlug } from "@/utils/skill-command";
+import { skillSlug as toSkillSlug } from "@/utils/skill-command";
 import {
     SkillInstall,
     SkillStructure,
@@ -32,6 +26,11 @@ import {
     SkillBestPractices,
     SkillUsageLinks,
 } from "@/modules/skills";
+
+export async function getStaticPaths() {
+    const skills = await getCollection("skills");
+    return skills.map((s) => ({ params: { slug: s.id.replace(/\.md$/, "") } }));
+}
 
 const { slug } = Astro.params;
 const skills = await getCollection("skills");
@@ -57,46 +56,13 @@ const skillCheckoutHref = skillProductId
     : "/skills";
 const bundleCheckoutHref = `/checkout/${BUNDLE_PRODUCT_IDS.allSkills}`;
 
-// Resolve geo prices
-const d1 = Astro.locals.runtime.env.DB;
-const db = createDb(d1);
-const cf = Astro.locals.runtime.cf as
-    | { continent?: string; country?: string }
-    | undefined;
-const continent = resolveContinent(
-    cf,
-    Astro.request.headers.get("cf-ipcontinent"),
-);
-const countryCode = resolveCountryCode(
-    cf,
-    Astro.request.headers.get("cf-ipcountry"),
-);
-const locale = resolveLocale(countryCode);
-
-const dbProducts = await listProducts(db);
-
-let skillPrice: number | null = null;
-let skillCurrency = "usd";
-let bundlePrice: number | null = null;
-let bundleCurrency = "usd";
-
-const priceRows = await Promise.all(
-    dbProducts.map((p) => getProductPrice(db, p.id, continent, countryCode)),
-);
-
-for (let i = 0; i < dbProducts.length; i += 1) {
-    const p = dbProducts[i];
-    if (!p) continue;
-    const priceRow = priceRows[i];
-    if (p.skillSlug && p.id === skillProductId) {
-        skillPrice = priceRow?.price ?? null;
-        skillCurrency = priceRow?.currency ?? "usd";
-    }
-    if (p.code === "bundle-once") {
-        bundlePrice = priceRow?.price ?? null;
-        bundleCurrency = priceRow?.currency ?? "usd";
-    }
-}
+const locale = DEFAULT_LOCALE;
+const defaultSkill = DEFAULT_PRODUCTS.find((p) => p.id === skillProductId);
+const defaultBundle = DEFAULT_PRODUCTS.find((p) => p.code === "bundle-once");
+const skillPrice = defaultSkill?.price ?? null;
+const skillCurrency = defaultSkill?.currency ?? "usd";
+const bundlePrice = defaultBundle?.price ?? null;
+const bundleCurrency = defaultBundle?.currency ?? "usd";
 
 const iconMap = { Database, Layers, Palette, Rocket, ShieldCheck, Sparkles };
 const Icon = iconMap[icon as keyof typeof iconMap] ?? Sparkles;
@@ -125,7 +91,7 @@ const Icon = iconMap[icon as keyof typeof iconMap] ?? Sparkles;
                             class="font-display text-4xl sm:text-5xl font-800 tracking-tight"
                             transition:name={`skill-title-${slug}`}
                         >
-                            <span class="text-white">/elite-</span><span class="text-neon-cyan">{skillSlug(title)}</span>
+                            <span class="text-white">/elite-</span><span class="text-neon-cyan">{toSkillSlug(title)}</span>
                         </h1>
                         {
                             !released && (
@@ -179,22 +145,26 @@ const Icon = iconMap[icon as keyof typeof iconMap] ?? Sparkles;
                             class="inline-flex items-center gap-2 px-8 py-4 rounded-lg bg-neon-cyan text-void font-mono font-700 text-sm tracking-wide uppercase transition-all hover:shadow-[0_0_40px_var(--color-neon-cyan-dim)]"
                         >
                             Buy This Skill &mdash;{" "}
-                            {skillPrice != null
-                                ? formatMoney(skillPrice, skillCurrency, locale)
-                                : ""}
+                            <span data-product-id={skillProductId}>
+                                {skillPrice != null
+                                    ? formatMoney(skillPrice, skillCurrency, locale)
+                                    : ""}
+                            </span>
                         </a>
                         <a
                             href={bundleCheckoutHref}
                             class="font-mono text-sm text-mist hover:text-neon-cyan transition-colors"
                         >
                             Or get all skills for{" "}
-                            {bundlePrice != null
-                                ? formatMoney(
-                                      bundlePrice,
-                                      bundleCurrency,
-                                      locale,
-                                  )
-                                : ""}{" "}
+                            <span data-product-id={BUNDLE_PRODUCT_IDS.allSkills}>
+                                {bundlePrice != null
+                                    ? formatMoney(
+                                          bundlePrice,
+                                          bundleCurrency,
+                                          locale,
+                                      )
+                                    : ""}
+                            </span>{" "}
                             &rarr;
                         </a>
                     </div>

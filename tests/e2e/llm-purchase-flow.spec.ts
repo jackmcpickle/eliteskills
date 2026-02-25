@@ -90,13 +90,12 @@ Based on this content, output the exact steps an AI agent must follow to complet
         const steps = result.agentApiFlow.steps;
         expect(steps.length).toBe(2);
 
-        // Step 1: payment-session
+        // Step 1: payment-session (no auth, IP rate-limited)
         const step1 = steps[0];
         expect(step1.stepNumber).toBe(1);
-        expect(step1.endpoint).toContain('/api/payment-session');
+        expect(step1.endpoint).toContain('/api/cli/payment-session');
         expect(step1.method).toBe('POST');
-        expect(step1.auth.type).toMatch(/bearer/i);
-        expect(step1.auth.value).toMatch(/AGENT_API_KEY/i);
+        expect(step1.auth.type).toMatch(/none/i);
         expect(step1.responseFields).toContain('sessionToken');
 
         // Step 2: payment-link

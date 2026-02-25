@@ -32,7 +32,7 @@ vi.mock('@/libs/download', () => ({
 }));
 
 // Dynamic import after mocks
-const { POST } = await import('./install');
+const { POST } = await import('@/pages/api/cli/install');
 
 function makeRequest(body: unknown): Request {
     return new Request('http://localhost/api/cli/install', {

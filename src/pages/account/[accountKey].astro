@@ -28,6 +28,13 @@ Astro.cookies.set('account_key', accountKey, {
 const purchases = await getPurchasesByUserId(db, user.id);
 const allSkillProducts = await listSkillProducts(db);
 
+type InstallKeyDisplay = {
+	key: string;
+	downloadCount: number;
+	createdAt: string;
+	installCommands: string[];
+};
+
 type PurchaseDisplay = {
 	id: string;
 	productName: string;
@@ -35,8 +42,7 @@ type PurchaseDisplay = {
 	amountPaid: string;
 	date: string;
 	skillSlug: string | null;
-	installCommands: string[];
-	installKeys: Array<{ key: string; downloadCount: number; createdAt: string }>;
+	installKeys: InstallKeyDisplay[];
 };
 
 const purchaseDisplays: PurchaseDisplay[] = await Promise.all(
@@ -44,21 +50,11 @@ const purchaseDisplays: PurchaseDisplay[] = await Promise.all(
 		const product = await getProductById(db, p.productId);
 		const keys = await getInstallKeysByPurchaseId(db, p.id);
 
-		// Build install commands
-		let installCommands: string[] = [];
-		if (product?.skillSlug) {
-			installCommands = [`npx @eliteskills/cli install ${product.skillSlug}`];
-		} else if (product) {
-			// Bundle — list all individual skill install commands
-			installCommands = allSkillProducts.map((sp) => `npx @eliteskills/cli install ${sp.skillSlug}`);
-		}
-
 		return {
 			id: p.id,
 			productName: product?.name ?? `Product #${p.productId}`,
 			productId: p.productId,
 			skillSlug: product?.skillSlug ?? null,
-			installCommands,
 			amountPaid: p.amountTotal
 				? formatMoney(
 						isZeroDecimalCurrency(p.currency ?? 'usd')
@@ -68,11 +64,20 @@ const purchaseDisplays: PurchaseDisplay[] = await Promise.all(
 					)
 				: 'N/A',
 			date: new Date(p.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }),
-			installKeys: keys.map((k) => ({
-				key: k.key,
-				downloadCount: k.downloadCount,
-				createdAt: new Date(k.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }),
-			})),
+			installKeys: keys.map((k) => {
+				let installCommands: string[] = [];
+				if (product?.skillSlug) {
+					installCommands = [`npx @eliteskills/cli install ${product.skillSlug} ${k.key}`];
+				} else if (product) {
+					installCommands = allSkillProducts.map((sp) => `npx @eliteskills/cli install ${sp.skillSlug} ${k.key}`);
+				}
+				return {
+					key: k.key,
+					downloadCount: k.downloadCount,
+					createdAt: new Date(k.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }),
+					installCommands,
+				};
+			}),
 		};
 	}),
 );
@@ -132,44 +137,37 @@ const purchaseDisplays: PurchaseDisplay[] = await Promise.all(
 								type="submit"
 								class="rounded-lg bg-neon-cyan px-5 py-2.5 font-mono text-xs uppercase tracking-wide text-void hover:shadow-[0_0_30px_var(--color-neon-cyan-dim)] transition-all"
 							>
-								Generate install URL
+								Generate install token
 							</button>
 						</form>
 					</div>
 
-					{/* Install commands */}
-					{purchase.installCommands.length > 0 && (
-						<div class="mb-6 space-y-2">
-							<p class="font-mono text-xs uppercase tracking-[0.2em] text-ghost">Install command{purchase.installCommands.length > 1 ? 's' : ''}</p>
-							{purchase.installCommands.map((cmd) => (
-								<div class="flex items-center gap-2 rounded-lg border border-slate-mid bg-abyss px-4 py-3">
-									<code class="flex-1 text-sm text-neon-green break-all select-all">{cmd}</code>
-									<button
-										type="button"
-										class="copy-btn shrink-0 min-w-[4.5rem] text-center rounded border border-slate-mid px-2.5 py-1.5 font-mono text-xs text-ghost hover:border-neon-cyan-dim hover:text-neon-cyan transition-all"
-										data-copy={cmd}
-									>
-										Copy
-									</button>
-								</div>
-							))}
-						</div>
-					)}
-
 					{purchase.installKeys.length > 0 && (
-						<div class="space-y-3">
-							<p class="font-mono text-xs uppercase tracking-[0.2em] text-ghost">Install URLs</p>
-							{purchase.installKeys.map((ik) => {
-								const downloadUrl = `https://eliteskills.ai/download/${ik.key}`;
-								return (
-									<div class="rounded-lg border border-slate-mid bg-abyss p-4">
-										<code class="block text-sm text-neon-green break-all select-all">{downloadUrl}</code>
-										<p class="text-ghost text-xs font-mono mt-2">
-											Created {ik.createdAt} &middot; {ik.downloadCount} download{ik.downloadCount === 1 ? '' : 's'}
+						<div class="space-y-4">
+							{purchase.installKeys.map((ik) => (
+								<div class="rounded-lg border border-slate-mid bg-abyss p-4 space-y-3">
+									<div class="flex items-center justify-between">
+										<p class="font-mono text-xs uppercase tracking-[0.2em] text-ghost">
+											Token: <span class="text-mist">{ik.key}</span>
+										</p>
+										<p class="text-ghost text-xs font-mono">
+											{ik.createdAt} &middot; {ik.downloadCount} download{ik.downloadCount === 1 ? '' : 's'}
 										</p>
 									</div>
-								);
-							})}
+									{ik.installCommands.map((cmd) => (
+										<div class="flex items-center gap-2 rounded-lg border border-slate-mid/50 bg-void px-4 py-3">
+											<code class="flex-1 text-sm text-neon-green break-all select-all">{cmd}</code>
+											<button
+												type="button"
+												class="copy-btn shrink-0 min-w-[4.5rem] text-center rounded border border-slate-mid px-2.5 py-1.5 font-mono text-xs text-ghost hover:border-neon-cyan-dim hover:text-neon-cyan transition-all"
+												data-copy={cmd}
+											>
+												Copy
+											</button>
+										</div>
+									))}
+								</div>
+							))}
 						</div>
 					)}
 				</div>

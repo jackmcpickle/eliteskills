@@ -124,9 +124,11 @@ const Icon = iconMap[icon as keyof typeof iconMap] ?? Sparkles;
                             class="inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-neon-cyan-dim text-neon-cyan font-mono text-sm font-600 tracking-wide uppercase transition-all hover:border-neon-cyan hover:shadow-[0_0_30px_var(--color-neon-cyan-glow)]"
                         >
                             Buy{" "}
-                            {price != null
-                                ? formatMoney(price, currency, locale)
-                                : ""}
+                            <span data-product-id={productId}>
+                                {price != null
+                                    ? formatMoney(price, currency, locale)
+                                    : ""}
+                            </span>
                         </a>
                         <span class="block font-mono text-[10px] text-ghost mt-1">
                             Prices adjusted for your region

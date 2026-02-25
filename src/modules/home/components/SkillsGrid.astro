@@ -68,7 +68,7 @@ const slugToProduct = new Map(skillProducts.map((p) => [p.skillSlug, p]));
 					{released && product ? (
 						<div>
 							<span class="inline-flex items-center gap-1.5 font-mono text-xs text-neon-cyan">
-								<span>{formatMoney(product.price, product.currency, locale)}</span>
+								<span data-product-id={product.id}>{formatMoney(product.price, product.currency, locale)}</span>
 								<span class="text-ghost">&middot;</span>
 								<span>Buy skill</span>
 							</span>

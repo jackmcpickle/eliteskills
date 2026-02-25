@@ -1,9 +1,9 @@
+import { mkdtempSync, rmSync, readFileSync, existsSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { zipSync } from 'fflate';
 import { describe, expect, it, beforeEach, afterEach } from 'vitest';
 import { extractZip } from './extract';
-import { zipSync } from 'fflate';
-import { mkdtempSync, rmSync, readFileSync, existsSync } from 'node:fs';
-import { join } from 'node:path';
-import { tmpdir } from 'node:os';
 
 function makeZip(files: Record<string, string | Uint8Array>): ArrayBuffer {
     const entries: Record<string, Uint8Array> = {};
@@ -73,9 +73,9 @@ describe('extractZip', () => {
         const result = extractZip(zip, tmpDir);
 
         expect(result.fileCount).toBe(1);
-        expect(
-            existsSync(join(tmpDir, '.claude/skills/react/.DS_Store')),
-        ).toBe(false);
+        expect(existsSync(join(tmpDir, '.claude/skills/react/.DS_Store'))).toBe(
+            false,
+        );
     });
 
     it('skips __MACOSX entries', () => {
@@ -102,9 +102,9 @@ describe('extractZip', () => {
 
         const result = extractZip(zip, tmpDir);
         expect(result.fileCount).toBe(1);
-        expect(
-            existsSync(join(tmpDir, '.claude/skills/react/empty.txt')),
-        ).toBe(true);
+        expect(existsSync(join(tmpDir, '.claude/skills/react/empty.txt'))).toBe(
+            true,
+        );
     });
 
     it('extracts bundle with multiple skill dirs', () => {

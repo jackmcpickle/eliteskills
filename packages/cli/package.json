@@ -1,11 +1,14 @@
 {
     "name": "@eliteskills/cli",
-    "version": "0.1.0",
+    "version": "1.0.0",
     "type": "module",
     "bin": {
         "eliteskills": "./bin/cli.mjs"
     },
-    "files": ["bin", "dist"],
+    "files": [
+        "bin",
+        "dist"
+    ],
     "dependencies": {
         "fflate": "^0.8.2"
     },

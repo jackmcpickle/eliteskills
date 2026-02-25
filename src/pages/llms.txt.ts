@@ -135,7 +135,7 @@ A: No. Both options are one-time payments. No recurring charges.
 A: Yes. 30-day money-back guarantee on all plans.
 
 **Q: How do I get the skills after purchase?**
-A: Instant delivery via email after Stripe payment completes.
+A: After Stripe payment completes you receive an install token via email. Run \`npx @eliteskills/cli install <skill> <token>\` to install.
 
 **Q: Who made these?**
 A: Jack McNicol — 20 years shipping production code.
@@ -149,21 +149,55 @@ A: Payment links expire after 1 hour. If expired, the buyer sees an error page w
 **Q: Is payment handled directly or via Stripe?**
 A: All payments go through Stripe hosted checkout. No card details touch the Elite Skills server.
 
-## Payment API (for AI agents)
+## CLI Install (recommended for AI agents)
 
-The payment API is a 2-step flow for AI agents to create payment links on behalf of users. Both endpoints are heavily rate-limited.
+The fastest way for an AI agent to discover and install skills is via the CLI. No API key required.
+
+### Step 1 — Discover skills
+
+\`\`\`bash
+npx @eliteskills/cli find          # list all skills
+npx @eliteskills/cli find react    # search by keyword
+\`\`\`
+
+Returns matching skills with slug, title, description, highlights, and \`productId\`.
+
+### Step 2 — Purchase (if no install token)
+
+Use the payment API to create a payment link:
+
+1. \`POST https://eliteskills.ai/api/cli/payment-session\` — returns a \`sessionToken\` (no API key required)
+2. \`POST https://eliteskills.ai/api/payment-link\` with \`Authorization: Bearer <sessionToken>\` and \`{ productId, name, email }\` — returns a \`paymentUrl\`
+
+Present the \`paymentUrl\` to the user. After payment they receive an install token via email.
+
+### Step 3 — Install
+
+\`\`\`bash
+npx @eliteskills/cli install react <token>
+\`\`\`
+
+Downloads and extracts the skill into \`.claude/skills/\` in the current directory. No prompts when a token is provided.
+
+### Full non-interactive example
+
+\`\`\`bash
+npx @eliteskills/cli find react
+npx @eliteskills/cli install react abc123def
+\`\`\`
+
+## Payment API (detailed reference)
 
 ### Step 1: Create a session token
 
-Authenticate with the agent API key to get a short-lived session token (expires in 1 hour).
+Get a short-lived session token (expires in 1 hour). No API key required.
 
-**Endpoint:** \`POST /api/payment-session\`
-**Auth:** \`Authorization: Bearer <AGENT_API_KEY>\`
+**Endpoint:** \`POST /api/cli/payment-session\`
+**Auth:** none
 **Body:** none
 
 \`\`\`bash
-curl -X POST https://eliteskills.ai/api/payment-session \\
-  -H "Authorization: Bearer YOUR_AGENT_API_KEY"
+curl -X POST https://eliteskills.ai/api/cli/payment-session
 \`\`\`
 
 **Response:**
@@ -256,7 +290,7 @@ All error responses follow the format \`{"error": "..."}\` with appropriate HTTP
 
 ### Rate limits
 
-- \`/api/payment-session\`: 5 requests per 5 minutes per IP, 30 per hour per API key
+- \`/api/cli/payment-session\`: 5 requests per 5 minutes per IP
 - \`/api/payment-link\`: 20 per 10 minutes per IP, 10 per hour per session, 5 per hour per email
 
 ## Pages

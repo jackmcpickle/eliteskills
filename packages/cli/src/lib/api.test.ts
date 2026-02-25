@@ -9,9 +9,9 @@ describe('fetchSkillZip', () => {
     });
 
     function mockFetch(status: number, body: BodyInit = '') {
-        globalThis.fetch = vi.fn().mockResolvedValue(
-            new Response(body, { status }),
-        );
+        globalThis.fetch = vi
+            .fn()
+            .mockResolvedValue(new Response(body, { status }));
     }
 
     it('returns ArrayBuffer on 200', async () => {
@@ -58,7 +58,9 @@ describe('fetchSkillZip', () => {
     });
 
     it('throws on network failure', async () => {
-        globalThis.fetch = vi.fn().mockRejectedValue(new TypeError('fetch failed'));
+        globalThis.fetch = vi
+            .fn()
+            .mockRejectedValue(new TypeError('fetch failed'));
         await expect(fetchSkillZip('t', 'react')).rejects.toThrow(
             'Network error',
         );

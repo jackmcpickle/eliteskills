@@ -1,14 +1,19 @@
-import { add } from './commands/add.js';
+import { find } from './commands/find.js';
+import { install } from './commands/install.js';
 import * as log from './lib/log.js';
 
 const USAGE = `Usage: eliteskills <command>
 
 Commands:
-  add <skill> [token]   Install a skill into .claude/skills/
+  find <keyword>            Search the skill catalog
+  install <skill> [token]   Install a skill (or start purchase flow)
+  add <skill> [token]       Alias for install
+  buy <skill>               Alias for install
 
 Examples:
-  npx @eliteskills/cli add react
-  npx @eliteskills/cli add react abc123def`;
+  npx @eliteskills/cli find react
+  npx @eliteskills/cli install react
+  npx @eliteskills/cli install react abc123def`;
 
 export async function main(argv: string[]): Promise<void> {
     const args = argv.slice(2);
@@ -19,7 +24,13 @@ export async function main(argv: string[]): Promise<void> {
         return;
     }
 
-    if (command === 'add') {
+    if (command === 'find') {
+        const keyword = args[1];
+        await find(keyword);
+        return;
+    }
+
+    if (command === 'install' || command === 'add' || command === 'buy') {
         const skill = args[1];
         if (!skill) {
             log.error('Missing skill name.');
@@ -27,7 +38,7 @@ export async function main(argv: string[]): Promise<void> {
             process.exit(1);
         }
         const token = args[2];
-        await add(skill, token);
+        await install(skill, token);
         return;
     }
 

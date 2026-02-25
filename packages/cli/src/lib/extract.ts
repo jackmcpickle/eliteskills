@@ -1,6 +1,6 @@
-import { unzipSync } from 'fflate';
 import { writeFileSync, mkdirSync } from 'node:fs';
 import { join, dirname, normalize } from 'node:path';
+import { unzipSync } from 'fflate';
 
 const SKIP_FILES = new Set(['.DS_Store', '__MACOSX']);
 

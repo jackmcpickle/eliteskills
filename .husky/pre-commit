@@ -1,0 +1,8 @@
+#!/usr/bin/env sh
+
+# Ensure tool managers are in PATH for non-interactive shells (git hooks).
+# Supports mise shims, nvm, volta, and globally installed tools.
+[ -d "$HOME/.local/share/mise/shims" ] && export PATH="$HOME/.local/share/mise/shims:$PATH"
+[ -d "$HOME/.local/bin" ] && export PATH="$HOME/.local/bin:$PATH"
+
+pnpm lint-staged

@@ -148,10 +148,10 @@ describe('Account page contracts', () => {
         expect(cookie).toContain('Max-Age=2592000');
     });
 
-    it('install command format: npx elite-skills install {slug}', () => {
+    it('install command format: npx @eliteskills/cli install {slug}', () => {
         const slug = 'code-review';
-        const cmd = `npx elite-skills install ${slug}`;
-        expect(cmd).toMatch(/^npx elite-skills install [a-z0-9-]+$/);
+        const cmd = `npx @eliteskills/cli install ${slug}`;
+        expect(cmd).toMatch(/^npx @eliteskills\/cli install [a-z0-9-]+$/);
     });
 });
 

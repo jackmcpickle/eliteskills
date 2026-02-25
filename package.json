@@ -1,9 +1,9 @@
 {
     "name": "eliteskills",
-    "type": "module",
     "version": "1.0.0",
-    "packageManager": "pnpm@10.29.3",
+    "type": "module",
     "scripts": {
+        "prepare": "husky",
         "test": "pnpm run fmt:check && pnpm run check && pnpm run lint && pnpm vitest",
         "test:coverage": "pnpm run fmt:check && pnpm run check && pnpm run lint && vitest run --coverage.enabled",
         "check": "astro check",
@@ -28,6 +28,7 @@
         "build": "pnpm build:manifest && pnpm build:skills && astro build",
         "build:cli": "pnpm --filter @eliteskills/cli build",
         "test:cli": "pnpm --filter @eliteskills/cli test",
+        "release": "commit-and-tag-version -a",
         "astro": "astro"
     },
     "dependencies": {
@@ -49,10 +50,18 @@
     "devDependencies": {
         "@anthropic-ai/sdk": "^0.78.0",
         "@cloudflare/workers-types": "^4.20260228.0",
+        "@commitlint/cli": "^20.4.1",
+        "@commitlint/config-conventional": "^20.4.1",
+        "@commitlint/prompt-cli": "^20.4.1",
         "@playwright/test": "^1.58.2",
+        "@types/node": "^24.10.13",
         "@vitest/coverage-v8": "^4.0.18",
+        "commit-and-tag-version": "^12.6.1",
+        "conventional-changelog-conventionalcommits": "^9.1.0",
         "dotenv": "^17.3.1",
         "drizzle-kit": "^0.31.9",
+        "husky": "^9.1.7",
+        "lint-staged": "^16.2.7",
         "oxfmt": "^0.34.0",
         "oxlint": "^1.49.0",
         "oxlint-tsgolint": "^0.14.2",
@@ -60,5 +69,40 @@
         "vite-node": "^5.3.0",
         "vitest": "^4.0.18",
         "wrangler": "^4.67.0"
+    },
+    "lint-staged": {
+        "**/*.*": [
+            "oxfmt --write --no-error-on-unmatched-pattern",
+            "oxlint --type-aware --type-check --fix --quiet"
+        ]
+    },
+    "commitlint": {
+        "extends": [
+            "@commitlint/config-conventional"
+        ],
+        "rules": {
+            "body-max-line-length": [
+                2,
+                "always",
+                "Infinity"
+            ]
+        }
+    },
+    "packageManager": "pnpm@10.29.3",
+    "commit-and-tag-version": {
+        "bumpFiles": [
+            {
+                "filename": "VERSION",
+                "type": "plain-text"
+            },
+            {
+                "filename": "package.json",
+                "type": "json"
+            },
+            {
+                "filename": "packages/cli/package.json",
+                "type": "json"
+            }
+        ]
     }
 }

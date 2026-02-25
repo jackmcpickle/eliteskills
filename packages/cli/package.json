@@ -1,7 +1,9 @@
 {
     "name": "@eliteskills/cli",
     "version": "1.0.0",
-    "type": "module",
+    "description": "CLI for browsing and installing EliteSkill.ai coding skills",
+    "homepage": "https://eliteskills.ai",
+    "author": "EliteSkills <hello@eliteskills.ai> (https://eliteskills.ai)",
     "bin": {
         "eliteskills": "./bin/cli.mjs"
     },
@@ -9,6 +11,11 @@
         "bin",
         "dist"
     ],
+    "type": "module",
+    "scripts": {
+        "build": "tsup",
+        "test": "vitest run"
+    },
     "dependencies": {
         "fflate": "^0.8.2"
     },
@@ -16,9 +23,5 @@
         "tsup": "^8.5.0",
         "typescript": "^5.9.3",
         "vitest": "^4.0.18"
-    },
-    "scripts": {
-        "build": "tsup",
-        "test": "vitest run"
     }
 }

@@ -47,10 +47,10 @@ const purchaseDisplays: PurchaseDisplay[] = await Promise.all(
 		// Build install commands
 		let installCommands: string[] = [];
 		if (product?.skillSlug) {
-			installCommands = [`npx elite-skills install ${product.skillSlug}`];
+			installCommands = [`npx @eliteskills/cli install ${product.skillSlug}`];
 		} else if (product) {
 			// Bundle — list all individual skill install commands
-			installCommands = allSkillProducts.map((sp) => `npx elite-skills install ${sp.skillSlug}`);
+			installCommands = allSkillProducts.map((sp) => `npx @eliteskills/cli install ${sp.skillSlug}`);
 		}
 
 		return {

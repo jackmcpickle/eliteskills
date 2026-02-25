@@ -40,6 +40,7 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm vitest
+      - run: pnpm test:cli
 
   e2e:
     name: Playwright E2E (Human Flow)

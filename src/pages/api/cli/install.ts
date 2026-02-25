@@ -6,6 +6,7 @@ import { createDb } from '@/libs/db/client';
 import {
     getInstallKeyByKey,
     incrementDownloadCount,
+    listSkillProducts,
     getPurchaseById,
     getProductById,
 } from '@/libs/db/repo';
@@ -48,9 +49,21 @@ export const POST: APIRoute = async ({ request, locals }) => {
         return jsonError('Product not found.', 404);
     }
 
-    // Single skill product: verify requested skill matches
-    if (product.skillSlug !== null && product.skillSlug !== skill) {
-        return jsonError("Token doesn't grant access to this skill.", 403);
+    if (product.skillSlug !== null) {
+        if (product.skillSlug !== skill) {
+            return jsonError("Token doesn't grant access to this skill.", 403);
+        }
+    } else {
+        const skillProducts = await listSkillProducts(db);
+        const validSkills = new Set(
+            skillProducts
+                .map((skillProduct) => skillProduct.skillSlug)
+                .filter((skillSlug): skillSlug is string => skillSlug !== null),
+        );
+
+        if (!validSkills.has(skill)) {
+            return jsonError('Skill not found.', 404);
+        }
     }
 
     // Resolve zip — for bundles (skillSlug=null), serve per-skill zip using skill param

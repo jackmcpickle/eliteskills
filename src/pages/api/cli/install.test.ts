@@ -3,6 +3,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 const mockGetInstallKeyByKey = vi.fn();
 const mockGetPurchaseById = vi.fn();
 const mockGetProductById = vi.fn();
+const mockListSkillProducts = vi.fn();
 const mockIncrementDownloadCount = vi.fn();
 
 vi.mock('@/libs/db/client', () => ({
@@ -13,6 +14,7 @@ vi.mock('@/libs/db/repo', () => ({
     getInstallKeyByKey: (...args: unknown[]) => mockGetInstallKeyByKey(...args),
     getPurchaseById: (...args: unknown[]) => mockGetPurchaseById(...args),
     getProductById: (...args: unknown[]) => mockGetProductById(...args),
+    listSkillProducts: (...args: unknown[]) => mockListSkillProducts(...args),
     incrementDownloadCount: (...args: unknown[]) =>
         mockIncrementDownloadCount(...args),
 }));
@@ -58,6 +60,10 @@ function callPost(body: unknown) {
 describe('POST /api/cli/install', () => {
     beforeEach(() => {
         vi.clearAllMocks();
+        mockListSkillProducts.mockResolvedValue([
+            { id: 1, skillSlug: 'react' },
+            { id: 2, skillSlug: 'backend' },
+        ]);
         fakeLocals.runtime.env.ASSETS.fetch = vi
             .fn()
             .mockResolvedValue(new Response(new Uint8Array([1, 2])));
@@ -179,5 +185,22 @@ describe('POST /api/cli/install', () => {
         const res = await callPost({ token: 'tok', skill: 'react' });
         expect(res.status).toBe(200);
         expect(res.headers.get('content-type')).toBe('application/zip');
+    });
+
+    it('returns 404 for bundle token with unknown skill', async () => {
+        mockGetInstallKeyByKey.mockResolvedValue({
+            id: 'k1',
+            purchaseId: 'p1',
+            downloadCount: 0,
+            maxDownloads: null,
+        });
+        mockGetPurchaseById.mockResolvedValue({ id: 'p1', productId: 1 });
+        mockGetProductById.mockResolvedValue({
+            id: 1,
+            skillSlug: null,
+        });
+
+        const res = await callPost({ token: 'tok', skill: 'unknown' });
+        expect(res.status).toBe(404);
     });
 });

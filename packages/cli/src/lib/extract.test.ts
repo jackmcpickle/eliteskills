@@ -95,6 +95,18 @@ describe('extractZip', () => {
         expect(result.dirs).toEqual([]);
     });
 
+    it('keeps valid empty files', () => {
+        const zip = makeZip({
+            '.claude/skills/react/empty.txt': new Uint8Array(),
+        });
+
+        const result = extractZip(zip, tmpDir);
+        expect(result.fileCount).toBe(1);
+        expect(
+            existsSync(join(tmpDir, '.claude/skills/react/empty.txt')),
+        ).toBe(true);
+    });
+
     it('extracts bundle with multiple skill dirs', () => {
         const zip = makeZip({
             '.claude/skills/react/SKILL.md': '# React',

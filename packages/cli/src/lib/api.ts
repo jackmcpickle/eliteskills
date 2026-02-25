@@ -1,4 +1,4 @@
-const API_BASE = 'https://eliteskill.ai';
+const API_BASE = 'https://eliteskills.ai';
 
 const ERROR_MESSAGES: Record<number, string> = {
     400: 'Missing skill or token.',

@@ -25,8 +25,8 @@ export function extractZip(
     for (const [path, data] of Object.entries(files)) {
         if (shouldSkip(path)) continue;
 
-        // Skip directory entries (empty data, path ends with /)
-        if (path.endsWith('/') || data.length === 0) continue;
+        // Skip directory entries
+        if (path.endsWith('/')) continue;
 
         // Safety: all paths must be within .claude/skills/
         const normalized = normalize(path);

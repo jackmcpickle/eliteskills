@@ -26,6 +26,8 @@
         "stripe:sync": "pnpm exec vite-node scripts/sync-stripe-products.ts",
         "stripe:cleanup": "pnpm exec vite-node scripts/cleanup-stripe-duplicates.ts",
         "build": "pnpm build:manifest && pnpm build:skills && astro build",
+        "build:cli": "pnpm --filter @eliteskills/cli build",
+        "test:cli": "pnpm --filter @eliteskills/cli test",
         "astro": "astro"
     },
     "dependencies": {

@@ -1,0 +1,21 @@
+{
+    "name": "@eliteskills/cli",
+    "version": "0.1.0",
+    "type": "module",
+    "bin": {
+        "eliteskills": "./bin/cli.mjs"
+    },
+    "files": ["bin", "dist"],
+    "dependencies": {
+        "fflate": "^0.8.2"
+    },
+    "devDependencies": {
+        "tsup": "^8.5.0",
+        "typescript": "^5.9.3",
+        "vitest": "^4.0.18"
+    },
+    "scripts": {
+        "build": "tsup",
+        "test": "vitest run"
+    }
+}

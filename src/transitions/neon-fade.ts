@@ -1,6 +1,6 @@
 import type { TransitionDirectionalAnimations } from 'astro';
 
-const neonFade: TransitionDirectionalAnimations = {
+export const neonFade: TransitionDirectionalAnimations = {
     forwards: {
         old: {
             name: 'neonFadeOut',
@@ -31,4 +31,3 @@ const neonFade: TransitionDirectionalAnimations = {
     },
 };
 
-export default neonFade;

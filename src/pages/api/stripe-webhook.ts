@@ -67,6 +67,41 @@ function computePriceSnapshot(
     return isZeroDecimalCurrency(currency) ? amountTotal : amountTotal / 100;
 }
 
+async function resolveProduct(
+    db: ReturnType<typeof createDb>,
+    session: CheckoutSessionData,
+): Promise<Awaited<ReturnType<typeof getProductById>> | undefined> {
+    const metaProductId = Number(session.metadata?.productId);
+    const product = metaProductId
+        ? await getProductById(db, metaProductId)
+        : undefined;
+    if (product) return product;
+    if (session.metadata?.productCode) {
+        return getProductByCode(db, session.metadata.productCode);
+    }
+    return undefined;
+}
+
+async function sendCheckoutEmails(ctx: EmailContext): Promise<void> {
+    try {
+        await sendMail({
+            to: [getAdminEmail()],
+            subject: `Payment received: ${ctx.productName} (${ctx.email})`,
+            text: buildAdminEmailText(ctx),
+        });
+
+        const customerEmail = buildCustomerEmail(ctx);
+        await sendMail({
+            to: [ctx.email],
+            subject: 'Payment confirmed — Elite Skills',
+            text: customerEmail.text,
+            html: customerEmail.html,
+        });
+    } catch {
+        // Non-fatal: payment is already captured by Stripe
+    }
+}
+
 async function handleCheckoutCompleted(
     session: CheckoutSessionData,
     d1: D1Database,
@@ -78,25 +113,19 @@ async function handleCheckoutCompleted(
     const continent = session.metadata?.continent ?? 'NA';
     const amountPaid = resolveAmountPaid(session);
 
-    // Resolve product id from metadata
-    const metaProductId = Number(session.metadata?.productId);
-    let product = metaProductId
-        ? await getProductById(db, metaProductId)
-        : undefined;
-
-    // Fallback: try legacy code lookup
-    if (!product && session.metadata?.productCode) {
-        product = await getProductByCode(db, session.metadata.productCode);
-    }
+    const product = await resolveProduct(db, session);
 
     if (!product) {
         if (isMailConfigured()) {
-            await sendMail({
-                to: [getAdminEmail()],
-                subject: `WARN: Unknown product in payment (${email})`,
-                text: `Session: ${session.id}\nMetadata productId: ${session.metadata?.productId}\nEmail: ${email}`,
+            try {
+                await sendMail({
+                    to: [getAdminEmail()],
+                    subject: `WARN: Unknown product in payment (${email})`,
+                    text: `Session: ${session.id}\nMetadata productId: ${session.metadata?.productId}\nEmail: ${email}`,
+                });
+            } catch {
                 // non-fatal
-            }).catch(() => {});
+            }
         }
         return;
     }
@@ -125,11 +154,9 @@ async function handleCheckoutCompleted(
         metadata: purchaseMetadata,
     });
 
-    const accountUrl = `${SITE_URL}/account/${user.accountKey}`;
-
     if (!isMailConfigured()) return;
 
-    const ctx: EmailContext = {
+    await sendCheckoutEmails({
         session,
         customerName,
         email,
@@ -138,26 +165,8 @@ async function handleCheckoutCompleted(
         amountPaid,
         productName: product.name,
         productCode: product.code,
-        accountUrl,
-    };
-
-    try {
-        await sendMail({
-            to: [getAdminEmail()],
-            subject: `Payment received: ${product.name} (${email})`,
-            text: buildAdminEmailText(ctx),
-        });
-
-        const customerEmail = buildCustomerEmail(ctx);
-        await sendMail({
-            to: [email],
-            subject: 'Payment confirmed — Elite Skills',
-            text: customerEmail.text,
-            html: customerEmail.html,
-        });
-    } catch {
-        // Non-fatal: payment is already captured by Stripe
-    }
+        accountUrl: `${SITE_URL}/account/${user.accountKey}`,
+    });
 }
 
 export const POST: APIRoute = async ({ request, clientAddress, locals }) => {

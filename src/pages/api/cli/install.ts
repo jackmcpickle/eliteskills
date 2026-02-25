@@ -49,11 +49,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
         return jsonError('Product not found.', 404);
     }
 
-    if (product.skillSlug !== null) {
-        if (product.skillSlug !== skill) {
-            return jsonError("Token doesn't grant access to this skill.", 403);
-        }
-    } else {
+    if (product.skillSlug === null) {
         const skillProducts = await listSkillProducts(db);
         const validSkills = new Set(
             skillProducts
@@ -64,6 +60,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
         if (!validSkills.has(skill)) {
             return jsonError('Skill not found.', 404);
         }
+    } else if (product.skillSlug !== skill) {
+        return jsonError("Token doesn't grant access to this skill.", 403);
     }
 
     // Resolve zip — for bundles (skillSlug=null), serve per-skill zip using skill param

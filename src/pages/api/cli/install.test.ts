@@ -1,3 +1,4 @@
+import type { APIContext } from 'astro';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 const mockGetInstallKeyByKey = vi.fn();
@@ -11,11 +12,15 @@ vi.mock('@/libs/db/client', () => ({
 }));
 
 vi.mock('@/libs/db/repo', () => ({
-    getInstallKeyByKey: (...args: unknown[]) => mockGetInstallKeyByKey(...args),
-    getPurchaseById: (...args: unknown[]) => mockGetPurchaseById(...args),
-    getProductById: (...args: unknown[]) => mockGetProductById(...args),
-    listSkillProducts: (...args: unknown[]) => mockListSkillProducts(...args),
-    incrementDownloadCount: (...args: unknown[]) =>
+    getInstallKeyByKey: (...args: unknown[]): unknown =>
+        mockGetInstallKeyByKey(...args),
+    getPurchaseById: (...args: unknown[]): unknown =>
+        mockGetPurchaseById(...args),
+    getProductById: (...args: unknown[]): unknown =>
+        mockGetProductById(...args),
+    listSkillProducts: (...args: unknown[]): unknown =>
+        mockListSkillProducts(...args),
+    incrementDownloadCount: (...args: unknown[]): unknown =>
         mockIncrementDownloadCount(...args),
 }));
 
@@ -50,11 +55,11 @@ const fakeLocals = {
     },
 };
 
-function callPost(body: unknown) {
-    return (POST as Function)({
+async function callPost(body: unknown): Promise<Response> {
+    return POST({
         request: makeRequest(body),
         locals: fakeLocals,
-    });
+    } as unknown as APIContext) as Promise<Response>;
 }
 
 describe('POST /api/cli/install', () => {

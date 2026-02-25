@@ -75,7 +75,9 @@ describe('install command', () => {
 
         const stdout = logSpy.mock.calls.map((c) => c[0]).join('\n');
         expect(stdout).toContain('Downloading skill "react"');
-        expect(stdout).toContain('Installed react (1 files) to .claude/skills/');
+        expect(stdout).toContain(
+            'Installed react (1 files) to .claude/skills/',
+        );
     });
 
     it('exits on 404 with error message', async () => {
@@ -125,7 +127,9 @@ describe('install command', () => {
         ).toBe('# React');
 
         const stdout = logSpy.mock.calls.map((c) => c[0]).join('\n');
-        expect(stdout).toContain('Installed react (1 files) to .claude/skills/');
+        expect(stdout).toContain(
+            'Installed react (1 files) to .claude/skills/',
+        );
     });
 
     it('purchase flow prints payment url and next steps', async () => {

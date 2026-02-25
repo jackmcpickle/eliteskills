@@ -134,7 +134,7 @@ Generate a detailed, staged plan. Each stage should be completable and deployabl
 - Linting & formatting (ESLint/oxlint/Biome, Prettier, language-specific linters)
 - Editor config (.editorconfig, VS Code settings, recommended extensions)
 - Pre-commit hooks (husky + lint-staged or equivalent)
-- Generate `CLAUDE.md` with project commands, structure, and conventions
+- Generate a minimal `CLAUDE.md` with **only CLI commands** (dev, build, test, lint, format, migrate, deploy). No descriptions, no architecture, no conventions — just commands.
 - Explain every tool choice
 
 #### Stage 1: CI/CD & Deployment Pipeline
@@ -211,12 +211,18 @@ After the user approves the plan, offer to scaffold the project:
 3. Configure linting, formatting, and pre-commit hooks
 4. Set up the test harness with passing example tests
 5. Create the CI/CD pipeline configuration files
-6. Generate `CLAUDE.md` with:
-   - Project description and architecture
-   - All dev commands (dev, build, test, lint, deploy)
-   - Directory structure explanation
-   - Coding conventions
-   - Key technology decisions and why
+6. Generate a minimal `CLAUDE.md` containing **only** CLI commands:
+   ```markdown
+   ## Commands
+   [dev command]      # Start dev server
+   [build command]    # Production build
+   [test command]     # Run tests
+   [lint command]     # Lint code
+   [format command]   # Format code
+   [migrate command]  # Run DB migrations (if applicable)
+   [deploy command]   # Deploy (if applicable)
+   ```
+   Do NOT add project descriptions, architecture explanations, coding conventions, or directory structures. Keep it to commands only — less context performs better.
 7. Create initial commit
 8. Verify the app runs, tests pass, and linting passes
 

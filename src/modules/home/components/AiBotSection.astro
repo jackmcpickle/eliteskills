@@ -97,7 +97,7 @@ await requestApproval({
 				<code class="flex-1 font-mono text-sm text-neon-cyan select-all">{agentPrompt}</code>
 				<button
 					type="button"
-					class="copy-btn shrink-0 rounded border border-slate-mid px-2.5 py-1.5 font-mono text-xs text-ghost hover:border-neon-cyan-dim hover:text-neon-cyan transition-all"
+					class="copy-btn shrink-0 min-w-[4.5rem] text-center rounded border border-slate-mid px-2.5 py-1.5 font-mono text-xs text-ghost hover:border-neon-cyan-dim hover:text-neon-cyan transition-all"
 					data-copy={agentPrompt}
 				>
 					Copy
@@ -107,26 +107,4 @@ await requestApproval({
 	</div>
 </section>
 
-<script>
-	document.querySelectorAll<HTMLButtonElement>('.copy-btn').forEach((btn) => {
-		btn.addEventListener('click', async () => {
-			const text = btn.dataset.copy;
-			if (!text) return;
-			try {
-				await navigator.clipboard.writeText(text);
-				const original = btn.textContent;
-				btn.textContent = 'Copied!';
-				setTimeout(() => { btn.textContent = original; }, 1500);
-			} catch {
-				const code = btn.previousElementSibling;
-				if (code) {
-					const range = document.createRange();
-					range.selectNodeContents(code);
-					const sel = window.getSelection();
-					sel?.removeAllRanges();
-					sel?.addRange(range);
-				}
-			}
-		});
-	});
-</script>
+<script>import '../../../scripts/copy-btn';</script>

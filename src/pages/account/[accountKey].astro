@@ -146,7 +146,7 @@ const purchaseDisplays: PurchaseDisplay[] = await Promise.all(
 									<code class="flex-1 text-sm text-neon-green break-all select-all">{cmd}</code>
 									<button
 										type="button"
-										class="copy-btn shrink-0 rounded border border-slate-mid px-2.5 py-1.5 font-mono text-xs text-ghost hover:border-neon-cyan-dim hover:text-neon-cyan transition-all"
+										class="copy-btn shrink-0 min-w-[4.5rem] text-center rounded border border-slate-mid px-2.5 py-1.5 font-mono text-xs text-ghost hover:border-neon-cyan-dim hover:text-neon-cyan transition-all"
 										data-copy={cmd}
 									>
 										Copy
@@ -184,27 +184,4 @@ const purchaseDisplays: PurchaseDisplay[] = await Promise.all(
 	</main>
 </BaseLayout>
 
-<script>
-	document.querySelectorAll('.copy-btn').forEach((btn) => {
-		btn.addEventListener('click', async () => {
-			const text = (btn as HTMLElement).dataset.copy;
-			if (!text) return;
-			try {
-				await navigator.clipboard.writeText(text);
-				const original = btn.textContent;
-				btn.textContent = 'Copied!';
-				setTimeout(() => { btn.textContent = original; }, 1500);
-			} catch {
-				// Fallback: select the code text
-				const code = btn.previousElementSibling;
-				if (code) {
-					const range = document.createRange();
-					range.selectNodeContents(code);
-					const sel = window.getSelection();
-					sel?.removeAllRanges();
-					sel?.addRange(range);
-				}
-			}
-		});
-	});
-</script>
+<script>import '../../scripts/copy-btn';</script>

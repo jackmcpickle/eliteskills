@@ -6,17 +6,17 @@ TanStack Table with column factory, DataTable, filters, and server pagination.
 
 ```tsx
 import type { ColumnDef } from '@tanstack/react-table';
-import { Badge, Button } from '@superit/ui-core';
+import { Badge, Button } from '@/components/ui';
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
-} from '@superit/ui-core';
+} from '@/components/ui';
 import { MoreHorizontal } from 'lucide-react';
-import type { {Feature} } from '@superit/ui-superit-api';
+import type { {Feature} } from '@/lib/api';
 import { DataTableColumnHeader } from '@/components/table';
-import { Checkbox } from '@superit/ui-core';
+import { Checkbox } from '@/components/ui';
 import { formatDateTime } from '@/utils/date';
 
 export interface ColumnActions {
@@ -124,7 +124,7 @@ export function createColumns(
 ## List View with Filters + Server Pagination
 
 ```tsx
-import type { {Feature} } from '@superit/ui-superit-api';
+import type { {Feature} } from '@/lib/api';
 import { type ReactElement, useMemo, useState } from 'react';
 import {
     FilterBar,

@@ -26,7 +26,7 @@ import {
     Card,
     CardContent,
     FieldGroup,
-} from '@superit/ui-core';
+} from '@/components/ui';
 import type { ReactElement, SubmitEvent } from 'react';
 import { use{Feature}Form } from '@/modules/{feature}/hooks/use{Feature}Form';
 import { use{Action}{Feature}Mutation } from '@/modules/{feature}/hooks/use{Action}{Feature}Mutation';
@@ -104,8 +104,8 @@ import {
     Card,
     CardContent,
     FieldGroup,
-} from '@superit/ui-core';
-import type { {Feature}Detail } from '@superit/ui-superit-api';
+} from '@/components/ui';
+import type { {Feature}Detail } from '@/lib/api';
 import type { ReactElement, SubmitEvent } from 'react';
 import { use{Feature}Form } from '@/modules/{feature}/hooks/use{Feature}Form';
 import { use{Feature}FormController } from '@/modules/{feature}/hooks/use{Feature}FormController';
@@ -195,7 +195,7 @@ import {
     SelectTrigger,
     SelectValue,
     Switch,
-} from '@superit/ui-core';
+} from '@/components/ui';
 import type { ReactElement } from 'react';
 
 interface SelectField {

@@ -1,7 +1,7 @@
 ---
 name: backend
 description: Create FastAPI backend features following SubTechnica patterns. Use when building new APIs, services, domain models, or repository functions. Uses SQLModel for DB, Pydantic CamelModel for API types, and Result pattern for error handling.
-version: 1.0.0
+version: 1.1.0
 ---
 
 # Backend Development Skill
@@ -155,8 +155,8 @@ async def get_note_by_key(
     key: str,
 ) -> Result[NotFound, NoteDetail]:
     stmt = select(Note).where(Note.key == key)
-    result = await session.exec(stmt)
-    note = result.one_or_none()
+    result = await session.execute(stmt)
+    note = result.scalars().one_or_none()
     if note is None:
         return Err(NotFound(entity="Note", identifier=key))
     return Ok(NoteDetail.model_validate(note, from_attributes=True))
@@ -166,7 +166,7 @@ async def create_note(
     session: AsyncSession,
     team_id: int,
     data: NoteCreateBody,
-) -> Result[NotFound, NoteDetail]:
+) -> NoteDetail:  # Use Result[ErrorType, ...] if create can fail (e.g., AlreadyExists)
     note = Note(
         team_id=team_id,
         title=data.title,
@@ -176,7 +176,7 @@ async def create_note(
     session.add(note)
     await session.commit()
     await session.refresh(note)
-    return Ok(NoteDetail.model_validate(note, from_attributes=True))
+    return NoteDetail.model_validate(note, from_attributes=True)
 ```
 
 ### Service — works with DTOs only

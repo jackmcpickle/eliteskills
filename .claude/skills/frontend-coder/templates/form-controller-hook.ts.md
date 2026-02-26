@@ -3,7 +3,7 @@
 Separates form business logic (create/edit/delete + navigation) from form UI.
 
 ```typescript
-import type { {Feature}Detail } from '@superit/ui-superit-api';
+import type { {Feature}Detail } from '@/lib/api';
 import { useNavigate } from '@tanstack/react-router';
 import { useCreate{Feature}Mutation } from '@/modules/{feature}/hooks/useCreate{Feature}Mutation';
 import { useUpdate{Feature}Mutation } from '@/modules/{feature}/hooks/useUpdate{Feature}Mutation';
@@ -83,3 +83,4 @@ export function use{Feature}FormController({
 3. **Navigation on success** - `useNavigate()` for routing after create
 4. **Read-only guard** - prevents submission for read-only items
 5. **Named return interface** - `Use{Feature}FormControllerReturn`
+6. **`mutate` vs `mutateAsync`** — Controllers use `mutate` (with `onSuccess` callback). Form `onSubmit` handlers that need to `await` use `mutateAsync`. Don't mix both in one flow

@@ -66,7 +66,7 @@ class NoteListItem(CamelModel):
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from srv.core.errors import NotFound
+from srv.core.errors import NotFound, QueryError
 from srv.core.result import Err, Ok, Result
 from ..models.note import Note
 from ..types.note import NoteCreateBody, NoteUpdateBody, NoteDetail, NoteListItem
@@ -88,10 +88,10 @@ async def list_notes_for_team(
     session: AsyncSession,
     team_id: int,
     pinned_only: bool = False,
-) -> Result[NotFound, list[NoteListItem]]:
+) -> Result[QueryError, list[NoteListItem]]:
     stmt = select(Note).where(Note.team_id == team_id)
     if pinned_only:
-        stmt = stmt.where(Note.is_pinned == True)  # noqa: E712
+        stmt = stmt.where(Note.is_pinned)
     stmt = stmt.order_by(Note.is_pinned.desc(), Note.created_at.desc())
     result = await session.execute(stmt)
     return Ok([NoteListItem.model_validate(n, from_attributes=True) for n in result.scalars().all()])
@@ -101,7 +101,7 @@ async def create_note(
     session: AsyncSession,
     team_id: int,
     data: NoteCreateBody,
-) -> Result[NotFound, NoteDetail]:
+) -> NoteDetail:
     note = Note(
         team_id=team_id,
         title=data.title,
@@ -111,7 +111,7 @@ async def create_note(
     session.add(note)
     await session.commit()
     await session.refresh(note)
-    return Ok(NoteDetail.model_validate(note, from_attributes=True))
+    return NoteDetail.model_validate(note, from_attributes=True)
 
 
 async def update_note(

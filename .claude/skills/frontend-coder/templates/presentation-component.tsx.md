@@ -5,7 +5,7 @@ Pure UI components with no hooks, no data fetching. Live in `src/components/`.
 ## Basic Variant Component
 
 ```tsx
-import { cn } from '@superit/ui-core';
+import { cn } from '@/components/ui';
 import type { ReactElement, ReactNode } from 'react';
 
 type {Component}Variant = 'default' | 'accent' | 'muted';
@@ -44,7 +44,7 @@ export function {Component}({
 ## Polymorphic Component
 
 ```tsx
-import { cn } from '@superit/ui-core';
+import { cn } from '@/components/ui';
 import type { ComponentProps, ReactElement } from 'react';
 
 type {Component}Element = 'h1' | 'h2' | 'h3' | 'h4';
@@ -83,7 +83,7 @@ export function {Component}({
 ## Size-Variant Layout Component
 
 ```tsx
-import { cn } from '@superit/ui-core';
+import { cn } from '@/components/ui';
 import type { ReactElement, ReactNode } from 'react';
 
 type ContainerSize = 'none' | 'sm' | 'md' | 'lg';
@@ -138,7 +138,7 @@ export function Container({
 2. **`type` for variants** - string unions for style options
 3. **`interface` for props** - always with explicit types
 4. **`satisfies Record<>`** for style mappings - type-safe without assertion
-5. **`cn()` from `@superit/ui-core`** for className merging
+5. **`cn()` from `@/components/ui`** for className merging
 6. **`children: ReactNode`** for composable components
 7. **`ComponentProps<'element'>`** for extending native HTML props
 8. **Named exports only** - never default exports

@@ -5,7 +5,7 @@ Scaffold a complete feature module with routes, hooks, components, and barrel ex
 ## Directory Structure
 
 ```
-src/ui-service-desk/src/modules/{feature}/
+src/modules/{feature}/
 ├── index.ts                           # Barrel exports (public API)
 ├── types.ts                           # Local types, const enums, tab configs
 ├── helpers.ts                         # Pure data transformation functions
@@ -102,7 +102,7 @@ export function get{Feature}TabLink(
 import { createFileRoute } from '@tanstack/react-router';
 import type { ReactElement } from 'react';
 import { PageHeading } from '@/components/PageHeading';
-import { Separator } from '@superit/ui-core';
+import { Separator } from '@/components/ui';
 import { {Feature}sListView } from '@/modules/{feature}';
 import { useActiveTeam } from '@/modules/team';
 
@@ -170,13 +170,20 @@ routes/_app/t/$teamKey/{feature}/${{feature}Key}/
 
 ## Step 4: Query Keys
 
-Add to `src/ui-service-desk/src/utils/queryKeys.ts`:
+The centralized `queryKeys.ts` file collects all features' key factories. Add your feature's keys alongside existing ones:
 
 ```typescript
+// src/utils/queryKeys.ts
+import type { ArticleQueryParams } from '@/modules/article';
+import type { {Feature}QueryParams } from '@/modules/{feature}';
+
+export const articleKeys = { /* existing */ };
+
+// Add new feature keys:
 export const {feature}Keys = {
     all: ['{feature}'] as const,
     lists: () => [...{feature}Keys.all, 'list'] as const,
-    list: (params: Record<string, unknown>) =>
+    list: (params: {Feature}QueryParams) =>
         [...{feature}Keys.lists(), params] as const,
     details: () => [...{feature}Keys.all, 'detail'] as const,
     detail: (key: string) => [...{feature}Keys.details(), key] as const,
@@ -185,9 +192,12 @@ export const {feature}Keys = {
 };
 ```
 
+> Always type `list()` params with the feature's `QueryParams` interface — never use `Record<string, unknown>`.
+
 ## Step 5: Hooks, Schema, Components
 
 Use the individual templates for each:
+
 - [Query Hook](query-hook.ts.md) for `use{Feature}sQuery.ts` and `use{Feature}Query.ts`
 - [Mutation Hook](mutation-hook.ts.md) for create/update/delete mutations
 - [Form Component](form-component.tsx.md) for `{Feature}Form.tsx`

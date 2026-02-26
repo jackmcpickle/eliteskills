@@ -3,7 +3,7 @@
 TanStack Query hook for fetching data.
 
 ```typescript
-import type { {ResponseType} } from '@superit/ui-superit-api';
+import type { {ResponseType} } from '@/lib/api';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 import { {feature}Keys } from '@/utils/queryKeys';
@@ -34,7 +34,7 @@ export function use{Feature}Query(teamKey: string): Use{Feature}QueryReturn {
 For queries with filters/pagination:
 
 ```typescript
-import type { {ResponseType} } from '@superit/ui-superit-api';
+import type { {ResponseType} } from '@/lib/api';
 import type { UseQueryOptions } from '@tanstack/react-query';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@/lib/api';

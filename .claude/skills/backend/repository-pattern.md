@@ -15,7 +15,7 @@ Repositories handle all async database operations, own the SQLModel-to-DTO conve
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from srv.core.errors import NotFound
+from srv.core.errors import NotFound, QueryError
 from srv.core.result import Err, Ok, Result
 from ..models.note import Note
 from ..types.note import NoteCreateBody, NoteUpdateBody, NoteDetail, NoteListItem
@@ -26,8 +26,8 @@ async def get_note_by_key(
     key: str,
 ) -> Result[NotFound, NoteDetail]:
     stmt = select(Note).where(Note.key == key)
-    result = await session.exec(stmt)
-    note = result.one_or_none()
+    result = await session.execute(stmt)
+    note = result.scalars().one_or_none()
     if note is None:
         return Err(NotFound(entity="Note", identifier=key))
     return Ok(NoteDetail.model_validate(note, from_attributes=True))
@@ -37,20 +37,20 @@ async def list_notes_for_team(
     session: AsyncSession,
     team_id: int,
     pinned_only: bool = False,
-) -> Result[NotFound, list[NoteListItem]]:
+) -> Result[QueryError, list[NoteListItem]]:
     stmt = select(Note).where(Note.team_id == team_id)
     if pinned_only:
         stmt = stmt.where(Note.is_pinned)
     stmt = stmt.order_by(Note.created_at.desc())
-    result = await session.exec(stmt)
-    return Ok([NoteListItem.model_validate(n, from_attributes=True) for n in result.all()])
+    result = await session.execute(stmt)
+    return Ok([NoteListItem.model_validate(n, from_attributes=True) for n in result.scalars().all()])
 
 
 async def create_note(
     session: AsyncSession,
     team_id: int,
     data: NoteCreateBody,
-) -> Result[NotFound, NoteDetail]:
+) -> NoteDetail:  # Use Result[ErrorType, ...] if create can fail (e.g., AlreadyExists)
     note = Note(
         team_id=team_id,
         title=data.title,
@@ -60,7 +60,7 @@ async def create_note(
     session.add(note)
     await session.commit()
     await session.refresh(note)
-    return Ok(NoteDetail.model_validate(note, from_attributes=True))
+    return NoteDetail.model_validate(note, from_attributes=True)
 
 
 async def update_note(
@@ -69,8 +69,8 @@ async def update_note(
     data: NoteUpdateBody,
 ) -> Result[NotFound, NoteDetail]:
     stmt = select(Note).where(Note.key == key)
-    result = await session.exec(stmt)
-    note = result.one_or_none()
+    result = await session.execute(stmt)
+    note = result.scalars().one_or_none()
     if note is None:
         return Err(NotFound(entity="Note", identifier=key))
 
@@ -89,8 +89,8 @@ async def delete_note(
     key: str,
 ) -> Result[NotFound, None]:
     stmt = select(Note).where(Note.key == key)
-    result = await session.exec(stmt)
-    note = result.one_or_none()
+    result = await session.execute(stmt)
+    note = result.scalars().one_or_none()
     if note is None:
         return Err(NotFound(entity="Note", identifier=key))
     await session.delete(note)
@@ -100,14 +100,14 @@ async def delete_note(
 
 ## Naming Conventions
 
-| Operation      | Function Name                                | Returns                             |
-| -------------- | -------------------------------------------- | ----------------------------------- |
-| Get one by key | `get_{entity}_by_key(session, key)`          | `Result[NotFound, EntityDetail]`    |
-| Get one by id  | `get_{entity}_by_id(session, id)`            | `Result[NotFound, EntityDetail]`    |
-| List           | `list_{entities}_for_{parent}(session, ...)` | `Result[..., list[EntityListItem]]` |
-| Create         | `create_{entity}(session, ..., data)`        | `Result[..., EntityDetail]`         |
-| Update         | `update_{entity}(session, key, data)`        | `Result[NotFound, EntityDetail]`    |
-| Delete         | `delete_{entity}(session, key)`              | `Result[NotFound, None]`            |
+| Operation      | Function Name                                | Returns                                              |
+| -------------- | -------------------------------------------- | ---------------------------------------------------- |
+| Get one by key | `get_{entity}_by_key(session, key)`          | `Result[NotFound, EntityDetail]`                     |
+| Get one by id  | `get_{entity}_by_id(session, id)`            | `Result[NotFound, EntityDetail]`                     |
+| List           | `list_{entities}_for_{parent}(session, ...)` | `Result[QueryError, list[EntityListItem]]`           |
+| Create         | `create_{entity}(session, ..., data)`        | `EntityDetail` (wrap in `Result` if create can fail) |
+| Update         | `update_{entity}(session, key, data)`        | `Result[NotFound, EntityDetail]`                     |
+| Delete         | `delete_{entity}(session, key)`              | `Result[NotFound, None]`                             |
 
 ## Key Pattern: Repos Accept DTOs
 
@@ -129,7 +129,7 @@ async def create_note(session, team_id, data: NoteCreateBody) -> Result[..., Not
 Use typed errors from `srv.core.errors`:
 
 ```python
-from srv.core.errors import NotFound, AlreadyExists, InvalidState
+from srv.core.errors import NotFound, AlreadyExists, InvalidState, QueryError
 
 # Not found
 return Err(NotFound(entity="Note", identifier=key))
@@ -150,13 +150,40 @@ async def list_articles(
     article_type: str | None = None,
     offset: int = 0,
     limit: int = 20,
-) -> Result[NotFound, list[ArticleListItem]]:
+) -> Result[QueryError, list[ArticleListItem]]:
     stmt = select(Article).where(Article.team_id == team_id)
     if article_type:
         stmt = stmt.where(Article.article_type == article_type)
     stmt = stmt.offset(offset).limit(limit).order_by(Article.created_at.desc())
-    result = await session.exec(stmt)
-    return Ok([ArticleListItem.model_validate(a, from_attributes=True) for a in result.all()])
+    result = await session.execute(stmt)
+    return Ok([ArticleListItem.model_validate(a, from_attributes=True) for a in result.scalars().all()])
+```
+
+## SQL vs Python Filtering
+
+Always filter in SQL when possible. Python-side filtering is acceptable only when the column type doesn't support portable SQL operators (e.g., JSON array membership) AND the dataset is bounded. Document the reason in a comment.
+
+```python
+# Good — filter in SQL
+stmt = stmt.where(Article.article_type == article_type)
+
+# Acceptable — JSON array membership not portable in SQL, dataset bounded by team
+tags = [tag for item in items if target_tag in item.tags]  # bounded by team's items
+```
+
+## State Transitions
+
+For toggle endpoints, use the service pattern from the notes example (read then check then update). For explicit set-state endpoints (archive, unarchive), succeed silently if already in target state:
+
+```python
+async def archive_note(session, key) -> Result[NotFound, NoteDetail]:
+    result = await repo.get_note_by_key(session, key)
+    if result.is_err():
+        return result
+    note = result.ok()
+    if note.is_archived:
+        return result  # already archived — succeed silently
+    return await repo.update_note(session, key, NoteUpdateBody(is_archived=True))
 ```
 
 ## What NOT to Put in Repositories

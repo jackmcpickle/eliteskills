@@ -5,7 +5,7 @@ Data table with server pagination, filters, and row actions.
 ## File Structure
 
 ```
-src/ui-service-desk/src/modules/articles/
+src/modules/articles/
 ├── hooks/
 │   ├── useArticlesQuery.ts
 │   ├── useDeleteArticleMutation.ts
@@ -21,7 +21,7 @@ src/ui-service-desk/src/modules/articles/
 ## hooks/useArticlesQuery.ts
 
 ```typescript
-import type { Article } from '@superit/ui-superit-api';
+import type { Article } from '@/lib/api';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 import { articleKeys } from '@/utils/queryKeys';
@@ -61,15 +61,15 @@ export function useArticlesQuery(
 
 ```typescript
 import type { ColumnDef } from '@tanstack/react-table';
-import { Badge, Button } from '@superit/ui-core';
+import { Badge, Button } from '@/components/ui';
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
-} from '@superit/ui-core';
+} from '@/components/ui';
 import { MoreHorizontal } from 'lucide-react';
-import type { Article } from '@superit/ui-superit-api';
+import type { Article } from '@/lib/api';
 import { DataTableColumnHeader } from '@/components/table';
 import { formatDateTime } from '@/utils/date';
 
@@ -151,7 +151,7 @@ export function createColumns(
 ## components/ArticlesListView.tsx
 
 ```typescript
-import type { Article } from '@superit/ui-superit-api';
+import type { Article } from '@/lib/api';
 import { type ReactElement, useMemo, useState } from 'react';
 import { ServerPagination } from '@/components/pagination';
 import { DataTable } from '@/components/table';

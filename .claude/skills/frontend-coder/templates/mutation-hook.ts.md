@@ -5,7 +5,7 @@ TanStack Mutation hook for create/update/delete operations.
 ## Simple Mutation
 
 ```typescript
-import { toast } from '@superit/ui-core';
+import { toast } from '@/components/ui';
 import {
     type UseMutateFunction,
     useMutation,
@@ -62,8 +62,7 @@ export function use{Action}{Feature}Mutation(): Use{Action}{Feature}MutationRetu
 For mutations needing `mutateAsync` or richer return:
 
 ```typescript
-import { toast } from '@superit/ui-core';
-import { ResponseError } from '@superit/ui-superit-api';
+import { toast } from '@/components/ui';
 import {
     type UseMutateAsyncFunction,
     type UseMutateFunction,
@@ -88,9 +87,8 @@ async function {action}{Feature}Request(params: {Action}{Feature}Params): Promis
     try {
         return await api.{resource}.{action}{Feature}(params);
     } catch (error) {
-        if (error instanceof ResponseError) {
-            const body = (await error.response.json()) as { detail?: string };
-            throw new Error(body.detail ?? '{Action} failed', { cause: error });
+        if (error instanceof Error) {
+            throw new Error(error.message ?? '{Action} failed', { cause: error });
         }
         throw error;
     }
@@ -100,7 +98,7 @@ export function use{Action}{Feature}Mutation(): Use{Action}{Feature}MutationRetu
     const { mutate, mutateAsync, isPending, isSuccess } = useMutation({
         mutationKey: {feature}Keys.all,
         mutationFn: {action}{Feature}Request,
-        onSuccess: (data) => {
+        onSuccess: (_result) => {
             toast.success('{Feature} {action}d');
         },
         onError: (error) => {
@@ -124,6 +122,7 @@ export function use{Action}{Feature}Mutation(): Use{Action}{Feature}MutationRetu
 1. **Separate async function** for mutation logic (not inline)
 2. **`useQueryClient()`** for cache invalidation in `onSuccess`
 3. **Toast notifications** for success/error feedback
-4. **`ResponseError` handling** - extract server error details
+4. **Error handling** - extract server error details from response
 5. **Naming**: `{action}{Feature}Mutation` for the mutate fn, `is{Action}Pending` for state
-6. **Unused params** prefixed with underscore: `_teamKey`
+6. **Underscore prefix** — `_teamKey` is correct here because `teamKey` is destructured but not forwarded to the API. Remove the underscore if the param is later used
+7. **`onSuccess` params** — use `_result` (with underscore) only if truly unused. If accessing the response (e.g., to navigate), use `result` without underscore

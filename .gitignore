@@ -27,6 +27,7 @@ pnpm-debug.log*
 coverage/
 test-results/
 playwright-report/
+skill-quality-report.md
 
 # Wrangler
 .wrangler/

@@ -12,7 +12,7 @@
         "fmt": "oxfmt \"**/*.{js,mjs,cjs,jsx,ts,mts,cts,tsx,css,astro}\" --write",
         "vitest": "vitest run --coverage.enabled",
         "test:e2e": "playwright test --grep-invert \"@llm|@live\"",
-        "test:llm": "playwright test --grep @llm",
+        "test:llm": "playwright test --grep @llm --workers=4",
         "test:skills": "playwright test --grep @llm tests/e2e/skill-quality.spec.ts",
         "test:live-agent": "playwright test --grep @live",
         "build:manifest": "pnpm exec vite-node scripts/build-skills-manifest.ts",

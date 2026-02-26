@@ -1,11 +1,25 @@
-import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
+import {
+    readFileSync,
+    readdirSync,
+    statSync,
+    existsSync,
+    writeFileSync,
+    appendFileSync,
+} from 'node:fs';
 import { join } from 'node:path';
 import Anthropic from '@anthropic-ai/sdk';
 import { test, expect } from '@playwright/test';
+import { SKILL_SLUG_TO_DIR } from '../../src/constants/products.ts';
 
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
 const SKILLS_DIR = join(import.meta.dirname, '..', '..', '.claude', 'skills');
 const MODEL = 'claude-sonnet-4-6';
+const REPORT_PATH = join(
+    import.meta.dirname,
+    '..',
+    '..',
+    'skill-quality-report.md',
+);
 
 // Per-skill generation prompts — what to ask the skill to build
 const GENERATION_TASKS: Record<string, string> = {
@@ -110,17 +124,27 @@ function parseFrontmatter(content: string): Record<string, string> {
     return meta;
 }
 
-// Discover all skills
+// Only test skills that are sold as products
+const productSkillDirs = new Set(Object.values(SKILL_SLUG_TO_DIR));
 const skillDirs = readdirSync(SKILLS_DIR)
     .filter((name) => {
         const dir = join(SKILLS_DIR, name);
-        return statSync(dir).isDirectory() && existsSync(join(dir, 'SKILL.md'));
+        return (
+            productSkillDirs.has(name) &&
+            statSync(dir).isDirectory() &&
+            existsSync(join(dir, 'SKILL.md'))
+        );
     })
     .sort();
 
 test.describe('@llm Skill quality evaluation', () => {
     test.skip(!ANTHROPIC_API_KEY, 'ANTHROPIC_API_KEY required');
     test.setTimeout(120_000);
+
+    test.beforeAll(() => {
+        const header = `# Skill Quality Report\n\nGenerated: ${new Date().toISOString()}\nModel: ${MODEL}\n\n---\n\n`;
+        writeFileSync(REPORT_PATH, header);
+    });
 
     for (const skillName of skillDirs) {
         test(`${skillName} — generates quality output and self-review`, async () => {
@@ -237,6 +261,36 @@ Return ONLY valid JSON matching this schema:
             console.log(
                 `Version bump suggestion: ${review.versionBumpSuggestion}`,
             );
+
+            // Append to report file
+            const catLines = review.categories
+                .map((c) => {
+                    const issues =
+                        c.issues.length > 0
+                            ? c.issues.map((i) => `  - ${i}`).join('\n')
+                            : '  (none)';
+                    return `- **${c.name}**: ${c.score}/100\n${issues}`;
+                })
+                .join('\n');
+            const recLines =
+                review.recommendations.length > 0
+                    ? review.recommendations.map((r) => `- ${r}`).join('\n')
+                    : '(none)';
+            const section = [
+                `## ${skillName} v${version}`,
+                '',
+                `**Overall: ${review.overallScore}/100** | Bump: \`${review.versionBumpSuggestion}\``,
+                '',
+                '### Categories',
+                catLines,
+                '',
+                '### Recommendations',
+                recLines,
+                '',
+                '---',
+                '',
+            ].join('\n');
+            appendFileSync(REPORT_PATH, section);
         });
     }
 });

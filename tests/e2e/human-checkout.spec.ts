@@ -209,7 +209,9 @@ test.describe('Human purchase flow — form submission', () => {
             const observer = new MutationObserver(() => {
                 document
                     .querySelectorAll('vite-error-overlay, astro-dev-toolbar')
-                    .forEach((el) =>{  el.remove(); });
+                    .forEach((el) => {
+                        el.remove();
+                    });
             });
             observer.observe(document.documentElement, {
                 childList: true,

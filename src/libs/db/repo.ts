@@ -1,4 +1,4 @@
-import { eq, and, sql } from 'drizzle-orm';
+import { eq, and, sql, isNotNull, isNull } from 'drizzle-orm';
 import type { AppDb } from './client';
 import {
     users,
@@ -124,16 +124,18 @@ export async function listProducts(
 export async function listSkillProducts(
     db: AppDb,
 ): Promise<Array<typeof products.$inferSelect>> {
-    const all = await db.select().from(products).all();
-    return all.filter((p) => p.skillSlug !== null);
+    return db
+        .select()
+        .from(products)
+        .where(isNotNull(products.skillSlug))
+        .all();
 }
 
 /** List bundle products (skill_slug is null). */
 export async function listBundleProducts(
     db: AppDb,
 ): Promise<Array<typeof products.$inferSelect>> {
-    const all = await db.select().from(products).all();
-    return all.filter((p) => p.skillSlug === null);
+    return db.select().from(products).where(isNull(products.skillSlug)).all();
 }
 
 // ── Product Prices ─────────────────────────────────────────────────

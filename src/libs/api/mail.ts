@@ -12,12 +12,8 @@ interface SendMailOptions {
     html?: string;
 }
 
-function isConfigured(): boolean {
-    return Boolean(RESEND_API_KEY && RESEND_FROM_EMAIL);
-}
-
 export function isMailConfigured(): boolean {
-    return isConfigured();
+    return Boolean(RESEND_API_KEY && RESEND_FROM_EMAIL);
 }
 
 export async function sendMail(options: SendMailOptions): Promise<void> {
@@ -37,5 +33,8 @@ export async function sendMail(options: SendMailOptions): Promise<void> {
 }
 
 export function getAdminEmail(): string {
-    return RESEND_TO_EMAIL ?? '';
+    if (!RESEND_TO_EMAIL) {
+        throw new Error('RESEND_TO_EMAIL not configured.');
+    }
+    return RESEND_TO_EMAIL;
 }

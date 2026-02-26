@@ -3,6 +3,7 @@ export const prerender = false;
 import type { APIRoute } from 'astro';
 import { SESSION_TOKEN_SECRET, PAY_TOKEN_SECRET } from 'astro:env/server';
 import { z } from 'zod';
+import { buildCheckoutMetadata } from '@/libs/api/checkout-utils';
 import { sendMail, isMailConfigured, getAdminEmail } from '@/libs/api/mail';
 import {
     isRateLimited,
@@ -62,28 +63,6 @@ const paymentLinkSchema = z
     );
 
 type PaymentLinkBody = z.infer<typeof paymentLinkSchema>;
-
-function buildMetadata(body: PaymentLinkBody): Record<string, string> {
-    const base: Record<string, string> = {
-        customerName: body.name.trim(),
-        source: 'agent',
-    };
-
-    if (body.purchaseKind === 'company') {
-        return {
-            ...base,
-            purchaseKind: 'company',
-            companyName: body.companyName?.trim() ?? '',
-            addressLine1: body.addressLine1?.trim() ?? '',
-            addressLine2: body.addressLine2?.trim() ?? '',
-            city: body.city?.trim() ?? '',
-            postalCode: body.postalCode?.trim() ?? '',
-            country: body.country?.trim() ?? '',
-        };
-    }
-
-    return { ...base, purchaseKind: 'personal' };
-}
 
 async function sendPaymentEmails(
     body: PaymentLinkBody,
@@ -226,7 +205,11 @@ export const POST: APIRoute = async ({ request, clientAddress, locals }) => {
         cancelUrl: tempPayUrl,
         continent,
         metadata: {
-            ...buildMetadata(body),
+            ...buildCheckoutMetadata({
+                ...body,
+                name: body.name.trim(),
+                source: 'agent',
+            }),
             countryCode,
             priceCurrency: priceRow.currency,
         },

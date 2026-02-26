@@ -104,3 +104,9 @@ export const LOGIN_LINK_EMAIL = {
     max: 3,
     windowMs: 60 * 60_000,
 } satisfies RateLimitConfig;
+
+/** /api/contact — per IP */
+export const CONTACT_IP = {
+    max: 5,
+    windowMs: 60_000,
+} satisfies RateLimitConfig;

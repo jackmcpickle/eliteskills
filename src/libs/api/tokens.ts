@@ -27,14 +27,21 @@ function fromBase64Url(str: string): Uint8Array {
     return new Uint8Array(Buffer.from(str, 'base64url'));
 }
 
+const keyCache = new Map<string, CryptoKey>();
+
 async function getKey(secret: string): Promise<CryptoKey> {
-    return crypto.subtle.importKey(
+    const cached = keyCache.get(secret);
+    if (cached) return cached;
+
+    const key = await crypto.subtle.importKey(
         'raw',
         encoder.encode(secret),
         { name: 'HMAC', hash: 'SHA-256' },
         false,
         ['sign', 'verify'],
     );
+    keyCache.set(secret, key);
+    return key;
 }
 
 async function hmacSign(payload: string, secret: string): Promise<string> {

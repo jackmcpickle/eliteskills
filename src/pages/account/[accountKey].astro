@@ -2,6 +2,7 @@
 export const prerender = false;
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import { COOKIE_MAX_AGE_30D } from '@/constants/time';
 import { createDb } from '@/libs/db/client';
 import { getUserByAccountKey, getPurchasesByUserId, getInstallKeysByPurchaseId, getProductById, listSkillProducts } from '@/libs/db/repo';
 import { formatMoney, isZeroDecimalCurrency } from '@/utils/format-money';
@@ -22,7 +23,7 @@ Astro.cookies.set('account_key', accountKey, {
 	secure: true,
 	sameSite: 'lax',
 	path: '/',
-	maxAge: 60 * 60 * 24 * 30,
+	maxAge: COOKIE_MAX_AGE_30D,
 });
 
 const purchases = await getPurchasesByUserId(db, user.id);

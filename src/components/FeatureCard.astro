@@ -1,0 +1,27 @@
+---
+interface Props {
+	title: string;
+	description: string;
+	index: number;
+	class?: string;
+}
+
+const { title, description, index, class: className = '' } = Astro.props;
+---
+
+<div
+	class:list={[
+		`reveal reveal-delay-${index + 1} scroll-sheen electron-border neon-hover group relative flex gap-5 rounded-2xl border border-border p-6 hover:border-neon-cyan-dim`,
+		className,
+	]}
+	style={`--scroll-delay: ${index * 60}ms`}
+>
+	<div class={`flex shrink-0 items-center justify-center size-12 rounded-full bg-neon-cyan-glow border border-neon-cyan-dim text-neon-cyan glow-breathe glow-breathe-delay-${index + 1} transition-shadow group-hover:shadow-[0_0_30px_var(--color-neon-cyan-glow)]`}>
+		<slot name="icon" />
+	</div>
+	<div>
+		<h3 class="font-display text-lg font-700 text-white mb-1">{title}</h3>
+		<p class="text-sm text-mist leading-relaxed">{description}</p>
+	</div>
+	<div class="absolute bottom-0 inset-x-6 h-px bg-gradient-to-r from-transparent via-neon-cyan-dim to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+</div>

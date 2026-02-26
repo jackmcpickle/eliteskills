@@ -1,4 +1,6 @@
 ---
+import FeatureCard from '@/components/FeatureCard.astro';
+import TerminalBlock from '@/components/TerminalBlock.astro';
 import { FileText, Wrench, Cpu } from '@lucide/astro';
 
 const features = [
@@ -72,32 +74,17 @@ const docLinks = [
 				{features.map((feature, i) => {
 					const Icon = iconMap[feature.icon as keyof typeof iconMap];
 					return (
-						<div class={`reveal reveal-delay-${i + 1} scroll-sheen electron-border neon-hover group relative flex gap-5 rounded-2xl border border-border p-6 hover:border-neon-cyan-dim`} style={`--scroll-delay: ${i * 60}ms`}>
-							<div class={`flex shrink-0 items-center justify-center size-12 rounded-full bg-neon-cyan-glow border border-neon-cyan-dim text-neon-cyan glow-breathe glow-breathe-delay-${i + 1} transition-shadow group-hover:shadow-[0_0_30px_var(--color-neon-cyan-glow)]`}>
-								<Icon class="size-6" aria-hidden="true" />
-							</div>
-							<div>
-								<h3 class="font-display text-lg font-700 text-white mb-1">{feature.title}</h3>
-								<p class="text-sm text-mist leading-relaxed">{feature.description}</p>
-							</div>
-							<div class="absolute bottom-0 inset-x-6 h-px bg-gradient-to-r from-transparent via-neon-cyan-dim to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-						</div>
+						<FeatureCard title={feature.title} description={feature.description} index={i}>
+							<Icon slot="icon" class="size-6" aria-hidden="true" />
+						</FeatureCard>
 					);
 				})}
 			</div>
 
 			<!-- Terminal preview -->
-			<div class="reveal reveal-delay-2 scan-line scroll-border-trace relative rounded-2xl border border-border bg-surface overflow-hidden">
-				<!-- Terminal header -->
-				<div class="flex items-center gap-2 px-5 py-3 border-b border-border bg-surface-hover">
-					<div class="size-3 rounded-full bg-red-400/60"></div>
-					<div class="size-3 rounded-full bg-neon-amber/60"></div>
-					<div class="size-3 rounded-full bg-neon-green/60"></div>
-					<span class="ml-2 font-mono text-[11px] text-ghost">.claude/skills/react/SKILL.md</span>
-				</div>
-				<!-- Skill content -->
+			<TerminalBlock label=".claude/skills/react/SKILL.md" class="reveal reveal-delay-2 scroll-border-trace">
 				<pre class="p-5 overflow-x-auto font-mono text-xs leading-relaxed text-cloud"><code set:text={skillSnippet} /></pre>
-			</div>
+			</TerminalBlock>
 		</div>
 
 		<!-- Doc links -->

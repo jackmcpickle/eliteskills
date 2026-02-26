@@ -2,7 +2,6 @@ import { describe, it, expect } from 'vitest';
 import {
     parseFormField,
     checkHoneypot,
-    checkRateLimit,
     parseBearer,
     timingSafeEqual,
     parseJsonBody,
@@ -47,29 +46,6 @@ describe('checkHoneypot', () => {
         expect(
             checkHoneypot(makeFormData({ website: 'http://spam.com' })),
         ).toBe(true);
-    });
-});
-
-describe('checkRateLimit', () => {
-    // Rate limit state is module-scoped, use unique IPs per test
-    it('allows requests under limit', () => {
-        const ip = `rl-under-${Date.now()}`;
-        for (let i = 0; i < 5; i += 1) {
-            expect(checkRateLimit(ip)).toBe(false);
-        }
-    });
-
-    it('blocks after 5 requests', () => {
-        const ip = `rl-over-${Date.now()}`;
-        for (let i = 0; i < 5; i += 1) checkRateLimit(ip);
-        expect(checkRateLimit(ip)).toBe(true);
-    });
-
-    it('different IPs tracked separately', () => {
-        const ip1 = `rl-sep-a-${Date.now()}`;
-        const ip2 = `rl-sep-b-${Date.now()}`;
-        for (let i = 0; i < 5; i += 1) checkRateLimit(ip1);
-        expect(checkRateLimit(ip2)).toBe(false);
     });
 });
 

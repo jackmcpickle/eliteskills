@@ -58,6 +58,9 @@ const middleTiers = [allSkills, lifetimeAccess].filter(
         </div>
 
         <div class="flex flex-col gap-6">
+            {middleTiers.length === 0 && (
+                <p class="text-center text-mist">Pricing unavailable. Please check back later.</p>
+            )}
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
                 {
                     middleTiers.map((tier, i) => {

@@ -150,17 +150,6 @@
     animation: var(--animate-border-flow);
 }
 
-@utility particle {
-    position: absolute;
-    width: 3px;
-    height: 3px;
-    border-radius: 50%;
-    background: var(--color-neon-cyan);
-    box-shadow: 0 0 6px var(--color-neon-cyan-dim);
-    pointer-events: none;
-    opacity: 0.6;
-}
-
 /* ── Body overlays (noise + grid) ─────────────────────────── */
 
 body::before {

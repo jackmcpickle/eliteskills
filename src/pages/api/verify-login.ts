@@ -2,11 +2,10 @@ export const prerender = false;
 
 import type { APIRoute } from 'astro';
 import { SESSION_TOKEN_SECRET } from 'astro:env/server';
+import { COOKIE_MAX_AGE_30D } from '@/constants/time';
 import { verifyToken } from '@/libs/api/tokens';
 import { createDb } from '@/libs/db/client';
 import { getUserByEmail } from '@/libs/db/repo';
-
-const THIRTY_DAYS = 60 * 60 * 24 * 30;
 
 export const GET: APIRoute = async ({ url, locals }) => {
     const token = url.searchParams.get('token');
@@ -40,7 +39,7 @@ export const GET: APIRoute = async ({ url, locals }) => {
         status: 302,
         headers: {
             Location: '/account',
-            'Set-Cookie': `account_key=${user.accountKey}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=${THIRTY_DAYS}`,
+            'Set-Cookie': `account_key=${user.accountKey}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=${COOKIE_MAX_AGE_30D}`,
         },
     });
 };

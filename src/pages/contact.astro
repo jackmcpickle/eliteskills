@@ -46,43 +46,12 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 </BaseLayout>
 
 <script>
-	const form = document.getElementById('contact-form');
-	const submitButton = document.getElementById('contact-submit');
-	const statusNode = document.getElementById('contact-status');
-
-	if (form) {
-		form.addEventListener('submit', async (event) => {
-			event.preventDefault();
-			if (!submitButton || !statusNode) return;
-
-			statusNode.textContent = 'Sending...';
-			submitButton.setAttribute('disabled', 'true');
-			submitButton.classList.add('opacity-70');
-
-			try {
-				const formData = new FormData(form as HTMLFormElement);
-				const response = await fetch('/api/contact', {
-					method: 'POST',
-					body: formData,
-				});
-
-				const result = (await response.json()) as { error?: string };
-				if (!response.ok) {
-					statusNode.textContent = result.error || 'Message send failed.';
-					statusNode.className = 'min-h-5 text-sm text-red-300';
-					return;
-				}
-
-				statusNode.textContent = 'Message sent. Thanks.';
-				statusNode.className = 'min-h-5 text-sm text-neon-green';
-				(form as HTMLFormElement).reset();
-			} catch (_error) {
-				statusNode.textContent = 'Network issue. Try again.';
-				statusNode.className = 'min-h-5 text-sm text-red-300';
-			} finally {
-				submitButton.removeAttribute('disabled');
-				submitButton.classList.remove('opacity-70');
-			}
-		});
-	}
+	import { initFormSubmit } from '../scripts/form-submit';
+	initFormSubmit({
+		formId: 'contact-form',
+		submitId: 'contact-submit',
+		statusId: 'contact-status',
+		action: '/api/contact',
+		successMessage: 'Message sent. Thanks.',
+	});
 </script>

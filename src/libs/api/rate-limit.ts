@@ -51,14 +51,10 @@ export function isRateLimited(
 
 /* ── Pre-configured rate limit profiles ──────────────────── */
 
-/** /api/payment-session — very strict (agent key mint) */
+/** /api/cli/payment-session — very strict (IP only) */
 export const PAYMENT_SESSION_IP = {
     max: 5,
     windowMs: 5 * 60_000,
-} satisfies RateLimitConfig;
-export const PAYMENT_SESSION_KEY = {
-    max: 30,
-    windowMs: 60 * 60_000,
 } satisfies RateLimitConfig;
 
 /** /api/payment-link — strict (agent creates link) */
@@ -107,4 +103,10 @@ export const LOGIN_LINK_IP = {
 export const LOGIN_LINK_EMAIL = {
     max: 3,
     windowMs: 60 * 60_000,
+} satisfies RateLimitConfig;
+
+/** /api/contact — per IP */
+export const CONTACT_IP = {
+    max: 5,
+    windowMs: 60_000,
 } satisfies RateLimitConfig;

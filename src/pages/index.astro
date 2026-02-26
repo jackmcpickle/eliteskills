@@ -1,5 +1,5 @@
 ---
-export const prerender = false;
+export const prerender = true;
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import {
@@ -16,44 +16,13 @@ import {
 	WhatAreSkills,
 } from '@/modules/home';
 import { getCollection } from 'astro:content';
-import { createDb } from '@/libs/db/client';
-import { listProducts, getProductPrice } from '@/libs/db/repo';
-import { resolveContinent, resolveCountryCode, resolveLocale } from '@/libs/geo';
+import { DEFAULT_BUNDLE_PRODUCTS, DEFAULT_SKILL_PRODUCTS, DEFAULT_LOCALE } from '@/constants/default-prices';
 
 const reviews = await getCollection('reviews');
 
-const d1 = Astro.locals.runtime.env.DB;
-const db = createDb(d1);
-const dbProducts = await listProducts(db);
-
-const cf = Astro.locals.runtime.cf as { continent?: string; country?: string } | undefined;
-const continent = resolveContinent(cf, Astro.request.headers.get('cf-ipcontinent'));
-const countryCode = resolveCountryCode(cf, Astro.request.headers.get('cf-ipcountry'));
-const locale = resolveLocale(countryCode);
-
-// Build product map with geo price + currency
-const priceRows = await Promise.all(
-	dbProducts.map((p) => getProductPrice(db, p.id, continent, countryCode)),
-);
-
-const productMap = new Map<number, { id: number; code: string; name: string; price: number; currency: string; lifetime: number; skillSlug: string | null }>();
-for (let i = 0; i < dbProducts.length; i += 1) {
-	const p = dbProducts[i];
-	if (!p) continue;
-	const priceRow = priceRows[i];
-	productMap.set(p.id, {
-		id: p.id,
-		code: p.code,
-		name: p.name,
-		price: priceRow?.price ?? 0,
-		currency: priceRow?.currency ?? 'usd',
-		lifetime: p.lifetime,
-		skillSlug: p.skillSlug,
-	});
-}
-
-const bundleProducts = [...productMap.values()].filter((p) => !p.skillSlug);
-const skillProducts = [...productMap.values()].filter((p) => p.skillSlug);
+const bundleProducts = DEFAULT_BUNDLE_PRODUCTS;
+const skillProducts = DEFAULT_SKILL_PRODUCTS;
+const locale = DEFAULT_LOCALE;
 
 const SITE_URL = 'https://eliteskills.ai';
 

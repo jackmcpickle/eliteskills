@@ -1,4 +1,5 @@
 ---
+import TerminalBlock from '@/components/TerminalBlock.astro';
 import { skillSlashCommand } from "@/utils/skill-command";
 
 interface Props {
@@ -19,17 +20,9 @@ const command = skillSlashCommand(title);
     <div class="grid grid-cols-1 gap-4">
         {
             examples.map((example) => (
-                <div class="scan-line relative rounded-2xl border border-border bg-surface overflow-hidden">
-                    <div class="flex items-center gap-2 px-5 py-3 border-b border-border bg-surface-hover">
-                        <div class="size-3 rounded-full bg-red-400/60" />
-                        <div class="size-3 rounded-full bg-neon-amber/60" />
-                        <div class="size-3 rounded-full bg-neon-green/60" />
-                        <span class="ml-2 font-mono text-[11px] text-ghost">
-                            {example.label}
-                        </span>
-                    </div>
+                <TerminalBlock label={example.label}>
                     <pre class="p-5 font-mono text-xs leading-relaxed text-cloud"><code><span class="text-neon-cyan select-none">&gt; </span>{command} {example.command}</code></pre>
-                </div>
+                </TerminalBlock>
             ))
         }
     </div>

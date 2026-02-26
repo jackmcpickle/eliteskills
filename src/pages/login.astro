@@ -45,43 +45,12 @@ const errorMsg = error === 'expired' ? 'Link expired. Request a new one.' : erro
 </BaseLayout>
 
 <script>
-	const form = document.getElementById('login-form');
-	const submitButton = document.getElementById('login-submit');
-	const statusNode = document.getElementById('login-status');
-
-	if (form) {
-		form.addEventListener('submit', async (event) => {
-			event.preventDefault();
-			if (!submitButton || !statusNode) return;
-
-			statusNode.textContent = 'Sending...';
-			submitButton.setAttribute('disabled', 'true');
-			submitButton.classList.add('opacity-70');
-
-			try {
-				const formData = new FormData(form as HTMLFormElement);
-				const response = await fetch('/api/send-login-link', {
-					method: 'POST',
-					body: formData,
-				});
-
-				const result = (await response.json()) as { error?: string };
-				if (!response.ok) {
-					statusNode.textContent = result.error || 'Something went wrong.';
-					statusNode.className = 'min-h-5 text-sm text-red-300';
-					return;
-				}
-
-				statusNode.textContent = 'Check your email for a login link.';
-				statusNode.className = 'min-h-5 text-sm text-neon-green';
-				(form as HTMLFormElement).reset();
-			} catch (_error) {
-				statusNode.textContent = 'Network issue. Try again.';
-				statusNode.className = 'min-h-5 text-sm text-red-300';
-			} finally {
-				submitButton.removeAttribute('disabled');
-				submitButton.classList.remove('opacity-70');
-			}
-		});
-	}
+	import { initFormSubmit } from '../scripts/form-submit';
+	initFormSubmit({
+		formId: 'login-form',
+		submitId: 'login-submit',
+		statusId: 'login-status',
+		action: '/api/send-login-link',
+		successMessage: 'Check your email for a login link.',
+	});
 </script>

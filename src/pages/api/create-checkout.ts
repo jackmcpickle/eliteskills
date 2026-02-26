@@ -1,6 +1,8 @@
 export const prerender = false;
 
 import type { APIRoute } from 'astro';
+import { z } from 'zod';
+import { buildCheckoutMetadata } from '@/libs/api/checkout-utils';
 import {
     isRateLimited,
     CREATE_CHECKOUT_IP,
@@ -19,77 +21,51 @@ import { resolveContinent, resolveCountryCode } from '@/libs/geo';
 
 const SITE_URL = 'https://eliteskills.ai';
 
-interface CheckoutPayload {
-    productId: number;
-    name: string;
-    email: string;
-    purchaseKind: string;
-    companyName: string;
-    addressLine1: string;
-    addressLine2: string;
-    city: string;
-    postalCode: string;
-    country: string;
-}
+const checkoutSchema = z
+    .object({
+        productId: z.coerce.number().int().positive('Invalid product.'),
+        name: z.string().trim().min(1, 'Name required.'),
+        email: z.string().trim().pipe(z.email('Email invalid.')),
+        purchaseKind: z.enum(['personal', 'company']).default('personal'),
+        companyName: z.string().trim().default(''),
+        addressLine1: z.string().trim().default(''),
+        addressLine2: z.string().trim().default(''),
+        city: z.string().trim().default(''),
+        postalCode: z.string().trim().default(''),
+        country: z.string().trim().default(''),
+    })
+    .refine(
+        (d) =>
+            d.purchaseKind !== 'company' ||
+            (!!d.companyName &&
+                !!d.addressLine1 &&
+                !!d.city &&
+                !!d.postalCode &&
+                !!d.country),
+        {
+            message: 'Complete company address required for receipt.',
+            path: ['companyName'],
+        },
+    );
 
-function parsePayload(formData: FormData): CheckoutPayload {
-    return {
-        productId: Number(parseFormField(formData, 'productId')) || 0,
-        name: parseFormField(formData, 'name'),
-        email: parseFormField(formData, 'email'),
-        purchaseKind: parseFormField(formData, 'purchaseKind') || 'personal',
-        companyName: parseFormField(formData, 'companyName'),
-        addressLine1: parseFormField(formData, 'addressLine1'),
-        addressLine2: parseFormField(formData, 'addressLine2'),
-        city: parseFormField(formData, 'city'),
-        postalCode: parseFormField(formData, 'postalCode'),
-        country: parseFormField(formData, 'country'),
-    };
-}
-
-function validatePayload(payload: CheckoutPayload): string | null {
-    if (!payload.productId) return 'Invalid product.';
-    if (!payload.name) return 'Name required.';
-    if (!payload.email) return 'Email required.';
-
-    const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(payload.email);
-    if (!emailValid) return 'Email invalid.';
-
-    if (payload.purchaseKind === 'company') {
-        if (!payload.companyName) return 'Company name required for receipt.';
-        if (
-            !payload.addressLine1 ||
-            !payload.city ||
-            !payload.postalCode ||
-            !payload.country
-        ) {
-            return 'Complete company address required for receipt.';
-        }
+function parsePayload(formData: FormData): Record<string, string> {
+    const fields = [
+        'productId',
+        'name',
+        'email',
+        'purchaseKind',
+        'companyName',
+        'addressLine1',
+        'addressLine2',
+        'city',
+        'postalCode',
+        'country',
+    ];
+    const result: Record<string, string> = {};
+    for (const field of fields) {
+        result[field] = parseFormField(formData, field);
     }
-
-    return null;
-}
-
-function buildMetadata(payload: CheckoutPayload): Record<string, string> {
-    const base: Record<string, string> = {
-        customerName: payload.name,
-        source: 'website',
-    };
-
-    if (payload.purchaseKind === 'company') {
-        return {
-            ...base,
-            purchaseKind: 'company',
-            companyName: payload.companyName,
-            addressLine1: payload.addressLine1,
-            addressLine2: payload.addressLine2,
-            city: payload.city,
-            postalCode: payload.postalCode,
-            country: payload.country,
-        };
-    }
-
-    return { ...base, purchaseKind: 'personal' };
+    return result;
 }
 
 export const POST: APIRoute = async ({ request, clientAddress, locals }) => {
@@ -104,9 +80,15 @@ export const POST: APIRoute = async ({ request, clientAddress, locals }) => {
     const formData = await request.formData();
     if (checkHoneypot(formData)) return jsonOk();
 
-    const payload = parsePayload(formData);
-    const error = validatePayload(payload);
-    if (error) return jsonError(error, 400);
+    const raw = parsePayload(formData);
+    const parsed = checkoutSchema.safeParse(raw);
+    if (!parsed.success) {
+        return jsonError(
+            parsed.error.issues[0]?.message ?? 'Invalid input.',
+            400,
+        );
+    }
+    const payload = parsed.data;
 
     if (
         isRateLimited(
@@ -157,7 +139,7 @@ export const POST: APIRoute = async ({ request, clientAddress, locals }) => {
             cancelUrl: `${SITE_URL}/checkout/${product.id}`,
             continent,
             metadata: {
-                ...buildMetadata(payload),
+                ...buildCheckoutMetadata({ ...payload, source: 'website' }),
                 countryCode,
                 priceCurrency: priceRow.currency,
             },

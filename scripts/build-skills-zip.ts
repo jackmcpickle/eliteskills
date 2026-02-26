@@ -7,20 +7,11 @@
 import { readFileSync, writeFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { zipSync } from 'fflate';
+import { SKILL_SLUG_TO_DIR } from '../src/constants/products.ts';
 
 const ROOT = join(import.meta.dirname ?? '.', '..');
 const SKILLS_DIR = join(ROOT, '.claude', 'skills');
 const OUTPUT_DIR = join(ROOT, 'public');
-
-/** Map DB skill_slug → .claude/skills/ directory name */
-const SKILL_SLUG_TO_DIR: Record<string, string> = {
-    react: 'frontend-coder',
-    python: 'backend',
-    style: 'frontend-design',
-    'architecture-review': 'review',
-    'feature-enhancer': 'feature',
-    'app-bootstrap': 'bootstrap',
-};
 
 /** Dirs excluded from all zips (internal / not sold) */
 const IGNORED_DIRS = new Set([

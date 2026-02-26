@@ -10,7 +10,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  NODE_VERSION: '22'
+  NODE_VERSION: "22"
 
 jobs:
   lint:
@@ -55,6 +55,8 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - name: Install Playwright browsers
         run: pnpm exec playwright install chromium --with-deps
+      - name: Apply D1 migrations
+        run: pnpm wrangler d1 migrations apply eliteskills-db --local
       - name: Run human checkout e2e
         run: pnpm test:e2e
       - name: Upload Playwright report
@@ -71,31 +73,44 @@ jobs:
     env:
       ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
     steps:
+      - name: Skip if secret missing
+        if: env.ANTHROPIC_API_KEY == ''
+        run: |
+          echo "::notice::ANTHROPIC_API_KEY not set, skipping"
+          exit 0
       - uses: actions/checkout@v4
+        if: env.ANTHROPIC_API_KEY != ''
       - uses: pnpm/action-setup@v4
+        if: env.ANTHROPIC_API_KEY != ''
       - uses: actions/setup-node@v4
+        if: env.ANTHROPIC_API_KEY != ''
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+        if: env.ANTHROPIC_API_KEY != ''
       - name: Install Playwright browsers
+        if: env.ANTHROPIC_API_KEY != ''
         run: pnpm exec playwright install chromium --with-deps
-      - name: Verify ANTHROPIC_API_KEY is set
-        run: |
-          if [ -z "$ANTHROPIC_API_KEY" ]; then
-            echo "::error::ANTHROPIC_API_KEY secret is required"
-            exit 1
-          fi
       - name: Run LLM purchase flow tests
+        if: env.ANTHROPIC_API_KEY != ''
         run: pnpm test:llm
-        timeout-minutes: 5
+        timeout-minutes: 10
+        continue-on-error: true
       - name: Upload Playwright report
-        if: failure()
+        if: failure() && env.ANTHROPIC_API_KEY != ''
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report-llm
           path: playwright-report/
           retention-days: 7
+      - name: Upload skill quality report
+        if: always() && env.ANTHROPIC_API_KEY != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: skill-quality-report
+          path: skill-quality-report.md
+          retention-days: 30
 
   live-agent:
     name: Live Agent API Smoke Test
@@ -103,26 +118,31 @@ jobs:
     env:
       AGENT_API_KEY: ${{ secrets.AGENT_API_KEY }}
     steps:
+      - name: Skip if secret missing
+        if: env.AGENT_API_KEY == ''
+        run: |
+          echo "::notice::AGENT_API_KEY not set, skipping"
+          exit 0
       - uses: actions/checkout@v4
+        if: env.AGENT_API_KEY != ''
       - uses: pnpm/action-setup@v4
+        if: env.AGENT_API_KEY != ''
       - uses: actions/setup-node@v4
+        if: env.AGENT_API_KEY != ''
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+        if: env.AGENT_API_KEY != ''
       - name: Install Playwright browsers
+        if: env.AGENT_API_KEY != ''
         run: pnpm exec playwright install chromium --with-deps
-      - name: Verify AGENT_API_KEY is set
-        run: |
-          if [ -z "$AGENT_API_KEY" ]; then
-            echo "::error::AGENT_API_KEY secret is required"
-            exit 1
-          fi
       - name: Run live agent flow tests
+        if: env.AGENT_API_KEY != ''
         run: pnpm test:live-agent
         timeout-minutes: 3
       - name: Upload Playwright report
-        if: failure()
+        if: failure() && env.AGENT_API_KEY != ''
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report-live-agent

@@ -2,6 +2,7 @@
 export const prerender = false;
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import { COOKIE_MAX_AGE_30D } from '@/constants/time';
 import { createDb } from '@/libs/db/client';
 import { upsertUserByEmail, createPurchase, getProductById } from '@/libs/db/repo';
 import { isStripeConfigured, getCheckoutSession } from '@/libs/api/stripe';
@@ -56,7 +57,7 @@ if (sessionId && isStripeConfigured()) {
 				secure: true,
 				sameSite: 'lax',
 				path: '/',
-				maxAge: 60 * 60 * 24 * 30,
+				maxAge: COOKIE_MAX_AGE_30D,
 			});
 		}
 	} catch {

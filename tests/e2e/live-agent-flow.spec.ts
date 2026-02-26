@@ -1,23 +1,15 @@
 import { test, expect } from '@playwright/test';
 
-const AGENT_API_KEY = process.env.AGENT_API_KEY;
 const LIVE_BASE = 'https://eliteskills.ai';
 
 test.describe('@live @llm Live agent API purchase flow', () => {
-    test.skip(!AGENT_API_KEY, 'AGENT_API_KEY required');
-
     // Single request pair per run to avoid rate-limit burn
     test('full agent flow: session token -> payment link', async ({
         request,
     }) => {
-        // Step 1: Create session token
+        // Step 1: Create session token (no auth needed, IP rate-limited)
         const sessionRes = await request.post(
-            `${LIVE_BASE}/api/payment-session`,
-            {
-                headers: {
-                    authorization: `Bearer ${AGENT_API_KEY}`,
-                },
-            },
+            `${LIVE_BASE}/api/cli/payment-session`,
         );
 
         expect(sessionRes.status()).toBe(200);
@@ -57,17 +49,6 @@ test.describe('@live @llm Live agent API purchase flow', () => {
 });
 
 test.describe('@live Live agent API error cases', () => {
-    test.skip(!AGENT_API_KEY, 'AGENT_API_KEY required');
-
-    test('payment-session rejects bad auth', async ({ request }) => {
-        const res = await request.post(`${LIVE_BASE}/api/payment-session`, {
-            headers: { authorization: 'Bearer invalid-key' },
-        });
-        expect(res.status()).toBe(401);
-        const body = await res.json();
-        expect(body.error).toBeTruthy();
-    });
-
     test('payment-link rejects expired/invalid session token', async ({
         request,
     }) => {
@@ -90,10 +71,7 @@ test.describe('@live Live agent API error cases', () => {
     test('payment-link rejects invalid product', async ({ request }) => {
         // Get valid session token first
         const sessionRes = await request.post(
-            `${LIVE_BASE}/api/payment-session`,
-            {
-                headers: { authorization: `Bearer ${AGENT_API_KEY}` },
-            },
+            `${LIVE_BASE}/api/cli/payment-session`,
         );
         const { sessionToken } = await sessionRes.json();
 
@@ -115,10 +93,7 @@ test.describe('@live Live agent API error cases', () => {
 
     test('payment-link rejects missing email', async ({ request }) => {
         const sessionRes = await request.post(
-            `${LIVE_BASE}/api/payment-session`,
-            {
-                headers: { authorization: `Bearer ${AGENT_API_KEY}` },
-            },
+            `${LIVE_BASE}/api/cli/payment-session`,
         );
         const { sessionToken } = await sessionRes.json();
 
@@ -142,10 +117,7 @@ test.describe('@live Live agent API error cases', () => {
         request,
     }) => {
         const sessionRes = await request.post(
-            `${LIVE_BASE}/api/payment-session`,
-            {
-                headers: { authorization: `Bearer ${AGENT_API_KEY}` },
-            },
+            `${LIVE_BASE}/api/cli/payment-session`,
         );
         const { sessionToken } = await sessionRes.json();
 

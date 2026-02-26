@@ -1,52 +1,44 @@
 export const prerender = false;
 
 import type { APIRoute } from 'astro';
+import { z } from 'zod';
 import { sendMail, isMailConfigured, getAdminEmail } from '@/libs/api/mail';
+import { isRateLimited, CONTACT_IP } from '@/libs/api/rate-limit';
 import {
     checkHoneypot,
-    checkRateLimit,
     parseFormField,
     jsonError,
     jsonOk,
 } from '@/libs/api/spam';
 
-interface ContactPayload {
-    name: string;
-    email: string;
-    message: string;
-}
-
-function parsePayload(formData: FormData): ContactPayload {
-    return {
-        name: parseFormField(formData, 'name'),
-        email: parseFormField(formData, 'email'),
-        message: parseFormField(formData, 'message'),
-    };
-}
-
-function validatePayload(payload: ContactPayload): string | null {
-    if (!payload.name) return 'Name required.';
-    if (!payload.email) return 'Email required.';
-    if (!payload.message) return 'Message required.';
-
-    const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(payload.email);
-    if (!emailValid) return 'Email invalid.';
-
-    return null;
-}
+const contactSchema = z.object({
+    name: z.string().trim().min(1, 'Name required.'),
+    email: z.string().trim().pipe(z.email('Email invalid.')),
+    message: z.string().trim().min(1, 'Message required.'),
+});
 
 export const POST: APIRoute = async ({ request, clientAddress }) => {
     if (!isMailConfigured())
         return jsonError('Email service not configured.', 500);
-    if (checkRateLimit(clientAddress))
+    if (isRateLimited('contact:ip', clientAddress, CONTACT_IP))
         return jsonError('Too many requests. Try later.', 429);
 
     const formData = await request.formData();
     if (checkHoneypot(formData)) return jsonOk();
 
-    const payload = parsePayload(formData);
-    const error = validatePayload(payload);
-    if (error) return jsonError(error, 400);
+    const raw = {
+        name: parseFormField(formData, 'name'),
+        email: parseFormField(formData, 'email'),
+        message: parseFormField(formData, 'message'),
+    };
+    const parsed = contactSchema.safeParse(raw);
+    if (!parsed.success) {
+        return jsonError(
+            parsed.error.issues[0]?.message ?? 'Invalid input.',
+            400,
+        );
+    }
+    const payload = parsed.data;
 
     try {
         await sendMail({

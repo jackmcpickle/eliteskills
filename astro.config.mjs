@@ -50,11 +50,6 @@ export default defineConfig({
                 access: 'secret',
                 optional: true,
             }),
-            AGENT_API_KEY: envField.string({
-                context: 'server',
-                access: 'secret',
-                optional: true,
-            }),
             SESSION_TOKEN_SECRET: envField.string({
                 context: 'server',
                 access: 'secret',

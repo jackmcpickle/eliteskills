@@ -25,13 +25,6 @@ const {
 	noindex = false,
 } = Astro.props;
 
-let hasSession = false;
-try {
-	hasSession = Boolean(Astro.cookies.get('account_key')?.value);
-} catch {
-	// Cookies unavailable on prerendered pages
-}
-
 const pathname = Astro.url.pathname;
 const isHome = pathname === '/';
 const isLogin = pathname === '/login';
@@ -98,12 +91,29 @@ const isLogin = pathname === '/login';
 			</nav>
 		)}
 		<nav class="fixed top-0 right-0 z-40 flex items-center gap-4 px-6 py-4">
-			{hasSession && <a href="/account" class="font-mono text-xs uppercase tracking-wide text-mist hover:text-neon-cyan transition-colors">Account</a>}
-			{hasSession && <a href="/api/logout" class="font-mono text-xs uppercase tracking-wide text-mist hover:text-neon-cyan transition-colors">Logout</a>}
-			{!hasSession && !isLogin && !isHome && <a href="/login" class="font-mono text-xs uppercase tracking-wide text-mist hover:text-neon-cyan transition-colors">Login</a>}
+			<a href="/account" data-auth="session" class="hidden font-mono text-xs uppercase tracking-wide text-mist hover:text-neon-cyan transition-colors">Account</a>
+			<a href="/api/logout" data-auth="session" class="hidden font-mono text-xs uppercase tracking-wide text-mist hover:text-neon-cyan transition-colors">Logout</a>
+			{!isLogin && !isHome && <a href="/login" data-auth="guest" class="font-mono text-xs uppercase tracking-wide text-mist hover:text-neon-cyan transition-colors">Login</a>}
 		</nav>
 		<div transition:animate={neonFade}>
 			<slot />
 		</div>
+		<script is:inline>
+		(function(){
+			function updateNav() {
+				var has = document.cookie.indexOf('account_key=') !== -1;
+				document.querySelectorAll('[data-auth=session]').forEach(function(el) {
+					el.classList.toggle('hidden', !has);
+				});
+				document.querySelectorAll('[data-auth=guest]').forEach(function(el) {
+					el.classList.toggle('hidden', has);
+				});
+			}
+			document.addEventListener('astro:page-load', updateNav);
+		})();
+		</script>
+		<script>
+			import '@/scripts/update-prices';
+		</script>
 	</body>
 </html>

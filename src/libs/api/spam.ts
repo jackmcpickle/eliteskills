@@ -1,26 +1,6 @@
 /**
- * Anti-spam: honeypot + in-memory rate limit.
- *
- * Honeypot: hidden field `website` must be empty — bots auto-fill it.
- * Rate limit: max N requests per IP in a rolling window.
- *
- * TODO: In-memory rate limiter resets on CF Workers cold starts and doesn't
- * share state across isolates. Replace with Cloudflare KV or Durable Objects
- * for production-grade rate limiting.
+ * Anti-spam utilities: honeypot, form parsing, auth helpers, JSON responses.
  */
-
-const RATE_WINDOW_MS = 60_000;
-const RATE_MAX = 5;
-
-interface RateEntry {
-    timestamps: number[];
-}
-
-const rateBucket = new Map<string, RateEntry>();
-
-function pruneOld(entry: RateEntry, now: number): void {
-    entry.timestamps = entry.timestamps.filter((t) => now - t < RATE_WINDOW_MS);
-}
 
 export function parseFormField(formData: FormData, field: string): string {
     const value = formData.get(field);
@@ -31,23 +11,6 @@ export function parseFormField(formData: FormData, field: string): string {
 export function checkHoneypot(formData: FormData): boolean {
     const honeypot = parseFormField(formData, 'website');
     return honeypot.length > 0;
-}
-
-export function checkRateLimit(ip: string): boolean {
-    const now = Date.now();
-    let entry = rateBucket.get(ip);
-
-    if (!entry) {
-        entry = { timestamps: [] };
-        rateBucket.set(ip, entry);
-    }
-
-    pruneOld(entry, now);
-
-    if (entry.timestamps.length >= RATE_MAX) return true;
-
-    entry.timestamps.push(now);
-    return false;
 }
 
 /** Extract bearer token from Authorization header. Returns empty string if missing/malformed. */

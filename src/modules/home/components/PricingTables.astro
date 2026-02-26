@@ -58,6 +58,9 @@ const middleTiers = [allSkills, lifetimeAccess].filter(
         </div>
 
         <div class="flex flex-col gap-6">
+            {middleTiers.length === 0 && (
+                <p class="text-center text-mist">Pricing unavailable. Please check back later.</p>
+            )}
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
                 {
                     middleTiers.map((tier, i) => {
@@ -105,6 +108,7 @@ const middleTiers = [allSkills, lifetimeAccess].filter(
 
                                 <div class="flex items-baseline gap-1 mb-8">
                                     <span
+                                        data-product-id={tier.id}
                                         class={`font-display text-5xl sm:text-6xl font-900 tracking-tight ${isLifetime ? "text-neon-cyan" : "text-white"}`}
                                     >
                                         {formatMoney(
@@ -194,7 +198,7 @@ const middleTiers = [allSkills, lifetimeAccess].filter(
 
                                 <div class="flex items-center gap-3">
                                     <div class="flex items-baseline gap-0.5">
-                                        <span class="font-display text-3xl font-900 tracking-tight text-white">
+                                        <span data-product-id={singleSkill.id} class="font-display text-3xl font-900 tracking-tight text-white">
                                             {formatMoney(
                                                 singleSkill.price,
                                                 singleSkill.currency,
@@ -239,7 +243,7 @@ const middleTiers = [allSkills, lifetimeAccess].filter(
 
                             <div class="flex items-center gap-3">
                                 <div class="flex items-baseline gap-0.5">
-                                    <span class="font-display text-3xl font-900 tracking-tight text-mist">
+                                    <span data-product-id={teams.id} class="font-display text-3xl font-900 tracking-tight text-mist">
                                         {formatMoney(
                                             teams.price,
                                             teams.currency,

@@ -1,14 +1,12 @@
-export const prerender = false;
+export const prerender = true;
 
 import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
-import { createDb } from '@/libs/db/client';
 import {
-    listBundleProducts,
-    listSkillProducts,
-    getProductPrice,
-} from '@/libs/db/repo';
-import { resolveContinent, resolveCountryCode } from '@/libs/geo';
+    DEFAULT_BUNDLE_PRODUCTS,
+    DEFAULT_SKILL_PRODUCTS,
+    DEFAULT_LOCALE,
+} from '@/constants/default-prices';
 import { formatMoney } from '@/utils/format-money';
 
 interface SkillEntry {
@@ -19,26 +17,7 @@ interface PricingEntry {
     data: { period: string; description: string };
 }
 
-export const GET: APIRoute = async ({ request, locals }) => {
-    const d1 = locals.runtime.env.DB;
-    const db = createDb(d1);
-
-    const cf = locals.runtime.cf as
-        | { continent?: string; country?: string }
-        | undefined;
-    const continent = resolveContinent(
-        cf,
-        request.headers.get('cf-ipcontinent'),
-    );
-    const countryCode = resolveCountryCode(
-        cf,
-        request.headers.get('cf-ipcountry'),
-    );
-
-    const [bundles, skills] = await Promise.all([
-        listBundleProducts(db),
-        listSkillProducts(db),
-    ]);
+export const GET: APIRoute = async () => {
     const skillsCollection = (await getCollection(
         'skills',
     )) as unknown as SkillEntry[];
@@ -50,16 +29,8 @@ export const GET: APIRoute = async ({ request, locals }) => {
         pricingCollection.map((p) => [p.data.period, p]),
     );
 
-    const bundlePrices = await Promise.all(
-        bundles.map(async (b) =>
-            getProductPrice(db, b.id, continent, countryCode),
-        ),
-    );
-    const bundleLines = bundles.map((b, i) => {
-        const priceRow = bundlePrices[i];
-        const price = priceRow
-            ? formatMoney(priceRow.price, priceRow.currency)
-            : 'N/A';
+    const bundleLines = DEFAULT_BUNDLE_PRODUCTS.map((b) => {
+        const price = formatMoney(b.price, b.currency, DEFAULT_LOCALE);
         const period = b.lifetime ? 'lifetime' : 'once';
         const content = pricingMap.get(period);
         const desc = content?.data.description ?? '';
@@ -70,31 +41,31 @@ export const GET: APIRoute = async ({ request, locals }) => {
         (a, b) => a.data.order - b.data.order,
     );
     const skillDbMap = new Map(
-        skills.filter((p) => p.skillSlug).map((p) => [p.skillSlug, p]),
+        DEFAULT_SKILL_PRODUCTS.filter((p) => p.skillSlug).map((p) => [
+            p.skillSlug,
+            p,
+        ]),
     );
-    const skillPrices = await Promise.all(
-        sortedSkills.map(async (s) => {
-            const dbSkill = skillDbMap.get(s.id);
-            return dbSkill
-                ? getProductPrice(db, dbSkill.id, continent, countryCode)
-                : Promise.resolve(undefined);
-        }),
-    );
-    const skillLines = sortedSkills.map((s, i) => {
+    const skillLines = sortedSkills.map((s) => {
         const dbSkill = skillDbMap.get(s.id);
         if (!dbSkill) {
             return `- **${s.data.title}** — ${s.data.description}`;
         }
-        const priceRow = skillPrices[i];
-        const price = priceRow
-            ? formatMoney(priceRow.price, priceRow.currency)
-            : 'N/A';
+        const price = formatMoney(
+            dbSkill.price,
+            dbSkill.currency,
+            DEFAULT_LOCALE,
+        );
         return `- **${s.data.title} — ${price}** (productId: ${dbSkill.id}): ${s.data.description}`;
     });
 
     const idTable = [
-        ...bundles.map((b) => `| ${b.id} | ${b.code} | ${b.name} |`),
-        ...skills.map((s) => `| ${s.id} | ${s.code} | ${s.name} |`),
+        ...DEFAULT_BUNDLE_PRODUCTS.map(
+            (b) => `| ${b.id} | ${b.code} | ${b.name} |`,
+        ),
+        ...DEFAULT_SKILL_PRODUCTS.map(
+            (s) => `| ${s.id} | ${s.code} | ${s.name} |`,
+        ),
     ];
 
     const text = `# Elite Skills

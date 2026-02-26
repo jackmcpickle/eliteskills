@@ -68,24 +68,34 @@ jobs:
   llm:
     name: LLM Purchase Flow Test
     runs-on: ubuntu-latest
-    if: ${{ secrets.ANTHROPIC_API_KEY != '' }}
     env:
       ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
     steps:
+      - name: Skip if secret missing
+        if: env.ANTHROPIC_API_KEY == ''
+        run: |
+          echo "::notice::ANTHROPIC_API_KEY not set, skipping"
+          exit 0
       - uses: actions/checkout@v4
+        if: env.ANTHROPIC_API_KEY != ''
       - uses: pnpm/action-setup@v4
+        if: env.ANTHROPIC_API_KEY != ''
       - uses: actions/setup-node@v4
+        if: env.ANTHROPIC_API_KEY != ''
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+        if: env.ANTHROPIC_API_KEY != ''
       - name: Install Playwright browsers
+        if: env.ANTHROPIC_API_KEY != ''
         run: pnpm exec playwright install chromium --with-deps
       - name: Run LLM purchase flow tests
+        if: env.ANTHROPIC_API_KEY != ''
         run: pnpm test:llm
         timeout-minutes: 5
       - name: Upload Playwright report
-        if: failure()
+        if: failure() && env.ANTHROPIC_API_KEY != ''
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report-llm
@@ -95,24 +105,34 @@ jobs:
   live-agent:
     name: Live Agent API Smoke Test
     runs-on: ubuntu-latest
-    if: ${{ secrets.AGENT_API_KEY != '' }}
     env:
       AGENT_API_KEY: ${{ secrets.AGENT_API_KEY }}
     steps:
+      - name: Skip if secret missing
+        if: env.AGENT_API_KEY == ''
+        run: |
+          echo "::notice::AGENT_API_KEY not set, skipping"
+          exit 0
       - uses: actions/checkout@v4
+        if: env.AGENT_API_KEY != ''
       - uses: pnpm/action-setup@v4
+        if: env.AGENT_API_KEY != ''
       - uses: actions/setup-node@v4
+        if: env.AGENT_API_KEY != ''
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+        if: env.AGENT_API_KEY != ''
       - name: Install Playwright browsers
+        if: env.AGENT_API_KEY != ''
         run: pnpm exec playwright install chromium --with-deps
       - name: Run live agent flow tests
+        if: env.AGENT_API_KEY != ''
         run: pnpm test:live-agent
         timeout-minutes: 3
       - name: Upload Playwright report
-        if: failure()
+        if: failure() && env.AGENT_API_KEY != ''
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report-live-agent

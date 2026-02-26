@@ -191,6 +191,10 @@ src/srv/{domain}/
     └── notes.py           # imports services + types (NOT models)
 ```
 
+## `__init__.py` Conventions
+
+`__init__.py` files are empty. Router registration happens in the app's main router which imports and includes each domain router directly.
+
 ## What Each Layer Should NOT Do
 
 ### Routes

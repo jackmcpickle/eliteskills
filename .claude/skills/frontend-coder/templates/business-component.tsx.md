@@ -3,7 +3,7 @@
 Components with hooks, data fetching, state management, and event handlers. Live in `modules/*/components/`.
 
 ```tsx
-import { Button } from '@superit/ui-core';
+import { Button } from '@/components/ui';
 import { useNavigate } from '@tanstack/react-router';
 import { Loader2 } from 'lucide-react';
 import { type ReactElement, useState } from 'react';

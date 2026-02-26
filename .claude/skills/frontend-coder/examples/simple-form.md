@@ -5,7 +5,7 @@ Profile settings form with TanStack Form + Zod validation.
 ## File Structure
 
 ```
-src/ui-service-desk/src/modules/account/
+src/modules/account/
 ├── schemas/
 │   └── profile.schema.ts
 ├── hooks/
@@ -31,7 +31,7 @@ export type ProfileFormData = z.infer<typeof profileSchema>;
 ## hooks/useUpdateProfileMutation.ts
 
 ```typescript
-import { toast } from '@superit/ui-core';
+import { toast } from '@/components/ui';
 import {
     type UseMutateFunction,
     useMutation,
@@ -55,7 +55,9 @@ export function useUpdateProfileMutation(): UseUpdateProfileMutationReturn {
             api.users.updateProfile({ updateProfileRequest: data }),
         onSuccess: () => {
             toast.success('Profile updated');
-            void queryClient.invalidateQueries({ queryKey: userKeys.profile() });
+            void queryClient.invalidateQueries({
+                queryKey: userKeys.profile(),
+            });
         },
         onError: (error) => {
             toast.error('Failed to update profile', {
@@ -71,7 +73,7 @@ export function useUpdateProfileMutation(): UseUpdateProfileMutationReturn {
 ## components/ProfileForm.tsx
 
 ```typescript
-import { Card, CardContent, FieldGroup } from '@superit/ui-core';
+import { Card, CardContent, FieldGroup } from '@/components/ui';
 import type { ReactElement, SubmitEvent } from 'react';
 import { useProfileForm } from '@/modules/account/hooks/useProfileForm';
 import { useUpdateProfileMutation } from '@/modules/account/hooks/useUpdateProfileMutation';

@@ -16,7 +16,7 @@
 - Explicit return types on functions
 - ReactElement return type on components
 - Explicit parameter types (no implicit any)
-- Prefix unused params with underscore
+- Prefix params with underscore ONLY when truly unused (never accessed in function body)
 
 ### React Imports
 
@@ -91,7 +91,7 @@ function Page(): ReactElement {
 
 # Architecture Patterns
 
-Deep dive into state management, type-driven development, and validation strategies used in SubTechnica's React applications.
+Deep dive into state management, type-driven development, and validation strategies used in React applications.
 
 ## State Management Philosophy
 

@@ -101,7 +101,7 @@ async def get_{entity}_by_key(
 async def list_{entities}_for_team(
     session: AsyncSession,
     team_id: int,
-) -> Result[NotFound, list[{Entity}ListItem]]:
+) -> Result[QueryError, list[{Entity}ListItem]]:
     stmt = (
         select({Entity})
         .where({Entity}.team_id == team_id)
@@ -115,12 +115,12 @@ async def create_{entity}(
     session: AsyncSession,
     team_id: int,
     data: {Entity}CreateBody,
-) -> Result[NotFound, {Entity}Detail]:
+) -> {Entity}Detail:  # Use Result[ErrorType, ...] if create can fail (e.g., AlreadyExists for unique constraints)
     obj = {Entity}(team_id=team_id, name=data.name)
     session.add(obj)
     await session.commit()
     await session.refresh(obj)
-    return Ok({Entity}Detail.model_validate(obj, from_attributes=True))
+    return {Entity}Detail.model_validate(obj, from_attributes=True)
 
 
 async def update_{entity}(
@@ -253,3 +253,12 @@ async def delete_{entity}(
 | `{Entity}`   | `Note`  | PascalCase  |
 | `{entity}`   | `note`  | lowercase   |
 | `{entities}` | `notes` | plural      |
+
+## Design Decisions (Optional)
+
+Document non-obvious choices here when implementing a feature:
+
+| Decision                            | Rationale                                                            |
+| ----------------------------------- | -------------------------------------------------------------------- |
+| _e.g., Python-side tag filtering_   | _JSON array membership not portable in SQL; dataset bounded by team_ |
+| _e.g., No Result wrapper on create_ | _No unique constraints or error cases at repo level_                 |

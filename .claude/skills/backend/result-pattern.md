@@ -10,8 +10,8 @@ from srv.core.errors import NotFound
 
 async def get_note(session: AsyncSession, key: str) -> Result[NotFound, Note]:
     stmt = select(Note).where(Note.key == key)
-    result = await session.exec(stmt)
-    note = result.one_or_none()
+    result = await session.execute(stmt)
+    note = result.scalars().one_or_none()
     if note is None:
         return Err(NotFound(entity="Note", identifier=key))
     return Ok(note)
@@ -82,7 +82,7 @@ async def service_fn() -> Result[NotFound | Forbidden, Note]:
 Always use typed errors from `srv.core.errors`:
 
 ```python
-from srv.core.errors import NotFound, AlreadyExists, Forbidden, InvalidInput, InvalidState
+from srv.core.errors import NotFound, AlreadyExists, Forbidden, InvalidInput, InvalidState, QueryError
 
 # Not found
 Err(NotFound(entity="Note", identifier=key))
@@ -98,6 +98,9 @@ Err(InvalidInput(errors={"title": ["Title is required"]}))
 
 # Invalid state
 Err(InvalidState(entity="Note", reason="Cannot edit a published note"))
+
+# Query error (for list operations that can't return NotFound)
+Err(QueryError(reason="Failed to fetch notes"))
 ```
 
 ## When NOT to Use Result

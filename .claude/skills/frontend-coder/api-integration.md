@@ -4,12 +4,10 @@ How to fetch data and interact with the FastAPI backend from the frontend.
 
 ## Generated API Client
 
-The API client is auto-generated from OpenAPI spec into `src/ui-superit-api/`. Import as `@superit/superit-api`.
+The API client is auto-generated from OpenAPI spec. Import from `@/lib/api`.
 
 ```typescript
-import { TicketsApi, Configuration } from '@superit/superit-api';
-
-const api = new TicketsApi(new Configuration({ basePath: '/api' }));
+import { api } from '@/lib/api';
 ```
 
 ## TanStack Query for Data Fetching
@@ -97,10 +95,4 @@ async function fetchTicket(key: string): Promise<Ticket | null> {
 
 ## API Client Regeneration
 
-After backend API changes:
-
-```bash
-make build-superit-api
-```
-
-This requires a running FastAPI server (`make start-bg` first). Regeneration touches all files in `src/ui-superit-api/`.
+After backend API changes, regenerate the API client per your project's build instructions.

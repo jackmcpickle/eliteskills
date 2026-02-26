@@ -30,7 +30,7 @@ export function initFormSubmit({
         const formData = new FormData(form as HTMLFormElement);
         fetch(action, { method: 'POST', body: formData })
             .then(async (response) => {
-                const result = (await response.json());
+                const result: { error?: string } = await response.json();
                 if (!response.ok) {
                     statusNode.textContent =
                         result.error ?? 'Something went wrong.';

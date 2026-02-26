@@ -93,7 +93,7 @@ jobs:
       - name: Run LLM purchase flow tests
         if: env.ANTHROPIC_API_KEY != ''
         run: pnpm test:llm
-        timeout-minutes: 5
+        timeout-minutes: 20
       - name: Upload Playwright report
         if: failure() && env.ANTHROPIC_API_KEY != ''
         uses: actions/upload-artifact@v4

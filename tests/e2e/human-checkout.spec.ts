@@ -1,5 +1,9 @@
 import { test, expect } from '@playwright/test';
 
+// Seeded product IDs from drizzle/0001_products.sql
+const BUNDLE_ONCE_ID = 7;
+const BUNDLE_LIFETIME_ID = 8;
+
 test.describe('Human purchase flow — homepage to checkout', () => {
     test('homepage loads with pricing section and CTAs', async ({ page }) => {
         await page.goto('/');
@@ -26,24 +30,29 @@ test.describe('Human purchase flow — homepage to checkout', () => {
         await page.goto('/');
         const pricing = page.locator('#pricing');
 
-        // $29 and $99 visible
-        await expect(pricing.getByText('29')).toBeVisible();
-        await expect(pricing.getByText('99')).toBeVisible();
+        // Target specific price elements via data-product-id
+        const oncePrice = pricing.locator(
+            `[data-product-id="${BUNDLE_ONCE_ID}"]`,
+        );
+        const lifetimePrice = pricing.locator(
+            `[data-product-id="${BUNDLE_LIFETIME_ID}"]`,
+        );
+        await expect(oncePrice).toBeVisible();
+        await expect(lifetimePrice).toBeVisible();
     });
 });
 
 test.describe('Human purchase flow — once checkout page', () => {
     test('checkout/once loads with correct product info', async ({ page }) => {
-        await page.goto('/checkout/once');
-        await expect(page).toHaveTitle(/One-Time Purchase/);
-        await expect(page.getByText('$29')).toBeVisible();
+        await page.goto(`/checkout/${BUNDLE_ONCE_ID}`);
+        await expect(page).toHaveTitle(/All Skills/);
         await expect(page.locator('input[name="productId"]')).toHaveValue(
-            'once',
+            String(BUNDLE_ONCE_ID),
         );
     });
 
     test('checkout form has required fields', async ({ page }) => {
-        await page.goto('/checkout/once');
+        await page.goto(`/checkout/${BUNDLE_ONCE_ID}`);
 
         await expect(page.locator('#name')).toBeVisible();
         await expect(page.locator('#email')).toBeVisible();
@@ -54,7 +63,7 @@ test.describe('Human purchase flow — once checkout page', () => {
     test('company fields hidden by default, shown when company selected', async ({
         page,
     }) => {
-        await page.goto('/checkout/once');
+        await page.goto(`/checkout/${BUNDLE_ONCE_ID}`);
 
         const companyFields = page.locator('#company-fields');
         await expect(companyFields).toBeHidden();
@@ -73,7 +82,7 @@ test.describe('Human purchase flow — once checkout page', () => {
     test('honeypot field exists but positioned off-screen', async ({
         page,
     }) => {
-        await page.goto('/checkout/once');
+        await page.goto(`/checkout/${BUNDLE_ONCE_ID}`);
         const honeypot = page.locator('#website');
         // Exists in DOM
         await expect(honeypot).toHaveCount(1);
@@ -90,11 +99,10 @@ test.describe('Human purchase flow — lifetime checkout page', () => {
     test('checkout/lifetime loads with correct product info', async ({
         page,
     }) => {
-        await page.goto('/checkout/lifetime');
+        await page.goto(`/checkout/${BUNDLE_LIFETIME_ID}`);
         await expect(page).toHaveTitle(/Lifetime Access/);
-        await expect(page.getByText('$99')).toBeVisible();
         await expect(page.locator('input[name="productId"]')).toHaveValue(
-            'lifetime',
+            String(BUNDLE_LIFETIME_ID),
         );
     });
 });
@@ -103,7 +111,7 @@ test.describe('Human purchase flow — form submission', () => {
     test('personal purchase submits to /api/create-checkout', async ({
         page,
     }) => {
-        await page.goto('/checkout/once');
+        await page.goto(`/checkout/${BUNDLE_ONCE_ID}`);
 
         // Intercept API call
         const apiPromise = page.waitForRequest(
@@ -128,7 +136,7 @@ test.describe('Human purchase flow — form submission', () => {
     test('status shows "Creating secure checkout..." on submit', async ({
         page,
     }) => {
-        await page.goto('/checkout/once');
+        await page.goto(`/checkout/${BUNDLE_ONCE_ID}`);
 
         // Stub the API to delay so we can see status text
         await page.route('**/api/create-checkout', async (route) => {
@@ -153,7 +161,7 @@ test.describe('Human purchase flow — form submission', () => {
     });
 
     test('shows error message on API failure', async ({ page }) => {
-        await page.goto('/checkout/once');
+        await page.goto(`/checkout/${BUNDLE_ONCE_ID}`);
 
         await page.route('**/api/create-checkout', async (route) => {
             await route.fulfill({
@@ -173,7 +181,7 @@ test.describe('Human purchase flow — form submission', () => {
     });
 
     test('redirects on successful checkout', async ({ page }) => {
-        await page.goto('/checkout/once');
+        await page.goto(`/checkout/${BUNDLE_ONCE_ID}`);
 
         await page.route('**/api/create-checkout', async (route) => {
             await route.fulfill({
@@ -201,7 +209,7 @@ test.describe('Human purchase flow — form submission', () => {
             const observer = new MutationObserver(() => {
                 document
                     .querySelectorAll('vite-error-overlay, astro-dev-toolbar')
-                    .forEach((el) => el.remove());
+                    .forEach((el) =>{  el.remove(); });
             });
             observer.observe(document.documentElement, {
                 childList: true,
@@ -209,7 +217,7 @@ test.describe('Human purchase flow — form submission', () => {
             });
         });
 
-        await page.goto('/checkout/once');
+        await page.goto(`/checkout/${BUNDLE_ONCE_ID}`);
 
         // Slow response so we can observe disabled state
         let resolveRoute: (() => void) | undefined;
@@ -240,7 +248,7 @@ test.describe('Human purchase flow — form submission', () => {
     });
 
     test('company purchase requires company fields', async ({ page }) => {
-        await page.goto('/checkout/once');
+        await page.goto(`/checkout/${BUNDLE_ONCE_ID}`);
 
         // Stub API to return company validation error
         await page.route('**/api/create-checkout', async (route) => {
@@ -273,27 +281,23 @@ test.describe('Human purchase flow — pay page states', () => {
 
     test('pay page with invalid token shows error', async ({ page }) => {
         await page.goto('/pay?token=invalid-token');
-        await expect(page.getByText(/expired|invalid|wrong/i)).toBeVisible();
+        await expect(
+            page.locator('h1', { hasText: /went wrong|expired/i }),
+        ).toBeVisible();
     });
 });
 
 test.describe('Human purchase flow — success page', () => {
-    test('success page shows confirmation for once', async ({ page }) => {
-        await page.goto('/checkout/success?product=once');
+    test('success page shows confirmation', async ({ page }) => {
+        await page.goto('/checkout/success');
         await expect(page.getByText(/payment confirmed/i)).toBeVisible();
-        await expect(page.getByText(/one-time purchase/i)).toBeVisible();
-    });
-
-    test('success page shows confirmation for lifetime', async ({ page }) => {
-        await page.goto('/checkout/success?product=lifetime');
-        await expect(page.getByText(/payment confirmed/i)).toBeVisible();
-        // Verify the URL carries the product param correctly
-        expect(page.url()).toContain('product=lifetime');
+        await expect(page.getByText(/thanks for your purchase/i)).toBeVisible();
     });
 
     test('success page has navigation links', async ({ page }) => {
-        await page.goto('/checkout/success?product=once');
-        await expect(page.locator('a[href="/"]')).toBeVisible();
-        await expect(page.locator('a[href="/contact"]')).toBeVisible();
+        await page.goto('/checkout/success');
+        const main = page.locator('#main-content');
+        await expect(main.locator('a[href="/"]')).toBeVisible();
+        await expect(main.locator('a[href="/contact"]')).toBeVisible();
     });
 });

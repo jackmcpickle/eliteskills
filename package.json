@@ -11,7 +11,7 @@
         "fmt:check": "oxfmt \"**/*.{js,mjs,cjs,jsx,ts,mts,cts,tsx,css,astro}\" --check",
         "fmt": "oxfmt \"**/*.{js,mjs,cjs,jsx,ts,mts,cts,tsx,css,astro}\" --write",
         "vitest": "vitest run --coverage.enabled",
-        "test:e2e": "playwright test --grep-invert @llm",
+        "test:e2e": "playwright test --grep-invert \"@llm|@live\"",
         "test:llm": "playwright test --grep @llm",
         "test:skills": "playwright test --grep @llm tests/e2e/skill-quality.spec.ts",
         "test:live-agent": "playwright test --grep @live",

@@ -27,6 +27,6 @@ export default defineConfig({
         command: `pnpm dev --host 127.0.0.1 --port ${PORT}`,
         url: BASE_URL,
         reuseExistingServer: !process.env.CI,
-        timeout: 30_000,
+        timeout: process.env.CI ? 120_000 : 30_000,
     },
 });

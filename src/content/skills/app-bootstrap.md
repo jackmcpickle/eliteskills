@@ -1,33 +1,29 @@
 ---
 title: App Bootstrap
-description: Go from zero to deployed in minutes. Project scaffolding, CI/CD pipelines, infra-as-code — all wired up.
+description: Go from zero to a fully planned and scaffolded app. Guided discovery, tech stack recommendations with real trade-offs, and a staged implementation plan with CI/CD and testing baked in.
 icon: Rocket
 order: 5
+released: true
 highlights:
-  - Project scaffolding with best-practice defaults
-  - CI/CD pipeline configuration out of the box
-  - Infrastructure-as-code templates
-  - Monorepo and workspace setup
-  - Environment and secrets management
+  - Guided discovery — audience, platform, features, constraints
+  - 2-3 tech stack options with popularity stats, pros, and cons
+  - Staged implementation plan with CI/CD and test harness from stage 1
+  - Optional scaffolding — runs create commands, wires up linting and tests
+  - Covers web, mobile, desktop, CLI, and API projects
 structure:
   - SKILL.md
-  - templates/
-  - templates/monorepo.md
-  - templates/ci-pipeline.md
-  - templates/docker.md
-  - examples/
-  - examples/saas-starter.md
-  - examples/api-service.md
+  - framework-recommendations.md
+  - plan-template.md
 examples:
-  - label: SaaS starter
-    command: "Scaffold a full-stack SaaS app with auth, billing, and dashboard"
-  - label: API service
-    command: "Bootstrap a production API service with Docker, CI/CD, and monitoring"
-  - label: Monorepo setup
-    command: "Create a pnpm monorepo with shared packages, apps, and workspace config"
+  - label: SaaS web app
+    command: "Bootstrap a SaaS web app with auth, payments, and a dashboard"
+  - label: Mobile app
+    command: "I want to build a cross-platform mobile app for tracking workouts"
+  - label: CLI tool
+    command: "Help me start a CLI tool for managing database migrations"
 bestPractices:
-  - Specify your target deployment platform (Vercel, AWS, Cloudflare) upfront
-  - List your preferred tech stack — the skill adapts scaffolding to match
+  - Answer each discovery question — more context means better recommendations
+  - Mention your experience level and team size so complexity matches your situation
+  - Specify hard constraints early (must use Python, must deploy to AWS, etc.)
   - Use for greenfield projects; for existing projects use Feature Enhancer
-  - Review generated CI/CD configs for your specific provider's syntax
 ---

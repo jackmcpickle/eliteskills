@@ -7,7 +7,7 @@ A complete working example of a Notes feature with strict DTO boundaries. SQLMod
 ```python
 """SQLModel table for Notes. Only imported by repository."""
 from sqlmodel import Field
-from srv.db.base import BaseModel
+from app.db.base import BaseModel
 
 
 class Note(BaseModel, table=True):
@@ -16,7 +16,6 @@ class Note(BaseModel, table=True):
     title: str = Field(max_length=255)
     content: str = Field(default="")
     is_pinned: bool = Field(default=False)
-    team_id: int = Field(foreign_key="teams.id", index=True)
 ```
 
 ## types/note.py
@@ -25,7 +24,7 @@ class Note(BaseModel, table=True):
 """DTOs for Notes API. Imported by all layers."""
 from datetime import datetime
 from pydantic import BaseModel
-from srv.core.base.types import CamelModel
+from app.core.base.types import CamelModel
 
 
 class NoteCreateBody(BaseModel):
@@ -66,8 +65,8 @@ class NoteListItem(CamelModel):
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from srv.core.errors import NotFound, QueryError
-from srv.core.result import Err, Ok, Result
+from app.core.errors import NotFound, QueryError
+from app.core.result import Err, Ok, Result
 from ..models.note import Note
 from ..types.note import NoteCreateBody, NoteUpdateBody, NoteDetail, NoteListItem
 
@@ -84,12 +83,11 @@ async def get_note_by_key(
     return Ok(NoteDetail.model_validate(note, from_attributes=True))
 
 
-async def list_notes_for_team(
+async def list_notes(
     session: AsyncSession,
-    team_id: int,
     pinned_only: bool = False,
 ) -> Result[QueryError, list[NoteListItem]]:
-    stmt = select(Note).where(Note.team_id == team_id)
+    stmt = select(Note)
     if pinned_only:
         stmt = stmt.where(Note.is_pinned)
     stmt = stmt.order_by(Note.is_pinned.desc(), Note.created_at.desc())
@@ -99,11 +97,9 @@ async def list_notes_for_team(
 
 async def create_note(
     session: AsyncSession,
-    team_id: int,
     data: NoteCreateBody,
 ) -> NoteDetail:
     note = Note(
-        team_id=team_id,
         title=data.title,
         content=data.content,
         is_pinned=data.is_pinned,
@@ -155,20 +151,19 @@ async def delete_note(
 """Business logic for Notes. Works with DTOs only — never imports models."""
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from srv.core.errors import InvalidInput, NotFound
-from srv.core.result import Err, Result
+from app.core.errors import InvalidInput, NotFound
+from app.core.result import Err, Result
 from ..repository import note as repo
 from ..types.note import NoteCreateBody, NoteUpdateBody, NoteDetail
 
 
 async def create_note(
     session: AsyncSession,
-    team_id: int,
     data: NoteCreateBody,
 ) -> Result[InvalidInput, NoteDetail]:
     if not data.title.strip():
         return Err(InvalidInput(errors={"title": ["Title is required"]}))
-    return await repo.create_note(session, team_id, data)
+    return await repo.create_note(session, data)
 
 
 async def update_note(
@@ -201,8 +196,7 @@ async def toggle_pin(
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from srv.db import get_session
-from srv.identity.auth import get_current_user
+from app.db import get_session
 from ..services import note as service
 from ..repository import note as repo
 from ..types.note import NoteCreateBody, NoteUpdateBody, NoteDetail, NoteListItem
@@ -213,10 +207,9 @@ router = APIRouter(prefix="/notes", tags=["notes"])
 @router.get("/")
 async def list_notes(
     session: AsyncSession = Depends(get_session),
-    user=Depends(get_current_user),
     pinned: bool = False,
 ) -> list[NoteListItem]:
-    result = await repo.list_notes_for_team(session, user.team_id, pinned_only=pinned)
+    result = await repo.list_notes(session, pinned_only=pinned)
     return result.or_raise(lambda e: HTTPException(status_code=500, detail=str(e)))
 
 
@@ -224,9 +217,8 @@ async def list_notes(
 async def create_note(
     body: NoteCreateBody,
     session: AsyncSession = Depends(get_session),
-    user=Depends(get_current_user),
 ) -> NoteDetail:
-    result = await service.create_note(session, user.team_id, body)
+    result = await service.create_note(session, body)
     return result.or_raise(lambda e: HTTPException(status_code=400, detail=str(e)))
 
 
@@ -234,7 +226,6 @@ async def create_note(
 async def get_note(
     key: str,
     session: AsyncSession = Depends(get_session),
-    user=Depends(get_current_user),
 ) -> NoteDetail:
     result = await repo.get_note_by_key(session, key)
     return result.or_raise(lambda e: HTTPException(status_code=404, detail=str(e)))
@@ -245,7 +236,6 @@ async def update_note(
     key: str,
     body: NoteUpdateBody,
     session: AsyncSession = Depends(get_session),
-    user=Depends(get_current_user),
 ) -> NoteDetail:
     result = await service.update_note(session, key, body)
     return result.or_raise(lambda e: HTTPException(status_code=400, detail=str(e)))
@@ -255,7 +245,6 @@ async def update_note(
 async def delete_note(
     key: str,
     session: AsyncSession = Depends(get_session),
-    user=Depends(get_current_user),
 ) -> None:
     result = await repo.delete_note(session, key)
     result.or_raise(lambda e: HTTPException(status_code=404, detail=str(e)))
@@ -265,7 +254,6 @@ async def delete_note(
 async def toggle_pin(
     key: str,
     session: AsyncSession = Depends(get_session),
-    user=Depends(get_current_user),
 ) -> NoteDetail:
     result = await service.toggle_pin(session, key)
     return result.or_raise(lambda e: HTTPException(status_code=400, detail=str(e)))

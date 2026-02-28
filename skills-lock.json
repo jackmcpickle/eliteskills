@@ -7,27 +7,27 @@
             "contentHash": "0f5340637e00efcd23a9e1e51b7d32cb7ab635b5b7a47748353e760777a07f3c",
             "files": 1
         },
-        "backend": {
+        "elite-backend": {
             "version": "1.0.0",
             "contentHash": "090f0a7b677f16b2c0113fa14e3c312f69b3212ba340a768dad7ef9ac052cea4",
             "files": 7
         },
-        "bootstrap": {
+        "elite-bootstrap": {
             "version": "0.0.0",
             "contentHash": "10142a79d25fd343a320bd8f36a2d54aef2f38490150509c33882ef53e4c3ecc",
             "files": 1
         },
-        "feature": {
+        "elite-feature": {
             "version": "0.0.0",
             "contentHash": "630422c5567f2d3ea89ef491b7c72261bc933d0a2c8f9772b5581307a388f218",
             "files": 1
         },
-        "react": {
+        "elite-react": {
             "version": "1.0.0",
             "contentHash": "cc8ce33122e3bfd5a898759cd81e157a95038c745b1a884ee6a86dce923dd49e",
             "files": 17
         },
-        "style": {
+        "elite-style": {
             "version": "1.0.0",
             "contentHash": "f4c653b60e635b989402f5fba727d4ee04487bc682be63656e921484e58cb9e7",
             "files": 1
@@ -44,7 +44,7 @@
             "contentHash": "f2b529172abd981e81935156bca043c5783f3c0423c169ae2a5ad42d12a16eb8",
             "files": 1
         },
-        "review": {
+        "elite-review": {
             "version": "0.0.0",
             "contentHash": "e8d45ab4804b174dba7d921e9b69e16e85a2aedbceb9c5015a9309caade9d4c4",
             "files": 1

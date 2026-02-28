@@ -5,7 +5,7 @@ A complete, minimal template for a new FastAPI feature with strict DTO boundarie
 ## File Structure
 
 ```
-src/srv/{domain}/
+src/{app}/{domain}/
 ├── models/
 │   ├── __init__.py
 │   └── {entity}.py
@@ -27,14 +27,13 @@ src/srv/{domain}/
 ```python
 """SQLModel table for {Entity}. Only imported by repository."""
 from sqlmodel import Field
-from srv.db.base import BaseModel
+from app.db.base import BaseModel
 
 
 class {Entity}(BaseModel, table=True):
     __tablename__ = "{entities}"
 
     name: str = Field(max_length=255)
-    team_id: int = Field(foreign_key="teams.id", index=True)
     # Add fields...
 ```
 
@@ -44,7 +43,7 @@ class {Entity}(BaseModel, table=True):
 """DTOs for {Entity} API. Imported by all layers."""
 from datetime import datetime
 from pydantic import BaseModel
-from srv.core.base.types import CamelModel
+from app.core.base.types import CamelModel
 
 
 class {Entity}CreateBody(BaseModel):
@@ -80,8 +79,8 @@ class {Entity}ListItem(CamelModel):
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from srv.core.errors import NotFound
-from srv.core.result import Err, Ok, Result
+from app.core.errors import NotFound
+from app.core.result import Err, Ok, Result
 from ..models.{entity} import {Entity}
 from ..types.{entity} import {Entity}CreateBody, {Entity}UpdateBody, {Entity}Detail, {Entity}ListItem
 
@@ -98,13 +97,11 @@ async def get_{entity}_by_key(
     return Ok({Entity}Detail.model_validate(obj, from_attributes=True))
 
 
-async def list_{entities}_for_team(
+async def list_{entities}(
     session: AsyncSession,
-    team_id: int,
 ) -> Result[QueryError, list[{Entity}ListItem]]:
     stmt = (
         select({Entity})
-        .where({Entity}.team_id == team_id)
         .order_by({Entity}.created_at.desc())
     )
     result = await session.execute(stmt)
@@ -113,10 +110,9 @@ async def list_{entities}_for_team(
 
 async def create_{entity}(
     session: AsyncSession,
-    team_id: int,
     data: {Entity}CreateBody,
 ) -> {Entity}Detail:  # Use Result[ErrorType, ...] if create can fail (e.g., AlreadyExists for unique constraints)
-    obj = {Entity}(team_id=team_id, name=data.name)
+    obj = {Entity}(name=data.name)
     session.add(obj)
     await session.commit()
     await session.refresh(obj)
@@ -164,20 +160,19 @@ async def delete_{entity}(
 """Business logic for {Entity}. Works with DTOs only — never imports models."""
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from srv.core.errors import InvalidInput
-from srv.core.result import Err, Result
+from app.core.errors import InvalidInput
+from app.core.result import Err, Result
 from ..repository import {entity} as repo
 from ..types.{entity} import {Entity}CreateBody, {Entity}Detail
 
 
 async def create_{entity}(
     session: AsyncSession,
-    team_id: int,
     data: {Entity}CreateBody,
 ) -> Result[InvalidInput, {Entity}Detail]:
     if not data.name.strip():
         return Err(InvalidInput(errors={"name": ["Name is required"]}))
-    return await repo.create_{entity}(session, team_id, data)
+    return await repo.create_{entity}(session, data)
 ```
 
 ## routes/{entities}.py
@@ -187,8 +182,7 @@ async def create_{entity}(
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from srv.db import get_session
-from srv.identity.auth import get_current_user
+from app.db import get_session
 from ..services import {entity} as service
 from ..repository import {entity} as repo
 from ..types.{entity} import {Entity}CreateBody, {Entity}UpdateBody, {Entity}Detail, {Entity}ListItem
@@ -199,9 +193,8 @@ router = APIRouter(prefix="/{entities}", tags=["{entities}"])
 @router.get("/")
 async def list_{entities}(
     session: AsyncSession = Depends(get_session),
-    user=Depends(get_current_user),
 ) -> list[{Entity}ListItem]:
-    result = await repo.list_{entities}_for_team(session, user.team_id)
+    result = await repo.list_{entities}(session)
     return result.or_raise(lambda e: HTTPException(status_code=500, detail=str(e)))
 
 
@@ -209,9 +202,8 @@ async def list_{entities}(
 async def create_{entity}(
     body: {Entity}CreateBody,
     session: AsyncSession = Depends(get_session),
-    user=Depends(get_current_user),
 ) -> {Entity}Detail:
-    result = await service.create_{entity}(session, user.team_id, body)
+    result = await service.create_{entity}(session, body)
     return result.or_raise(lambda e: HTTPException(status_code=400, detail=str(e)))
 
 
@@ -219,7 +211,6 @@ async def create_{entity}(
 async def get_{entity}(
     key: str,
     session: AsyncSession = Depends(get_session),
-    user=Depends(get_current_user),
 ) -> {Entity}Detail:
     result = await repo.get_{entity}_by_key(session, key)
     return result.or_raise(lambda e: HTTPException(status_code=404, detail=str(e)))
@@ -230,7 +221,6 @@ async def update_{entity}(
     key: str,
     body: {Entity}UpdateBody,
     session: AsyncSession = Depends(get_session),
-    user=Depends(get_current_user),
 ) -> {Entity}Detail:
     result = await repo.update_{entity}(session, key, body)
     return result.or_raise(lambda e: HTTPException(status_code=400, detail=str(e)))
@@ -240,7 +230,6 @@ async def update_{entity}(
 async def delete_{entity}(
     key: str,
     session: AsyncSession = Depends(get_session),
-    user=Depends(get_current_user),
 ) -> None:
     result = await repo.delete_{entity}(session, key)
     result.or_raise(lambda e: HTTPException(status_code=404, detail=str(e)))

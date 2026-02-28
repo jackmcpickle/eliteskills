@@ -23,14 +23,14 @@ const REPORT_PATH = join(
 
 // Per-skill generation prompts — what to ask the skill to build
 const GENERATION_TASKS: Record<string, string> = {
-    react: `Build a task management feature module with:
+    'elite-react': `Build a task management feature module with:
 - A form to create tasks (title, description, priority enum, due date)
 - A table listing tasks with sorting and pagination
 - Query and mutation hooks for CRUD operations
 - Zod validation schemas
 Output all files with their paths as fenced code blocks.`,
 
-    backend: `Build a "bookmarks" domain with:
+    'elite-backend': `Build a "bookmarks" domain with:
 - SQLModel table for bookmarks (url, title, tags list, is_archived boolean)
 - Create/Update DTOs and Detail/ListItem response DTOs
 - Repository with CRUD operations returning Result types
@@ -38,7 +38,7 @@ Output all files with their paths as fenced code blocks.`,
 - FastAPI routes
 Output all files with their paths as fenced code blocks.`,
 
-    style: `Build a pricing page for a developer tools SaaS with 3 tiers (Hobby, Pro, Enterprise).
+    'elite-style': `Build a pricing page for a developer tools SaaS with 3 tiers (Hobby, Pro, Enterprise).
 Include distinctive typography, color scheme, and micro-interactions.
 Output as a single HTML file with inline CSS and JS.`,
 

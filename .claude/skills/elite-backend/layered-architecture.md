@@ -1,6 +1,6 @@
 # Layered Architecture
 
-SubTechnica uses a layered architecture with strict DTO boundaries. SQLModel stays in repositories; everything else works with Pydantic DTOs.
+Uses a layered architecture with strict DTO boundaries. SQLModel stays in repositories; everything else works with Pydantic DTOs.
 
 ## The Layers
 
@@ -79,31 +79,27 @@ class NoteDetail(CamelModel):
 async def create_note(
     body: NoteCreateBody,
     session: AsyncSession = Depends(get_session),
-    user=Depends(get_current_user),
 ) -> NoteDetail:
-    result = await note_service.create_note(session, user.team_id, body)
+    result = await note_service.create_note(session, body)
     return result.or_raise(lambda e: HTTPException(status_code=400, detail=str(e)))
 
 
 # services/note.py — validates, delegates, returns DTO
 async def create_note(
     session: AsyncSession,
-    team_id: int,
     data: NoteCreateBody,
 ) -> Result[InvalidInput, NoteDetail]:
     if not data.title.strip():
         return Err(InvalidInput(errors={"title": ["Title is required"]}))
-    return await note_repo.create_note(session, team_id, data)
+    return await note_repo.create_note(session, data)
 
 
 # repository/note.py — owns SQLModel, converts to DTO
 async def create_note(
     session: AsyncSession,
-    team_id: int,
     data: NoteCreateBody,
 ) -> Result[InvalidInput, NoteDetail]:
     note = Note(
-        team_id=team_id,
         title=data.title,
         content=data.content,
         is_pinned=data.is_pinned,
@@ -131,7 +127,6 @@ async def update_note(
     key: str,
     body: NoteUpdateBody,
     session: AsyncSession = Depends(get_session),
-    user=Depends(get_current_user),
 ) -> NoteDetail:
     result = await note_service.update_note(session, key, body)
     return result.or_raise(lambda e: HTTPException(status_code=400, detail=str(e)))
@@ -174,7 +169,7 @@ async def update_note(
 
 ```
 # Standard domain structure
-src/srv/{domain}/
+src/{app}/{domain}/
 ├── models/
 │   ├── __init__.py
 │   └── note.py           # SQLModel — only imported by repository

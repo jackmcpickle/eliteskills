@@ -1,6 +1,6 @@
 ---
-name: bootstrap
-description: "Bootstrap a new application from scratch. Guides users through audience, platform, features, and tech stack decisions, then generates a detailed staged implementation plan with CI/CD, testing, and deployment. Use when someone wants to start a new project, choose a tech stack, or scaffold an app."
+name: elite-bootstrap
+description: 'Bootstrap a new application from scratch. Guides users through audience, platform, features, and tech stack decisions, then generates a detailed staged implementation plan with CI/CD, testing, and deployment. Use when someone wants to start a new project, choose a tech stack, or scaffold an app.'
 version: 1.0.0
 ---
 
@@ -27,16 +27,16 @@ Walk through each section below **one at a time**. Don't dump all questions at o
 
 Ask which platform(s) they're targeting:
 
-| Platform | Follow-up questions |
-|----------|-------------------|
-| **Web app** | SPA vs SSR vs static? Real-time features needed? |
-| **Website / marketing site** | CMS needed? Blog? Dynamic content? |
-| **iOS app** | Native Swift or cross-platform? Minimum iOS version? |
-| **Android app** | Native Kotlin or cross-platform? Minimum API level? |
-| **Cross-platform mobile** | React Native or Flutter preference? Offline-first? |
-| **Desktop app** | Which OS(es)? Electron, Tauri, or native? |
-| **CLI tool** | Language preference? Distribution method (npm, brew, binary)? |
-| **API / backend service** | Who consumes it? Expected load? |
+| Platform                     | Follow-up questions                                           |
+| ---------------------------- | ------------------------------------------------------------- |
+| **Web app**                  | SPA vs SSR vs static? Real-time features needed?              |
+| **Website / marketing site** | CMS needed? Blog? Dynamic content?                            |
+| **iOS app**                  | Native Swift or cross-platform? Minimum iOS version?          |
+| **Android app**              | Native Kotlin or cross-platform? Minimum API level?           |
+| **Cross-platform mobile**    | React Native or Flutter preference? Offline-first?            |
+| **Desktop app**              | Which OS(es)? Electron, Tauri, or native?                     |
+| **CLI tool**                 | Language preference? Distribution method (npm, brew, binary)? |
+| **API / backend service**    | Who consumes it? Expected load?                               |
 
 If they mention multiple platforms, ask about priority order — which ships first?
 
@@ -117,7 +117,7 @@ For each stack option, provide:
 **Estimated complexity:** [Low / Medium / High]
 ```
 
-After presenting options, give a clear recommendation with reasoning: *"For your situation, I'd recommend Option N because..."*
+After presenting options, give a clear recommendation with reasoning: _"For your situation, I'd recommend Option N because..."_
 
 Wait for the user to choose before proceeding to Phase 3.
 
@@ -172,11 +172,11 @@ Set this up **before** writing application code so every subsequent stage deploy
 Break down each of the user's must-have features into sub-tasks:
 
 - For each feature:
-  - Data model changes
-  - API endpoints or service layer
-  - UI components and pages
-  - Tests for this feature
-  - Acceptance criteria
+    - Data model changes
+    - API endpoints or service layer
+    - UI components and pages
+    - Tests for this feature
+    - Acceptance criteria
 
 Prioritize by dependency order and risk — build the hardest/riskiest feature early to de-risk.
 
@@ -212,17 +212,18 @@ After the user approves the plan, offer to scaffold the project:
 4. Set up the test harness with passing example tests
 5. Create the CI/CD pipeline configuration files
 6. Generate a minimal `CLAUDE.md` containing **only** CLI commands:
-   ```markdown
-   ## Commands
-   [dev command]      # Start dev server
-   [build command]    # Production build
-   [test command]     # Run tests
-   [lint command]     # Lint code
-   [format command]   # Format code
-   [migrate command]  # Run DB migrations (if applicable)
-   [deploy command]   # Deploy (if applicable)
-   ```
-   Do NOT add project descriptions, architecture explanations, coding conventions, or directory structures. Keep it to commands only — less context performs better.
+    ```markdown
+    ## Commands
+
+    [dev command] # Start dev server
+    [build command] # Production build
+    [test command] # Run tests
+    [lint command] # Lint code
+    [format command] # Format code
+    [migrate command] # Run DB migrations (if applicable)
+    [deploy command] # Deploy (if applicable)
+    ```
+    Do NOT add project descriptions, architecture explanations, coding conventions, or directory structures. Keep it to commands only — less context performs better.
 7. Create initial commit
 8. Verify the app runs, tests pass, and linting passes
 

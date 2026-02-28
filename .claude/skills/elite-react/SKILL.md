@@ -1,5 +1,5 @@
 ---
-name: react
+name: elite-react
 description: Creates production-grade React frontend features using TanStack Router/Query/Form/Table, shadcn components, Tailwind v4, and Zod validation. Use when building React components, pages, forms, tables, hooks, or CRUD interfaces.
 version: 1.1.0
 ---

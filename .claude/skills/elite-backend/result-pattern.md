@@ -5,8 +5,8 @@ Use `Result[ErrorType, T]` at layer boundaries for explicit error handling.
 ## Basic Usage
 
 ```python
-from srv.core.result import Result, Ok, Err
-from srv.core.errors import NotFound
+from app.core.result import Result, Ok, Err
+from app.core.errors import NotFound
 
 async def get_note(session: AsyncSession, key: str) -> Result[NotFound, Note]:
     stmt = select(Note).where(Note.key == key)
@@ -32,7 +32,7 @@ async def resolve_note(
 ) -> Result[NotFound | InvalidState, Note]:
     result = await repo.get_note(session, key)
     if result.is_err():
-        return result.widen()
+        return result
 
     note = result.ok()
     if note.status == "archived":
@@ -66,23 +66,12 @@ return result.handle(
 )
 ```
 
-## Widening Error Types
-
-Use `.widen()` when returning a Result with a narrower error type from a function with a wider signature:
-
-```python
-async def service_fn() -> Result[NotFound | Forbidden, Note]:
-    # repo returns Result[NotFound, Note] - narrower than our signature
-    result = await repo.get_note(session, key)
-    return result.widen()  # widens NotFound to NotFound | Forbidden
-```
-
 ## Typed Errors
 
-Always use typed errors from `srv.core.errors`:
+Always use typed errors from `app.core.errors`:
 
 ```python
-from srv.core.errors import NotFound, AlreadyExists, Forbidden, InvalidInput, InvalidState, QueryError
+from app.core.errors import NotFound, AlreadyExists, Forbidden, InvalidInput, InvalidState, QueryError
 
 # Not found
 Err(NotFound(entity="Note", identifier=key))

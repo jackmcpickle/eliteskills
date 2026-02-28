@@ -4,10 +4,10 @@ After completing discovery and the user approves a tech stack, generate `BOOTSTR
 
 ---
 
-```markdown
+````markdown
 # [App Name] — Bootstrap Plan
 
-*Generated: [date]*
+_Generated: [date]_
 
 ## Overview
 
@@ -18,26 +18,27 @@ After completing discovery and the user approves a tech stack, generate `BOOTSTR
 
 ## Chosen Tech Stack
 
-| Layer | Choice | Rationale |
-|-------|--------|-----------|
-| Framework | | |
-| Language | | |
-| UI Library | | |
-| Database | | |
-| ORM | | |
-| Auth | | |
-| Hosting | | |
-| CI/CD | | |
-| Testing | | |
-| Monitoring | | |
-| API style | | |
-| Payments | | |
+| Layer      | Choice | Rationale |
+| ---------- | ------ | --------- |
+| Framework  |        |           |
+| Language   |        |           |
+| UI Library |        |           |
+| Database   |        |           |
+| ORM        |        |           |
+| Auth       |        |           |
+| Hosting    |        |           |
+| CI/CD      |        |           |
+| Testing    |        |           |
+| Monitoring |        |           |
+| API style  |        |           |
+| Payments   |        |           |
 
 ## Stage 0: Project Setup & DevEx
 
 **Goal:** Repository is initialized with tooling so every future commit is linted, formatted, and type-checked.
 
 ### Tasks
+
 - [ ] Initialize repository with .gitignore
 - [ ] Set up package manager and install core dependencies
 - [ ] Configure [linter] with project rules
@@ -48,6 +49,7 @@ After completing discovery and the user approves a tech stack, generate `BOOTSTR
 - [ ] Create README.md with project description and setup instructions
 
 ### Why this matters
+
 [Explain why DevEx setup first saves time across every subsequent stage]
 
 ---
@@ -57,6 +59,7 @@ After completing discovery and the user approves a tech stack, generate `BOOTSTR
 **Goal:** Every push triggers lint + test + build. Merges to main auto-deploy to staging.
 
 ### Tasks
+
 - [ ] Create CI workflow ([CI platform] — lint, type-check, test on PR)
 - [ ] Create CD workflow (deploy to [hosting] on merge to main)
 - [ ] Configure environment variables for dev/staging/production
@@ -64,9 +67,11 @@ After completing discovery and the user approves a tech stack, generate `BOOTSTR
 - [ ] Verify preview deployments work
 
 ### Pipeline architecture
+
 [Explain the flow: push → CI checks → PR review → merge → staging deploy → manual promote to production]
 
 ### Why CI/CD first
+
 [Explain: every subsequent stage is automatically validated. No "it works on my machine" problems. Deployment muscle memory from day 1.]
 
 ---
@@ -76,6 +81,7 @@ After completing discovery and the user approves a tech stack, generate `BOOTSTR
 **Goal:** Testing infrastructure is in place with passing example tests at every level.
 
 ### Tasks
+
 - [ ] Set up [unit test framework] with example test
 - [ ] Set up [integration test framework] with example test
 - [ ] Set up [E2E test framework] with smoke test (app loads)
@@ -83,6 +89,7 @@ After completing discovery and the user approves a tech stack, generate `BOOTSTR
 - [ ] Wire tests into CI pipeline (failing tests block merge)
 
 ### Testing strategy
+
 [Explain the testing pyramid/trophy for this specific app. What to unit test, what to integration test, what to E2E test. Where the most value comes from given the app type.]
 
 ---
@@ -92,6 +99,7 @@ After completing discovery and the user approves a tech stack, generate `BOOTSTR
 **Goal:** App runs locally and in staging with core layout, auth, and database connected.
 
 ### Tasks
+
 - [ ] Scaffold project using [create command]
 - [ ] Set up [UI library/design system]
 - [ ] Define design tokens (colors, typography, spacing)
@@ -102,6 +110,7 @@ After completing discovery and the user approves a tech stack, generate `BOOTSTR
 - [ ] Configure environment variable loading
 
 ### Architecture decisions
+
 [Explain folder structure, naming conventions, and any architectural patterns being used (e.g., feature-based modules, layered architecture)]
 
 ---
@@ -113,32 +122,39 @@ After completing discovery and the user approves a tech stack, generate `BOOTSTR
 **Priority:** P0 — [why this is first]
 
 #### Data model
+
 [Tables/collections needed, key fields, relationships]
 
 #### API / Service layer
+
 - [ ] [Endpoint/function 1]
 - [ ] [Endpoint/function 2]
 
 #### UI
+
 - [ ] [Page/screen 1]
 - [ ] [Component 1]
 
 #### Tests
+
 - [ ] Unit tests for [business logic]
 - [ ] E2E test for [critical path]
 
 #### Acceptance criteria
+
 - [ ] [User can...]
 - [ ] [System should...]
 
 ---
 
 ### Feature 2: [Name]
+
 [Same structure as Feature 1]
 
 ---
 
 ### Feature 3: [Name]
+
 [Same structure as Feature 1]
 
 ---
@@ -148,6 +164,7 @@ After completing discovery and the user approves a tech stack, generate `BOOTSTR
 **Goal:** App is production-ready with error handling, performance, accessibility, and monitoring.
 
 ### Tasks
+
 - [ ] Implement error boundaries / global error handling
 - [ ] Add loading states and skeleton screens
 - [ ] SEO: meta tags, Open Graph, structured data
@@ -165,18 +182,19 @@ After completing discovery and the user approves a tech stack, generate `BOOTSTR
 **Goal:** App is live in production and monitored.
 
 ### Tasks
+
 - [ ] Configure production environment
 - [ ] Set up custom domain and DNS
 - [ ] Verify SSL/TLS
 - [ ] Set up database backups ([schedule])
 - [ ] Document rollback procedure
 - [ ] Launch checklist:
-  - [ ] All tests passing
-  - [ ] Performance budget met
-  - [ ] Error tracking verified
-  - [ ] Analytics verified
-  - [ ] Backup verified
-  - [ ] Monitoring alerts configured
+    - [ ] All tests passing
+    - [ ] Performance budget met
+    - [ ] Error tracking verified
+    - [ ] Analytics verified
+    - [ ] Backup verified
+    - [ ] Monitoring alerts configured
 
 ---
 
@@ -192,10 +210,14 @@ After completing discovery and the user approves a tech stack, generate `BOOTSTR
 [migrate command]      # Run database migrations
 [deploy command]       # Deploy to staging/production
 ```
+````
 
 ## Appendix: Architecture Decisions
 
 | Decision | Choice | Alternatives Considered | Why |
-|----------|--------|------------------------|-----|
-| | | | |
+| -------- | ------ | ----------------------- | --- |
+|          |        |                         |     |
+
+```
+
 ```

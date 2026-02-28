@@ -1,12 +1,12 @@
 ---
-name: backend
-description: Create FastAPI backend features following SubTechnica patterns. Use when building new APIs, services, domain models, or repository functions. Uses SQLModel for DB, Pydantic CamelModel for API types, and Result pattern for error handling.
-version: 1.1.0
+name: elite-backend
+description: Create FastAPI backend features following established patterns. Use when building new APIs, services, domain models, or repository functions. Uses SQLModel for DB, Pydantic CamelModel for API types, and Result pattern for error handling.
+version: 2.0.0
 ---
 
 # Backend Development Skill
 
-Build production-grade FastAPI features using SubTechnica's established patterns. SQLModel for persistence, Pydantic DTOs for layer boundaries, Result for error handling.
+Build production-grade FastAPI features using established patterns. SQLModel for persistence, Pydantic DTOs for layer boundaries, Result for error handling.
 
 ## Core Philosophy
 
@@ -14,7 +14,19 @@ Build production-grade FastAPI features using SubTechnica's established patterns
 - **DTOs (Pydantic)** at every layer boundary — request DTOs in, response DTOs out
 - **Repositories own the conversion** — SQLModel never leaks past the repository
 - **Result[ErrorType, T]** for explicit error handling
-- **Typed errors** from `srv.core.errors` (NotFound, AlreadyExists, Forbidden, etc.)
+- **Typed errors** from `app.core.errors` (NotFound, AlreadyExists, Forbidden, etc.)
+
+## Assumptions
+
+This skill assumes your project provides these custom utilities (import paths use `app` as a placeholder for your root package):
+
+- `app.core.result` — `Result[E, T]`, `Ok`, `Err`
+- `app.core.errors` — typed errors: `NotFound`, `AlreadyExists`, `Forbidden`, `InvalidInput`, `InvalidState`, `QueryError`
+- `app.core.base.types` — `CamelModel` (Pydantic model with camelCase JSON serialization)
+- `app.db.base` — `BaseModel` (SQLModel base with auto `id`, `key`, `created_at`, `updated_at`)
+- `app.db` — `get_session` dependency
+
+If your project uses different paths, substitute accordingly.
 
 ## When to Use This Skill
 
@@ -24,14 +36,14 @@ Activate when the user requests:
 - Domain models or data structures
 - Repository functions or database operations
 - Business logic services
-- New domain modules under `src/srv/`
+- New domain modules under `src/{app}/`
 
 ## Quick Start Checklist
 
 For a new feature, create files under the domain:
 
 ```
-src/srv/{domain}/
+src/{app}/{domain}/
 ├── models/
 │   └── {entity}.py        # SQLModel table=True (DB only)
 ├── types/
@@ -93,7 +105,7 @@ Request DTO          Response DTO
 
 ### Models (SQLModel tables) — repo-internal
 
-- Extend `srv.db.base.BaseModel` for auto key/timestamps
+- Extend `app.db.base.BaseModel` for auto key/timestamps
 - Set `table=True` and `__tablename__`
 - Use `str, Enum` classes for enum fields (NOT `Literal`)
 
@@ -124,7 +136,7 @@ class NoteUpdateBody(BaseModel):
 
 ```python
 from datetime import datetime
-from srv.core.base.types import CamelModel
+from app.core.base.types import CamelModel
 
 class NoteDetail(CamelModel):
     key: str
@@ -145,8 +157,8 @@ class NoteListItem(CamelModel):
 ```python
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
-from srv.core.errors import NotFound
-from srv.core.result import Err, Ok, Result
+from app.core.errors import NotFound
+from app.core.result import Err, Ok, Result
 from ..models.note import Note
 from ..types.note import NoteDetail
 
@@ -164,11 +176,9 @@ async def get_note_by_key(
 
 async def create_note(
     session: AsyncSession,
-    team_id: int,
     data: NoteCreateBody,
 ) -> NoteDetail:  # Use Result[ErrorType, ...] if create can fail (e.g., AlreadyExists)
     note = Note(
-        team_id=team_id,
         title=data.title,
         content=data.content,
         is_pinned=data.is_pinned,
@@ -182,19 +192,18 @@ async def create_note(
 ### Service — works with DTOs only
 
 ```python
-from srv.core.errors import InvalidInput
-from srv.core.result import Err, Result
+from app.core.errors import InvalidInput
+from app.core.result import Err, Result
 from ..repository import note as repo
 from ..types.note import NoteCreateBody, NoteDetail
 
 async def create_note(
     session: AsyncSession,
-    team_id: int,
     data: NoteCreateBody,
 ) -> Result[InvalidInput, NoteDetail]:
     if not data.title.strip():
         return Err(InvalidInput(errors={"title": ["Title is required"]}))
-    return await repo.create_note(session, team_id, data)
+    return await repo.create_note(session, data)
 ```
 
 ### Route — thin passthrough
@@ -204,9 +213,8 @@ async def create_note(
 async def create_note(
     body: NoteCreateBody,
     session: AsyncSession = Depends(get_session),
-    user=Depends(get_current_user),
 ) -> NoteDetail:
-    result = await service.create_note(session, user.team_id, body)
+    result = await service.create_note(session, body)
     return result.or_raise(lambda e: HTTPException(status_code=400, detail=str(e)))
 ```
 
@@ -255,14 +263,14 @@ When in doubt, prefer:
 - [templates/feature.md](templates/feature.md) - Copy-paste starter template
 - [examples/notes.md](examples/notes.md) - Complete working example
 
-## Source of Truth
+## Project Integration
 
-Reference these existing files for patterns:
+Before using, locate these in your codebase:
 
-- Result: `src/srv/core/result.py`
-- Errors: `src/srv/core/errors.py`
-- CamelModel: `src/srv/core/base/types.py`
-- DB base: `src/srv/db/base.py`
-- Session: `src/srv/db/session.py`
-- Auth: `src/srv/identity/auth/dependencies.py`
-- Example domain: `src/srv/kb/` (models, types, repository, routes)
+- Result type module (`Ok`, `Err`, `Result`)
+- Typed error classes (`NotFound`, `AlreadyExists`, etc.)
+- `CamelModel` base class (camelCase JSON serialization)
+- DB `BaseModel` with auto id/key/timestamps
+- Session dependency (`get_session`)
+- Auth dependency (`get_current_user`) if applicable
+- An existing domain module as reference

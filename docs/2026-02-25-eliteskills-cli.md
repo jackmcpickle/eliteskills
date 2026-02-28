@@ -10,7 +10,7 @@ Users buy Claude Code skills on eliteskills.ai. Currently download is manual (zi
 npx @eliteskills/cli add react
 > Enter your install token: ▊
 > (user pastes token from account page)
-> ✓ Installed react (17 files) to .claude/skills/
+> ✓ Installed react (17 files) to .claude/skills/elite-react/
 ```
 
 Or with token inline:

@@ -7,7 +7,7 @@ Repositories handle all async database operations, own the SQLModel-to-DTO conve
 1. **All database operations** via `AsyncSession`
 2. **Own SQLModel to DTO conversion** via `model_validate(obj, from_attributes=True)`
 3. **Return `Result[ErrorType, DTO]`** — never return raw SQLModel objects
-4. **Use typed errors** from `srv.core.errors`
+4. **Use typed errors** from `app.core.errors`
 
 ## Basic Structure
 
@@ -15,8 +15,8 @@ Repositories handle all async database operations, own the SQLModel-to-DTO conve
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from srv.core.errors import NotFound, QueryError
-from srv.core.result import Err, Ok, Result
+from app.core.errors import NotFound, QueryError
+from app.core.result import Err, Ok, Result
 from ..models.note import Note
 from ..types.note import NoteCreateBody, NoteUpdateBody, NoteDetail, NoteListItem
 
@@ -33,12 +33,11 @@ async def get_note_by_key(
     return Ok(NoteDetail.model_validate(note, from_attributes=True))
 
 
-async def list_notes_for_team(
+async def list_notes(
     session: AsyncSession,
-    team_id: int,
     pinned_only: bool = False,
 ) -> Result[QueryError, list[NoteListItem]]:
-    stmt = select(Note).where(Note.team_id == team_id)
+    stmt = select(Note)
     if pinned_only:
         stmt = stmt.where(Note.is_pinned)
     stmt = stmt.order_by(Note.created_at.desc())
@@ -48,11 +47,9 @@ async def list_notes_for_team(
 
 async def create_note(
     session: AsyncSession,
-    team_id: int,
     data: NoteCreateBody,
 ) -> NoteDetail:  # Use Result[ErrorType, ...] if create can fail (e.g., AlreadyExists)
     note = Note(
-        team_id=team_id,
         title=data.title,
         content=data.content,
         is_pinned=data.is_pinned,
@@ -100,14 +97,14 @@ async def delete_note(
 
 ## Naming Conventions
 
-| Operation      | Function Name                                | Returns                                              |
-| -------------- | -------------------------------------------- | ---------------------------------------------------- |
-| Get one by key | `get_{entity}_by_key(session, key)`          | `Result[NotFound, EntityDetail]`                     |
-| Get one by id  | `get_{entity}_by_id(session, id)`            | `Result[NotFound, EntityDetail]`                     |
-| List           | `list_{entities}_for_{parent}(session, ...)` | `Result[QueryError, list[EntityListItem]]`           |
-| Create         | `create_{entity}(session, ..., data)`        | `EntityDetail` (wrap in `Result` if create can fail) |
-| Update         | `update_{entity}(session, key, data)`        | `Result[NotFound, EntityDetail]`                     |
-| Delete         | `delete_{entity}(session, key)`              | `Result[NotFound, None]`                             |
+| Operation      | Function Name                         | Returns                                              |
+| -------------- | ------------------------------------- | ---------------------------------------------------- |
+| Get one by key | `get_{entity}_by_key(session, key)`   | `Result[NotFound, EntityDetail]`                     |
+| Get one by id  | `get_{entity}_by_id(session, id)`     | `Result[NotFound, EntityDetail]`                     |
+| List           | `list_{entities}(session, ...)`       | `Result[QueryError, list[EntityListItem]]`           |
+| Create         | `create_{entity}(session, ..., data)` | `EntityDetail` (wrap in `Result` if create can fail) |
+| Update         | `update_{entity}(session, key, data)` | `Result[NotFound, EntityDetail]`                     |
+| Delete         | `delete_{entity}(session, key)`       | `Result[NotFound, None]`                             |
 
 ## Key Pattern: Repos Accept DTOs
 
@@ -116,8 +113,8 @@ Repositories accept request DTOs (or primitives) as input and return response DT
 ```python
 # Input: NoteCreateBody (request DTO)
 # Output: Result[..., NoteDetail] (response DTO)
-async def create_note(session, team_id, data: NoteCreateBody) -> Result[..., NoteDetail]:
-    note = Note(team_id=team_id, title=data.title, ...)  # DTO to SQLModel
+async def create_note(session, data: NoteCreateBody) -> Result[..., NoteDetail]:
+    note = Note(title=data.title, ...)  # DTO to SQLModel
     session.add(note)
     await session.commit()
     await session.refresh(note)
@@ -126,10 +123,10 @@ async def create_note(session, team_id, data: NoteCreateBody) -> Result[..., Not
 
 ## Error Types
 
-Use typed errors from `srv.core.errors`:
+Use typed errors from `app.core.errors`:
 
 ```python
-from srv.core.errors import NotFound, AlreadyExists, InvalidState, QueryError
+from app.core.errors import NotFound, AlreadyExists, InvalidState, QueryError
 
 # Not found
 return Err(NotFound(entity="Note", identifier=key))
@@ -146,12 +143,11 @@ return Err(InvalidState(entity="Note", reason="Cannot archive a draft"))
 ```python
 async def list_articles(
     session: AsyncSession,
-    team_id: int,
     article_type: str | None = None,
     offset: int = 0,
     limit: int = 20,
 ) -> Result[QueryError, list[ArticleListItem]]:
-    stmt = select(Article).where(Article.team_id == team_id)
+    stmt = select(Article)
     if article_type:
         stmt = stmt.where(Article.article_type == article_type)
     stmt = stmt.offset(offset).limit(limit).order_by(Article.created_at.desc())
@@ -167,8 +163,8 @@ Always filter in SQL when possible. Python-side filtering is acceptable only whe
 # Good — filter in SQL
 stmt = stmt.where(Article.article_type == article_type)
 
-# Acceptable — JSON array membership not portable in SQL, dataset bounded by team
-tags = [tag for item in items if target_tag in item.tags]  # bounded by team's items
+# Acceptable — JSON array membership not portable in SQL, dataset bounded
+tags = [tag for item in items if target_tag in item.tags]  # bounded dataset
 ```
 
 ## State Transitions

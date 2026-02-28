@@ -37,3 +37,6 @@ skill-quality-report.md
 
 # generated skills bundles
 public/skills-*.zip
+
+# generated OG images
+public/og/

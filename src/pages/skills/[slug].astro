@@ -68,7 +68,7 @@ const iconMap = { Database, Layers, Palette, Rocket, ShieldCheck, Sparkles };
 const Icon = iconMap[icon as keyof typeof iconMap] ?? Sparkles;
 ---
 
-<BaseLayout title={`${title} — Elite Skills`} description={description}>
+<BaseLayout title={`${title} — Elite Skills`} description={description} ogImage={`https://eliteskills.ai/og/${slug}.png`}>
     <main id="main-content" class="relative py-16 sm:py-24 lg:py-32 px-6">
         <!-- Ambient glow -->
         <div

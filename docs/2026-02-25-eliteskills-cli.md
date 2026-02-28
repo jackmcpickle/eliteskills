@@ -10,10 +10,11 @@ Users buy Claude Code skills on eliteskills.ai. Currently download is manual (zi
 npx @eliteskills/cli add react
 > Enter your install token: ▊
 > (user pastes token from account page)
-> ✓ Installed frontend-coder (17 files) to .claude/skills/
+> ✓ Installed react (17 files) to .claude/skills/
 ```
 
 Or with token inline:
+
 ```
 npx @eliteskills/cli add react abc123def
 ```
@@ -60,6 +61,7 @@ Errors:
 ```
 
 **Why new endpoint instead of reusing `/download/[key]`:**
+
 - Validates skill matches token (prevents confusion with bundle tokens)
 - Server-side skill resolution (token for bundle + skill=react → serve only react zip)
 - Future: version handling (v1 vs v2 based on purchase date)
@@ -68,6 +70,7 @@ Errors:
 **File**: `src/pages/api/cli/install.ts`
 
 **Logic**:
+
 1. Parse JSON body → `{ token, skill }`
 2. `getInstallKeyByKey(db, token)` → validate exists + download limit
 3. Trace: installKey → purchase → product
@@ -79,10 +82,12 @@ Errors:
 ## Implementation Steps
 
 ### Step 1: Root workspace setup
+
 - Create `pnpm-workspace.yaml` with `packages/*`
 - No changes to existing root `package.json`
 
 ### Step 2: CLI package scaffold
+
 - `packages/cli/package.json` — name `@eliteskills/cli`, bin `eliteskills` → `./bin/cli.mjs`
 - `packages/cli/tsconfig.json` — ESNext, Node18 target
 - `packages/cli/tsup.config.ts` — ESM output, minified
@@ -91,11 +96,13 @@ Errors:
 ### Step 3: CLI implementation
 
 **`src/index.ts`** — Parse `process.argv`:
+
 - `add <skill> [token]` → run add command
 - `--help` / no args → print usage
 - Unknown command → error + usage
 
 **`src/lib/prompt.ts`** — If token omitted, prompt via `readline`:
+
 ```ts
 import { createInterface } from 'node:readline/promises';
 const rl = createInterface({ input: process.stdin, output: process.stdout });
@@ -103,22 +110,26 @@ const token = await rl.question('Enter your install token: ');
 ```
 
 **`src/lib/api.ts`** — POST to `/api/cli/install`:
+
 ```ts
 const res = await fetch(`${API_BASE}/api/cli/install`, {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ token, skill }),
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ token, skill }),
 });
 ```
+
 Error mapping: 400/403/404/410 → clear user messages.
 
 **`src/lib/extract.ts`** — `fflate.unzipSync()`:
+
 - Safety check: all paths start with `.claude/skills/`
 - Skip directory entries + `.DS_Store`
 - Write files relative to CWD
 - Return file count + skill dir names
 
 **`src/commands/add.ts`** — Orchestrator:
+
 1. Prompt for token if missing
 2. Call API
 3. Handle errors
@@ -126,32 +137,34 @@ Error mapping: 400/403/404/410 → clear user messages.
 5. Print success summary
 
 ### Step 4: Server endpoint
+
 - Create `src/pages/api/cli/install.ts`
 - Reuse existing repo functions (`getInstallKeyByKey`, `getPurchaseById`, `getProductById`, `resolveDownloadZip`, `incrementDownloadCount`)
 - Add skill validation logic (match `skill` param against product's `skillSlug`)
 - Bundle handling: if product is bundle, serve per-skill zip using `skill` param
 
 ### Step 5: Build + test
+
 - `pnpm --filter @eliteskills/cli build`
 - Test locally: `node packages/cli/bin/cli.mjs add react <real-token>`
 - Add `build:cli` script to root package.json
 
 ## Key Files to Modify
 
-| File | Change |
-|---|---|
-| `pnpm-workspace.yaml` | **NEW** — workspace config |
-| `packages/cli/*` | **NEW** — entire CLI package |
-| `src/pages/api/cli/install.ts` | **NEW** — server endpoint |
-| `package.json` (root) | Add `build:cli` script |
+| File                           | Change                       |
+| ------------------------------ | ---------------------------- |
+| `pnpm-workspace.yaml`          | **NEW** — workspace config   |
+| `packages/cli/*`               | **NEW** — entire CLI package |
+| `src/pages/api/cli/install.ts` | **NEW** — server endpoint    |
+| `package.json` (root)          | Add `build:cli` script       |
 
 ## Key Files to Reuse
 
-| File | What |
-|---|---|
-| `src/libs/db/repo.ts` | `getInstallKeyByKey`, `incrementDownloadCount`, `getPurchaseById`, `getProductById` |
-| `src/libs/download.ts` | `resolveDownloadZip()` |
-| `src/libs/db/client.ts` | `createDb()` |
+| File                    | What                                                                                |
+| ----------------------- | ----------------------------------------------------------------------------------- |
+| `src/libs/db/repo.ts`   | `getInstallKeyByKey`, `incrementDownloadCount`, `getPurchaseById`, `getProductById` |
+| `src/libs/download.ts`  | `resolveDownloadZip()`                                                              |
+| `src/libs/db/client.ts` | `createDb()`                                                                        |
 
 ## Testing (CI)
 
@@ -160,6 +173,7 @@ Error mapping: 400/403/404/410 → clear user messages.
 CLI package gets its own `vitest.config.ts`. Tests run via `pnpm --filter @eliteskills/cli test`.
 
 **`src/lib/extract.test.ts`** — Zip extraction:
+
 - Creates test zips in-memory with `fflate.zipSync()`, passes to `extractZip()`
 - Valid zip → extracts to temp dir, verify files written correctly
 - Zip with paths outside `.claude/skills/` → throws error (path traversal protection)
@@ -169,6 +183,7 @@ CLI package gets its own `vitest.config.ts`. Tests run via `pnpm --filter @elite
 - Bundle zip (multiple skill dirs) → all extracted, returns correct dir names
 
 **`src/lib/api.test.ts`** — HTTP error mapping:
+
 - 400 → "Missing skill or token"
 - 403 → "Token doesn't grant access to this skill"
 - 404 → "Invalid install token"
@@ -177,12 +192,14 @@ CLI package gets its own `vitest.config.ts`. Tests run via `pnpm --filter @elite
 - Network failure (fetch throws) → "Network error"
 
 **`src/commands/add.test.ts`** — Full add flow (mocked fetch):
+
 - Mock `globalThis.fetch` to return a test zip → verify files extracted to temp dir
 - Mock fetch returning 404 → verify error message + exit code 1
 - Mock fetch returning 410 → verify limit message
 - Verify download count isn't incremented on client (server-side concern)
 
 **`src/index.test.ts`** — Arg parsing:
+
 - `['add', 'react', 'token123']` → calls add with correct args
 - `['add', 'react']` → calls add with skill only (token undefined)
 - `['add']` → exits with error (missing skill)
@@ -195,6 +212,7 @@ CLI package gets its own `vitest.config.ts`. Tests run via `pnpm --filter @elite
 Follows existing pattern (colocated test, vitest). Tests the endpoint handler function directly.
 
 **Logic tests** (mock db functions via `vi.mock`):
+
 - Missing body fields → 400
 - Invalid token (key not found) → 404
 - Download limit exceeded → 410
@@ -207,6 +225,7 @@ Follows existing pattern (colocated test, vitest). Tests the endpoint handler fu
 ### CI Integration
 
 Add to root `package.json` scripts:
+
 ```json
 "test:cli": "pnpm --filter @eliteskills/cli test"
 ```
@@ -214,6 +233,7 @@ Add to root `package.json` scripts:
 Existing `pnpm test` (runs vitest at root) covers server endpoint tests. CLI tests run separately since they're a workspace package.
 
 GitHub Actions (if exists) would add:
+
 ```yaml
 - run: pnpm --filter @eliteskills/cli build
 - run: pnpm --filter @eliteskills/cli test

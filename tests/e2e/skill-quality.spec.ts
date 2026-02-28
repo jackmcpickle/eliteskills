@@ -23,7 +23,7 @@ const REPORT_PATH = join(
 
 // Per-skill generation prompts — what to ask the skill to build
 const GENERATION_TASKS: Record<string, string> = {
-    'frontend-coder': `Build a task management feature module with:
+    react: `Build a task management feature module with:
 - A form to create tasks (title, description, priority enum, due date)
 - A table listing tasks with sorting and pagination
 - Query and mutation hooks for CRUD operations
@@ -38,7 +38,7 @@ Output all files with their paths as fenced code blocks.`,
 - FastAPI routes
 Output all files with their paths as fenced code blocks.`,
 
-    'frontend-design': `Build a pricing page for a developer tools SaaS with 3 tiers (Hobby, Pro, Enterprise).
+    style: `Build a pricing page for a developer tools SaaS with 3 tiers (Hobby, Pro, Enterprise).
 Include distinctive typography, color scheme, and micro-interactions.
 Output as a single HTML file with inline CSS and JS.`,
 

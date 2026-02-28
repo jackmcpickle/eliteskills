@@ -22,12 +22,12 @@
             "contentHash": "630422c5567f2d3ea89ef491b7c72261bc933d0a2c8f9772b5581307a388f218",
             "files": 1
         },
-        "frontend-coder": {
+        "react": {
             "version": "1.0.0",
             "contentHash": "cc8ce33122e3bfd5a898759cd81e157a95038c745b1a884ee6a86dce923dd49e",
             "files": 17
         },
-        "frontend-design": {
+        "style": {
             "version": "1.0.0",
             "contentHash": "f4c653b60e635b989402f5fba727d4ee04487bc682be63656e921484e58cb9e7",
             "files": 1

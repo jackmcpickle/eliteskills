@@ -93,9 +93,7 @@ export function isLoaded(
     return model.type === 'Loaded';
 }
 
-export function isEditing(
-    model: Model,
-): model is
+export function isEditing(model: Model): model is
     | { type: 'Editing'; data: Item[]; editingItem: Item; draft: ItemDraft }
     | { type: 'Saving'; data: Item[]; editingItem: Item; draft: ItemDraft }
     | {

@@ -98,10 +98,10 @@ export function use{Feature}(): Use{Feature}Return {
 
 ## When to Use
 
-| Criteria                            | useState | useReducer (this) | TanStack Query |
-| ----------------------------------- | -------- | ------------------ | -------------- |
-| Single primitive value              | Yes      | No                 | No             |
-| Server data fetching                | No       | No                 | Yes            |
-| Related values changing together    | No       | Yes                | No             |
-| Complex state transitions           | No       | Yes                | No             |
-| State machine behavior              | No       | Yes                | No             |
+| Criteria                         | useState | useReducer (this) | TanStack Query |
+| -------------------------------- | -------- | ----------------- | -------------- |
+| Single primitive value           | Yes      | No                | No             |
+| Server data fetching             | No       | No                | Yes            |
+| Related values changing together | No       | Yes               | No             |
+| Complex state transitions        | No       | Yes               | No             |
+| State machine behavior           | No       | Yes               | No             |

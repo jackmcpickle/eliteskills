@@ -1,12 +1,12 @@
 ---
 name: elite-review
-description: Perform a thorough code review. Use when the user says "review code", "code review", "review this PR", "review changes", "review my diff", "check this code", or asks for feedback on code they've written or changed.
+description: Perform a thorough code review. Use when the user says "review code", "code review", "review this PR", "review changes", "review my diff", "check this code", "DDD review", "domain review", "review domain model", or asks for feedback on code they've written or changed.
 version: 1.0.0
 ---
 
 # Code Review Skill
 
-Systematic code review based on Google's engineering practices and clean code principles. Works in two phases: understand the change, then review it across all dimensions.
+Systematic code review based on Google's engineering practices, Sandi Metz's 99 Bottles principles, and clean code fundamentals. Works in two phases: understand the change, then review it across all dimensions.
 
 ## Workflow
 
@@ -34,7 +34,11 @@ Determine what code to review based on user input:
 4. Note the scope: how many files, what subsystems, any cross-cutting concerns?
 ```
 
-**Step 3 — Clarify if needed**
+**Step 3 — Load specialized resources if needed**
+
+If the user requested a DDD review, domain review, or architecture review through a DDD lens, read `DDD.md` from this skill directory and follow its workflow instead of Phase 2.
+
+**Step 4 — Clarify if needed**
 
 If the intent of the change is unclear from the diff and commit messages, ask the user before proceeding. Otherwise move directly to Phase 2.
 
@@ -50,6 +54,8 @@ Review every changed line systematically across all dimensions below. Not every 
 - Is now the right time for this change, or does it depend on something not yet built?
 - Single Responsibility: does each new class/module have one clear reason to change?
 - Are SOLID principles respected (dependency inversion, interface segregation, open/closed)?
+- Are abstractions earned through repeated concrete examples, or imposed speculatively?
+- Could this be simpler and more concrete without sacrificing changeability?
 
 #### Functionality
 
@@ -69,6 +75,12 @@ Review every changed line systematically across all dimensions below. Not every 
 - Is there duplicated logic that violates DRY?
 - Do functions do one thing and do it well? Are any doing too much?
 - Are functions small enough to understand at a glance?
+- **Shameless Green check** — Is this the simplest concrete solution, or has the author reached for abstractions too early?
+- **Wrong abstraction detection** — Is duplicated code being tolerated because the right abstraction hasn't emerged yet? (Duplication > wrong abstraction)
+- **DRY cost/benefit** — Does extracting this duplication reduce change cost more than it increases comprehension cost?
+- **Incomprehensible conciseness** — Is overly terse code hiding duplication or unnamed domain concepts?
+- **Speculative generality** — Is complexity added "just in case" without a concrete current need?
+- **Value/Cost lens** — Is the code easy to write, understand, AND change?
 
 #### Tests
 
@@ -85,6 +97,8 @@ Review every changed line systematically across all dimensions below. Not every 
 - Does each name tell you why it exists, what it does, and how it's used?
 - Is naming consistent with the surrounding codebase?
 - Does naming follow language-specific conventions (camelCase, snake_case, etc.)?
+- Do names reflect domain concepts rather than implementation details?
+- Would a future change require renaming because the name is tied to current behavior?
 
 #### Comments
 
@@ -179,3 +193,7 @@ One of:
 - Don't suggest rewrites of working code just because you'd write it differently.
 - If the change is good and clean, say so briefly. Don't invent problems.
 - Frame feedback as suggestions, not commands: "Consider..." / "Could this...?" not "You must..."
+
+## Resources
+
+- [DDD.md](DDD.md) - DDD architecture review (bounded contexts, aggregates, tactical patterns)

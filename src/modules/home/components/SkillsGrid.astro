@@ -1,6 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
-import { Database, Layers, Palette, Rocket, ShieldCheck, Sparkles } from '@lucide/astro';
+import { Database, Layers, Palette, Rocket, ShieldCheck, Sparkles, FlaskConical, GitBranch } from '@lucide/astro';
 import { formatMoney } from '@/utils/format-money';
 
 interface ProductDisplay {
@@ -22,7 +22,7 @@ const { skillProducts, locale } = Astro.props;
 
 const skills = (await getCollection('skills')).sort((a, b) => a.data.order - b.data.order);
 
-const iconMap = { Database, Layers, Palette, Rocket, ShieldCheck, Sparkles };
+const iconMap = { Database, Layers, Palette, Rocket, ShieldCheck, Sparkles, FlaskConical, GitBranch };
 
 // Map skill slug -> product id for buy links
 const slugToProduct = new Map(skillProducts.map((p) => [p.skillSlug, p]));
@@ -57,9 +57,16 @@ const slugToProduct = new Map(skillProducts.map((p) => [p.skillSlug, p]));
 						<Icon class="size-5" aria-hidden="true" />
 					</div>
 
-					<h3 class="font-display text-xl font-700 text-white mb-3 group-hover:text-neon-cyan transition-colors">
-						{skill.data.title}
-					</h3>
+					<div class="flex items-center gap-2 mb-3">
+						<h3 class="font-display text-xl font-700 text-white group-hover:text-neon-cyan transition-colors">
+							{skill.data.title}
+						</h3>
+						{skill.data.isNew && (
+							<span class="inline-flex items-center px-1.5 py-0.5 rounded-full border border-neon-cyan/40 bg-neon-cyan/10 font-mono text-[10px] text-neon-cyan tracking-wider uppercase animate-pulse">
+								New
+							</span>
+						)}
+					</div>
 
 					<p class="text-sm text-mist leading-relaxed mb-4">
 						{skill.data.description}

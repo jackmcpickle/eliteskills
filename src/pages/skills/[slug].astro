@@ -5,6 +5,8 @@ import { getCollection } from "astro:content";
 import {
     Check,
     Database,
+    FlaskConical,
+    GitBranch,
     Layers,
     Palette,
     Rocket,
@@ -45,6 +47,7 @@ const {
     order,
     highlights,
     released,
+    isNew,
     examples,
     bestPractices,
     structure,
@@ -64,7 +67,7 @@ const skillCurrency = defaultSkill?.currency ?? "usd";
 const bundlePrice = defaultBundle?.price ?? null;
 const bundleCurrency = defaultBundle?.currency ?? "usd";
 
-const iconMap = { Database, Layers, Palette, Rocket, ShieldCheck, Sparkles };
+const iconMap = { Database, FlaskConical, GitBranch, Layers, Palette, Rocket, ShieldCheck, Sparkles };
 const Icon = iconMap[icon as keyof typeof iconMap] ?? Sparkles;
 ---
 
@@ -97,6 +100,13 @@ const Icon = iconMap[icon as keyof typeof iconMap] ?? Sparkles;
                             !released && (
                                 <span class="inline-flex items-center px-2.5 py-1 rounded-full border border-neon-amber/40 bg-neon-amber/10 font-mono text-xs text-neon-amber tracking-wider uppercase">
                                     Coming Soon
+                                </span>
+                            )
+                        }
+                        {
+                            isNew && (
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-full border border-neon-cyan/40 bg-neon-cyan/10 font-mono text-xs text-neon-cyan tracking-wider uppercase animate-pulse">
+                                    New
                                 </span>
                             )
                         }

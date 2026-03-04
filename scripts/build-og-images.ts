@@ -97,6 +97,22 @@ const ICON_DATA: Record<string, Array<[string, Record<string, string>]>> = {
         ['path', { d: 'M22 4h-4' }],
         ['circle', { cx: '4', cy: '20', r: '2' }],
     ],
+    FlaskConical: [
+        [
+            'path',
+            {
+                d: 'M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2',
+            },
+        ],
+        ['path', { d: 'M6.453 15h11.094' }],
+        ['path', { d: 'M8.5 2h7' }],
+    ],
+    GitBranch: [
+        ['line', { x1: '6', x2: '6', y1: '3', y2: '15' }],
+        ['circle', { cx: '18', cy: '6', r: '3' }],
+        ['circle', { cx: '6', cy: '18', r: '3' }],
+        ['path', { d: 'M18 9a9 9 0 0 1-9 9' }],
+    ],
 };
 
 // ── Helpers ─────────────────────────────────────────────────

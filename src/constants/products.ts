@@ -6,6 +6,8 @@ export const SKILL_SLUG_TO_DIR: Record<string, string> = {
     'architecture-review': 'elite-review',
     'feature-enhancer': 'elite-feature',
     'app-bootstrap': 'elite-bootstrap',
+    testing: 'elite-testing',
+    deploy: 'elite-deploy',
 };
 
 export const SKILL_SLUG_TO_PRODUCT_ID = {
@@ -15,6 +17,8 @@ export const SKILL_SLUG_TO_PRODUCT_ID = {
     'architecture-review': 4,
     'feature-enhancer': 5,
     'app-bootstrap': 6,
+    testing: 10,
+    deploy: 11,
 } as const satisfies Record<string, number>;
 
 export const BUNDLE_PRODUCT_IDS = {

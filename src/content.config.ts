@@ -19,6 +19,7 @@ const skills = defineCollection({
             .default([]),
         bestPractices: z.array(z.string()).default([]),
         structure: z.array(z.string()).default([]),
+        isNew: z.boolean().default(false),
     }),
 });
 

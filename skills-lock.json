@@ -1,35 +1,75 @@
 {
     "lockVersion": 2,
-    "generatedAt": "2026-02-26T01:36:56.808Z",
+    "generatedAt": "2026-03-06T04:44:02.691Z",
     "skills": {
-        "elite-backend": {
+        "agent-browser": {
             "version": "1.0.0",
-            "contentHash": "090f0a7b677f16b2c0113fa14e3c312f69b3212ba340a768dad7ef9ac052cea4",
+            "contentHash": "0f5340637e00efcd23a9e1e51b7d32cb7ab635b5b7a47748353e760777a07f3c",
+            "files": 1
+        },
+        "astro-web": {
+            "version": "1.0.0",
+            "contentHash": "6ae57ed94f068393ebd8ffa2ab874088c9f00b42eafb681b3f17f4cffb74c298",
+            "files": 1
+        },
+        "elite-backend": {
+            "version": "2.0.0",
+            "contentHash": "68834fd2bc3a6a55171bb3be7fc7b538303f2d7ad1ba9a6c7fc0d6419903fc23",
             "files": 7
         },
         "elite-bootstrap": {
-            "version": "0.0.0",
-            "contentHash": "10142a79d25fd343a320bd8f36a2d54aef2f38490150509c33882ef53e4c3ecc",
-            "files": 1
+            "version": "1.0.0",
+            "contentHash": "5ae691824c05e703085ec840288adb922eb760288d507ac7a468e4bbfb337868",
+            "files": 3
+        },
+        "elite-deploy": {
+            "version": "1.0.0",
+            "contentHash": "10a24f9f3767c2c4abaaca8162dd2953eab01313df0db33af6f6ea0a8255940d",
+            "files": 5
         },
         "elite-feature": {
-            "version": "0.0.0",
-            "contentHash": "630422c5567f2d3ea89ef491b7c72261bc933d0a2c8f9772b5581307a388f218",
-            "files": 1
+            "version": "1.0.0",
+            "contentHash": "dc0424159d921e2ec47e1b3ad5177878dd47cd17d375cd85d11545e10bfb6144",
+            "files": 3
+        },
+        "elite-qa": {
+            "version": "1.0.0",
+            "contentHash": "0b2524d63df45dc17578a52cb0931a63868ce38e6f429dc22a6136121a454c71",
+            "files": 3
         },
         "elite-react": {
-            "version": "1.0.0",
-            "contentHash": "cc8ce33122e3bfd5a898759cd81e157a95038c745b1a884ee6a86dce923dd49e",
+            "version": "1.1.0",
+            "contentHash": "3f8675935d873f5905c15d1c060e8d34e55728f00e5e0c2b8624dad0c2023463",
             "files": 17
         },
-        "elite-style": {
+        "elite-review": {
             "version": "1.0.0",
-            "contentHash": "f4c653b60e635b989402f5fba727d4ee04487bc682be63656e921484e58cb9e7",
+            "contentHash": "9ac0e54695091cc833bf1aef26375697598199e47825a55501a1bc5008ce82d7",
+            "files": 2
+        },
+        "elite-style": {
+            "version": "2.0.0",
+            "contentHash": "0d199a325bfb0723ceafac39e5da116124326d9f64d4cd8c747d3bca1d6712e6",
             "files": 1
         },
-        "elite-review": {
-            "version": "0.0.0",
-            "contentHash": "e8d45ab4804b174dba7d921e9b69e16e85a2aedbceb9c5015a9309caade9d4c4",
+        "elite-testing": {
+            "version": "1.0.0",
+            "contentHash": "9a69078f3fa95fa541737c99791c4ae5756fc6f47db14d64cb9bfad5d6525e17",
+            "files": 5
+        },
+        "hono-api": {
+            "version": "1.0.0",
+            "contentHash": "35b72549648f2756e5795ea24842dc992ee3e4f42f239fdfc1f4469f33942322",
+            "files": 1
+        },
+        "product-marketing-context": {
+            "version": "1.0.0",
+            "contentHash": "5f2a1c20630b364eb8c83a7031cf4abc95df2eb5482711c5ecc114eff7672d6f",
+            "files": 1
+        },
+        "react-doctor": {
+            "version": "1.0.0",
+            "contentHash": "f2b529172abd981e81935156bca043c5783f3c0423c169ae2a5ad42d12a16eb8",
             "files": 1
         }
     }

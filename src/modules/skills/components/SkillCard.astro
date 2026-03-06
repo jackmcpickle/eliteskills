@@ -1,6 +1,7 @@
 ---
 import {
     Check,
+    ClipboardCheck,
     Database,
     Layers,
     Palette,
@@ -41,7 +42,7 @@ const {
 } = Astro.props;
 const checkoutHref = productId ? `/checkout/${productId}` : "/skills";
 
-const iconMap = { Database, Layers, Palette, Rocket, ShieldCheck, Sparkles };
+const iconMap = { ClipboardCheck, Database, Layers, Palette, Rocket, ShieldCheck, Sparkles };
 const Icon = iconMap[icon as keyof typeof iconMap] ?? Sparkles;
 ---
 

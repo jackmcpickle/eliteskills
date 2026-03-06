@@ -85,6 +85,15 @@ export const DEFAULT_PRODUCTS: ProductDisplay[] = [
         skillSlug: 'deploy',
     },
     {
+        id: 12,
+        code: 'skill-qa',
+        name: 'Elite Skill — QA',
+        price: 9,
+        currency: 'usd',
+        lifetime: 0,
+        skillSlug: 'qa',
+    },
+    {
         id: BUNDLE_PRODUCT_IDS.allSkills,
         code: 'bundle-once',
         name: 'Elite AI Skills — All Skills',

@@ -1,6 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
-import { Database, Layers, Palette, Rocket, ShieldCheck, Sparkles, FlaskConical, GitBranch } from '@lucide/astro';
+import { ClipboardCheck, Database, Layers, Palette, Rocket, ShieldCheck, Sparkles, FlaskConical, GitBranch } from '@lucide/astro';
 import { formatMoney } from '@/utils/format-money';
 
 interface ProductDisplay {
@@ -22,7 +22,7 @@ const { skillProducts, locale } = Astro.props;
 
 const skills = (await getCollection('skills')).sort((a, b) => a.data.order - b.data.order);
 
-const iconMap = { Database, Layers, Palette, Rocket, ShieldCheck, Sparkles, FlaskConical, GitBranch };
+const iconMap = { ClipboardCheck, Database, Layers, Palette, Rocket, ShieldCheck, Sparkles, FlaskConical, GitBranch };
 
 // Map skill slug -> product id for buy links
 const slugToProduct = new Map(skillProducts.map((p) => [p.skillSlug, p]));

@@ -4,6 +4,7 @@ export const prerender = true;
 import { getCollection } from "astro:content";
 import {
     Check,
+    ClipboardCheck,
     Database,
     FlaskConical,
     GitBranch,
@@ -67,7 +68,7 @@ const skillCurrency = defaultSkill?.currency ?? "usd";
 const bundlePrice = defaultBundle?.price ?? null;
 const bundleCurrency = defaultBundle?.currency ?? "usd";
 
-const iconMap = { Database, FlaskConical, GitBranch, Layers, Palette, Rocket, ShieldCheck, Sparkles };
+const iconMap = { ClipboardCheck, Database, FlaskConical, GitBranch, Layers, Palette, Rocket, ShieldCheck, Sparkles };
 const Icon = iconMap[icon as keyof typeof iconMap] ?? Sparkles;
 ---
 

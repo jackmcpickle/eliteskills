@@ -8,6 +8,7 @@ export const SKILL_SLUG_TO_DIR: Record<string, string> = {
     'app-bootstrap': 'elite-bootstrap',
     testing: 'elite-testing',
     deploy: 'elite-deploy',
+    qa: 'elite-qa',
 };
 
 export const SKILL_SLUG_TO_PRODUCT_ID = {
@@ -19,6 +20,7 @@ export const SKILL_SLUG_TO_PRODUCT_ID = {
     'app-bootstrap': 6,
     testing: 10,
     deploy: 11,
+    qa: 12,
 } as const satisfies Record<string, number>;
 
 export const BUNDLE_PRODUCT_IDS = {

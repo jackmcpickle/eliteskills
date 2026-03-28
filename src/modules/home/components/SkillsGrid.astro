@@ -1,31 +1,10 @@
 ---
 import { getCollection } from 'astro:content';
 import { ClipboardCheck, Database, Layers, Palette, Rocket, ShieldCheck, Sparkles, FlaskConical, GitBranch } from '@lucide/astro';
-import { formatMoney } from '@/utils/format-money';
-
-interface ProductDisplay {
-	id: number;
-	code: string;
-	name: string;
-	price: number;
-	currency: string;
-	lifetime: number;
-	skillSlug: string | null;
-}
-
-interface Props {
-	skillProducts: ProductDisplay[];
-	locale: string;
-}
-
-const { skillProducts, locale } = Astro.props;
 
 const skills = (await getCollection('skills')).sort((a, b) => a.data.order - b.data.order);
 
 const iconMap = { ClipboardCheck, Database, Layers, Palette, Rocket, ShieldCheck, Sparkles, FlaskConical, GitBranch };
-
-// Map skill slug -> product id for buy links
-const slugToProduct = new Map(skillProducts.map((p) => [p.skillSlug, p]));
 ---
 
 <section id="skills" class="relative py-16 sm:py-24 lg:py-32 px-6">
@@ -44,7 +23,6 @@ const slugToProduct = new Map(skillProducts.map((p) => [p.skillSlug, p]));
 			{skills.map((skill, i) => {
 				const Icon = iconMap[skill.data.icon as keyof typeof iconMap] ?? Sparkles;
 				const slug = skill.id.replace(/\.md$/, '');
-				const product = slugToProduct.get(slug);
 				const { released } = skill.data;
 				const href = `/skills/${slug}`;
 
@@ -72,15 +50,10 @@ const slugToProduct = new Map(skillProducts.map((p) => [p.skillSlug, p]));
 						{skill.data.description}
 					</p>
 
-					{released && product ? (
-						<div>
-							<span class="inline-flex items-center gap-1.5 font-mono text-xs text-neon-cyan">
-								<span data-product-id={product.id}>{formatMoney(product.price, product.currency, locale)}</span>
-								<span class="text-ghost">&middot;</span>
-								<span>Buy skill</span>
-							</span>
-							<span class="block font-mono text-[10px] text-ghost mt-1">Prices adjusted for your region</span>
-						</div>
+					{released ? (
+						<span class="inline-flex items-center gap-1.5 font-mono text-xs text-neon-cyan">
+							<span>View skill details</span>
+						</span>
 					) : (
 						<span class="inline-flex items-center px-2 py-0.5 rounded-full border border-neon-amber/40 bg-neon-amber/10 font-mono text-[10px] text-neon-amber tracking-wider uppercase">
 							Coming Soon

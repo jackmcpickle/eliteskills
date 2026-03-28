@@ -21,14 +21,9 @@
         "preview": "wrangler dev",
         "deploy": "pnpm build && wrangler deploy",
         "dev": "astro dev",
-        "build:skills": "pnpm exec vite-node scripts/build-skills-zip.ts",
         "update:structure": "pnpm exec vite-node scripts/update-skill-structure.ts",
-        "stripe:sync": "pnpm exec vite-node scripts/sync-stripe-products.ts",
-        "stripe:cleanup": "pnpm exec vite-node scripts/cleanup-stripe-duplicates.ts",
         "build:og": "pnpm exec vite-node scripts/build-og-images.ts",
-        "build": "pnpm build:manifest && pnpm build:skills && pnpm build:og && astro build",
-        "build:cli": "pnpm --filter @eliteskills/cli build",
-        "test:cli": "pnpm --filter @eliteskills/cli test",
+        "build": "pnpm build:manifest && pnpm build:og && astro build",
         "release": "commit-and-tag-version -a",
         "astro": "astro"
     },
@@ -39,11 +34,8 @@
         "@lucide/astro": "^0.575.0",
         "@tailwindcss/vite": "^4.2.0",
         "astro": "^5.17.1",
-        "drizzle-orm": "^0.45.1",
         "fflate": "^0.8.2",
-        "resend": "^4.0.0",
         "sharp": "^0.34.5",
-        "stripe": "^20.3.1",
         "tailwindcss": "^4.2.0",
         "typescript": "^5.9.3",
         "zod": "^4.3.6"
@@ -60,7 +52,7 @@
         "commit-and-tag-version": "^12.6.1",
         "conventional-changelog-conventionalcommits": "^9.1.0",
         "dotenv": "^17.3.1",
-        "drizzle-kit": "^0.31.9",
+
         "husky": "^9.1.7",
         "lint-staged": "^16.2.7",
         "oxfmt": "^0.34.0",
@@ -89,21 +81,5 @@
             ]
         }
     },
-    "packageManager": "pnpm@10.29.3",
-    "commit-and-tag-version": {
-        "bumpFiles": [
-            {
-                "filename": "VERSION",
-                "type": "plain-text"
-            },
-            {
-                "filename": "package.json",
-                "type": "json"
-            },
-            {
-                "filename": "packages/cli/package.json",
-                "type": "json"
-            }
-        ]
-    }
+    "packageManager": "pnpm@10.29.3"
 }

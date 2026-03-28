@@ -10,19 +10,13 @@ import {
 	ReviewsMarquee,
 	BenefitsSection,
 	DifferentiatorSection,
-	PricingTables,
 	AiBotSection,
 	FooterCta,
 	WhatAreSkills,
 } from '@/modules/home';
 import { getCollection } from 'astro:content';
-import { DEFAULT_BUNDLE_PRODUCTS, DEFAULT_SKILL_PRODUCTS, DEFAULT_LOCALE } from '@/constants/default-prices';
 
 const reviews = await getCollection('reviews');
-
-const bundleProducts = DEFAULT_BUNDLE_PRODUCTS;
-const skillProducts = DEFAULT_SKILL_PRODUCTS;
-const locale = DEFAULT_LOCALE;
 
 const SITE_URL = 'https://eliteskills.ai';
 
@@ -34,18 +28,7 @@ const websiteJsonLd = {
 	description: 'Elite AI Skills for vibe coders, founders, and builders. 20 years of engineering distilled into precision-crafted AI instruction sets.',
 };
 
-const productJsonLd = bundleProducts.map((p) => ({
-	'@context': 'https://schema.org',
-	'@type': 'Product',
-	name: p.name,
-	offers: {
-		'@type': 'Offer',
-		price: p.price,
-		priceCurrency: p.currency.toUpperCase(),
-		availability: 'https://schema.org/InStock',
-		url: `${SITE_URL}/checkout/${p.id}`,
-	},
-}));
+
 
 const reviewJsonLd = {
 	'@context': 'https://schema.org',
@@ -68,17 +51,17 @@ const reviewJsonLd = {
 <BaseLayout
 	title="Elite Skills — AI Skills for Builders"
 	description="Elite AI Skills for vibe coders, founders, and builders. 20 years of engineering distilled into precision-crafted AI instruction sets."
-	jsonLd={[websiteJsonLd, ...productJsonLd, reviewJsonLd]}
+	jsonLd={[websiteJsonLd, reviewJsonLd]}
 >
 	<HeroBanner />
 	<WhatAreSkills />
-	<SkillsGrid skillProducts={skillProducts} locale={locale} />
+	<SkillsGrid />
 	<MetricsBar />
 	<ReviewsMarquee />
 	<BenefitsSection />
 	<DifferentiatorSection />
 	<CompatibleTools />
-	<PricingTables bundleProducts={bundleProducts} skillProducts={skillProducts} locale={locale} />
+
 	<AiBotSection />
 	<FooterCta />
 

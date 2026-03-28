@@ -9,8 +9,6 @@ import {
     ShieldCheck,
     Sparkles,
 } from "@lucide/astro";
-import { formatMoney } from "@/utils/format-money";
-
 interface Props {
     title: string;
     description: string;
@@ -19,11 +17,7 @@ interface Props {
     highlights: string[];
     index: number;
     slug: string;
-    productId?: number;
     released?: boolean;
-    price?: number | undefined;
-    currency?: string | undefined;
-    locale?: string;
 }
 
 const {
@@ -34,13 +28,8 @@ const {
     highlights,
     index,
     slug,
-    productId,
     released = false,
-    price,
-    currency = "usd",
-    locale = "en-US",
 } = Astro.props;
-const checkoutHref = productId ? `/checkout/${productId}` : "/skills";
 
 const iconMap = { ClipboardCheck, Database, Layers, Palette, Rocket, ShieldCheck, Sparkles };
 const Icon = iconMap[icon as keyof typeof iconMap] ?? Sparkles;
@@ -115,26 +104,16 @@ const Icon = iconMap[icon as keyof typeof iconMap] ?? Sparkles;
             )
         }
 
-        <!-- Buy button / Coming Soon -->
+        <!-- Install command / Coming Soon -->
         <div class="mt-8">
             {
                 released ? (
-                    <div>
-                        <a
-                            href={checkoutHref}
-                            class="inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-neon-cyan-dim text-neon-cyan font-mono text-sm font-600 tracking-wide uppercase transition-all hover:border-neon-cyan hover:shadow-[0_0_30px_var(--color-neon-cyan-glow)]"
-                        >
-                            Buy{" "}
-                            <span data-product-id={productId}>
-                                {price != null
-                                    ? formatMoney(price, currency, locale)
-                                    : ""}
-                            </span>
-                        </a>
-                        <span class="block font-mono text-[10px] text-ghost mt-1">
-                            Prices adjusted for your region
-                        </span>
-                    </div>
+                    <a
+                        href={`/skills/${slug}`}
+                        class="inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-neon-cyan-dim text-neon-cyan font-mono text-sm font-600 tracking-wide uppercase transition-all hover:border-neon-cyan hover:shadow-[0_0_30px_var(--color-neon-cyan-glow)]"
+                    >
+                        View Details
+                    </a>
                 ) : (
                     <span class="inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-ghost/30 text-ghost font-mono text-sm font-600 tracking-wide uppercase cursor-default">
                         Coming Soon

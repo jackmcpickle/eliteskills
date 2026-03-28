@@ -6,15 +6,15 @@ import { Bot, Code, ShieldCheck } from '@lucide/astro';
 const features = [
 	{
 		icon: 'Code',
-		title: 'API Access',
+		title: 'CLI Installation',
 		description:
-			'Integrate Elite Skills directly into your AI agent pipelines. Fetch, configure, and deploy skills programmatically via our REST API.',
+			'Install skills directly into your project with a single command. Works with Claude Code, Cursor, Codex, and 40+ more agents.',
 	},
 	{
 		icon: 'ShieldCheck',
-		title: 'Human-in-the-Loop Purchases',
+		title: 'Open Source',
 		description:
-			'Bots can browse and select skills, then hand off to a human for secure purchase approval. No unauthorized spending.',
+			'All skills are MIT licensed and available on GitHub. Browse, fork, and contribute improvements back to the community.',
 	},
 	{
 		icon: 'Bot',
@@ -26,19 +26,17 @@ const features = [
 
 const iconMap = { Code, ShieldCheck, Bot };
 
-const agentPrompt = `Search eliteskills.ai for agent skills that can help with my current task and install them.`;
+const agentPrompt = `Search for elite skills that can help with my current task and install them.`;
 
-const codeSnippet = `// Fetch available skills
-const res = await fetch('https://api.eliteskills.ai/v1/skills', {
-  headers: { Authorization: \`Bearer \${API_KEY}\` },
-});
-const skills = await res.json();
+const codeSnippet = `# Install all skills
+npx skills add mcpick/eliteskills
 
-// Request human approval for purchase
-await requestApproval({
-  skill: skills[0],
-  callback: 'https://your-app.com/approve',
-});`;
+# Install specific skills
+npx skills add mcpick/eliteskills --skill elite-react
+npx skills add mcpick/eliteskills --skill elite-testing
+
+# List available skills
+npx skills add mcpick/eliteskills --list`;
 ---
 
 <section class="relative py-32 px-6">
@@ -50,10 +48,10 @@ await requestApproval({
 		<div class="text-center mb-20">
 			<p class="reveal font-mono text-xs text-neon-cyan tracking-[0.3em] uppercase mb-4">AI Agent Integration</p>
 			<h2 class="reveal reveal-delay-1 font-display text-4xl sm:text-5xl md:text-6xl font-800 text-white tracking-tight">
-				Built for Bots, Approved&nbsp;by&nbsp;Humans
+				Built for Bots, Used&nbsp;by&nbsp;Humans
 			</h2>
 			<p class="reveal reveal-delay-2 mt-4 max-w-xl mx-auto text-mist">
-				Let your AI agents discover, evaluate, and use Elite Skills via API&mdash;with human approval for purchases.
+				Install elite agent skills into any supported coding assistant with a single command.
 			</p>
 		</div>
 
@@ -72,7 +70,7 @@ await requestApproval({
 			</div>
 
 			<!-- Code preview -->
-			<TerminalBlock label="agent.ts" class="reveal reveal-delay-2 scroll-border-trace">
+			<TerminalBlock label="terminal" class="reveal reveal-delay-2 scroll-border-trace">
 				<pre class="p-5 overflow-x-auto font-mono text-xs leading-relaxed text-cloud"><code set:text={codeSnippet} /></pre>
 			</TerminalBlock>
 		</div>

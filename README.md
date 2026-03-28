@@ -1,43 +1,37 @@
-# Astro Starter Kit: Minimal
+# Elite Skills
+
+High-quality agent skills for AI coding assistants. Works with Claude Code, Cursor, Codex, OpenCode, and 40+ more agents.
+
+## Install
 
 ```sh
-pnpm create astro@latest -- --template minimal
+npx skills add mcpick/eliteskills
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Available Skills
 
-## 🚀 Project Structure
+| Skill | Description |
+|-------|-------------|
+| elite-react | React patterns, hooks, performance, testing |
+| elite-backend | Python backend — FastAPI, Django, async patterns |
+| elite-style | CSS/design systems, responsive, accessibility |
+| elite-review | Architecture review with DDD principles |
+| elite-feature | Feature enhancement and discovery |
+| elite-bootstrap | App scaffolding with guided discovery |
+| elite-testing | Full testing pyramid — unit, integration, e2e, AI evals |
+| elite-deploy | Deployment strategies, CI/CD, migrations |
 
-Inside of your Astro project, you'll see the following folders and files:
+## Install specific skills
 
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
+```sh
+npx skills add mcpick/eliteskills --skill elite-react
+npx skills add mcpick/eliteskills --skill elite-testing --skill elite-deploy
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## What are agent skills?
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+Agent skills are reusable instruction sets that extend your AI coding assistant's capabilities. They're defined in `SKILL.md` files and loaded by your agent when relevant to your task.
 
-Any static assets, like images, can be placed in the `public/` directory.
+## License
 
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `pnpm install`             | Installs dependencies                            |
-| `pnpm dev`             | Starts local dev server at `localhost:4321`      |
-| `pnpm build`           | Build your production site to `./dist/`          |
-| `pnpm preview`         | Preview your build locally, before deploying     |
-| `pnpm astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `pnpm astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+MIT

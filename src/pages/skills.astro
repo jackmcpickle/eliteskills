@@ -4,12 +4,8 @@ export const prerender = true;
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 import { SkillsHero, SkillsList, SkillsFooter } from '@/modules/skills';
-import { DEFAULT_SKILL_PRODUCTS, DEFAULT_LOCALE } from '@/constants/default-prices';
 
 const skills = (await getCollection('skills')).sort((a, b) => a.data.order - b.data.order);
-
-const skillProducts = DEFAULT_SKILL_PRODUCTS;
-const locale = DEFAULT_LOCALE;
 
 const jsonLd = {
 	'@context': 'https://schema.org',
@@ -31,6 +27,6 @@ const jsonLd = {
 	jsonLd={jsonLd}
 >
 	<SkillsHero />
-	<SkillsList skillProducts={skillProducts} locale={locale} />
+	<SkillsList />
 	<SkillsFooter />
 </BaseLayout>

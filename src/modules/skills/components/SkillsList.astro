@@ -1,30 +1,10 @@
 ---
 import { getCollection } from "astro:content";
 import SkillCard from "./SkillCard.astro";
-import { SKILL_SLUG_TO_PRODUCT_ID } from "@/constants/products";
-
-interface ProductDisplay {
-    id: number;
-    code: string;
-    name: string;
-    price: number;
-    currency: string;
-    lifetime: number;
-    skillSlug: string | null;
-}
-
-interface Props {
-    skillProducts?: ProductDisplay[];
-    locale?: string;
-}
-
-const { skillProducts = [], locale = "en-US" } = Astro.props;
 
 const skills = (await getCollection("skills")).sort(
     (a, b) => a.data.order - b.data.order,
 );
-
-const slugToProduct = new Map(skillProducts.map((p) => [p.skillSlug, p]));
 ---
 
 <section id="main-content" class="relative pb-32 px-6">
@@ -32,7 +12,6 @@ const slugToProduct = new Map(skillProducts.map((p) => [p.skillSlug, p]));
         {
             skills.map((skill, i) => {
                 const slug = skill.id.replace(/\.md$/, "");
-                const product = slugToProduct.get(slug);
                 return (
                     <SkillCard
                         title={skill.data.title}
@@ -42,15 +21,7 @@ const slugToProduct = new Map(skillProducts.map((p) => [p.skillSlug, p]));
                         highlights={skill.data.highlights}
                         index={i}
                         slug={slug}
-                        productId={
-                            SKILL_SLUG_TO_PRODUCT_ID[
-                                slug as keyof typeof SKILL_SLUG_TO_PRODUCT_ID
-                            ]
-                        }
                         released={skill.data.released}
-                        price={product?.price}
-                        currency={product?.currency}
-                        locale={locale}
                     />
                 );
             })

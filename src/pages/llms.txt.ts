@@ -35,13 +35,13 @@ export const GET: APIRoute = async () => {
 
 ### Install all skills
 \`\`\`bash
-npx skills add mcpick/eliteskills
+npx skills add jackmcpickle/eliteskills
 \`\`\`
 
 ### Install specific skills
 \`\`\`bash
-npx skills add mcpick/eliteskills --skill elite-react
-npx skills add mcpick/eliteskills --skill elite-testing --skill elite-deploy
+npx skills add jackmcpickle/eliteskills --skill elite-react
+npx skills add jackmcpickle/eliteskills --skill elite-testing --skill elite-deploy
 \`\`\`
 
 ## Available Skills
@@ -76,7 +76,7 @@ A: Downloadable AI instruction sets that plug into any AI coding tool. They tell
 A: Any tool that accepts custom instructions or supports skill files: Claude Code, Cursor, Windsurf, Cline, ChatGPT, GitHub Copilot, etc.
 
 **Q: How do I install skills?**
-A: Use the Vercel Skills CLI: \`npx skills add mcpick/eliteskills\`. This installs all skills. For specific skills, use the \`--skill\` flag.
+A: Use the Vercel Skills CLI: \`npx skills add jackmcpickle/eliteskills\`. This installs all skills. For specific skills, use the \`--skill\` flag.
 
 **Q: Are these really open source?**
 A: Yes! MIT licensed. The skills are hosted on GitHub and distributed via the standard Vercel Skills CLI.
@@ -89,7 +89,7 @@ A: No. Installation and usage are completely open.
 
 ## Repository
 
-Source code: https://github.com/mcpick/eliteskills
+Source code: https://github.com/jackmcpickle/eliteskills
 License: MIT
 
 ## Pages

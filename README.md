@@ -5,7 +5,7 @@ High-quality agent skills for AI coding assistants. Works with Claude Code, Curs
 ## Install
 
 ```sh
-npx skills add mcpick/eliteskills
+npx skills add jackmcpickle/eliteskills
 ```
 
 ## Available Skills
@@ -24,8 +24,8 @@ npx skills add mcpick/eliteskills
 ## Install specific skills
 
 ```sh
-npx skills add mcpick/eliteskills --skill elite-react
-npx skills add mcpick/eliteskills --skill elite-testing --skill elite-deploy
+npx skills add jackmcpickle/eliteskills --skill elite-react
+npx skills add jackmcpickle/eliteskills --skill elite-testing --skill elite-deploy
 ```
 
 ## What are agent skills?

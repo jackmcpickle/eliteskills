@@ -1,6 +1,7 @@
 /** Maps content slug (src/content/skills/*.md) → skills/ dir name */
 export const SKILL_SLUG_TO_DIR: Record<string, string> = {
     react: 'elite-react',
+    web: 'elite-web',
     python: 'elite-backend',
     style: 'elite-style',
     'architecture-review': 'elite-review',

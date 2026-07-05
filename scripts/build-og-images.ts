@@ -113,6 +113,11 @@ const ICON_DATA: Record<string, Array<[string, Record<string, string>]>> = {
         ['circle', { cx: '6', cy: '18', r: '3' }],
         ['path', { d: 'M18 9a9 9 0 0 1-9 9' }],
     ],
+    Globe: [
+        ['circle', { cx: '12', cy: '12', r: '10' }],
+        ['path', { d: 'M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20' }],
+        ['path', { d: 'M2 12h20' }],
+    ],
 };
 
 // ── Helpers ─────────────────────────────────────────────────

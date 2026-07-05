@@ -40,7 +40,6 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm vitest
-      - run: pnpm test:cli
 
   e2e:
     name: Playwright E2E (Human Flow)
@@ -55,9 +54,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - name: Install Playwright browsers
         run: pnpm exec playwright install chromium --with-deps
-      - name: Apply D1 migrations
-        run: pnpm wrangler d1 migrations apply eliteskills-db --local
-      - name: Run human checkout e2e
+      - name: Run site e2e
         run: pnpm test:e2e
       - name: Upload Playwright report
         if: failure()

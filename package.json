@@ -64,9 +64,12 @@
         "wrangler": "^4.67.0"
     },
     "lint-staged": {
-        "**/*.*": [
+        "**/*.{ts,tsx,js,mjs,cjs,astro}": [
             "oxfmt --write --no-error-on-unmatched-pattern",
             "oxlint --type-aware --type-check --fix --quiet"
+        ],
+        "**/*.{md,json,css,html}": [
+            "oxfmt --write --no-error-on-unmatched-pattern"
         ]
     },
     "commitlint": {

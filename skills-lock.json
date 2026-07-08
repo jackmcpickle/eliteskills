@@ -1,21 +1,21 @@
 {
     "lockVersion": 2,
-    "generatedAt": "2026-03-28T22:42:06.603Z",
+    "generatedAt": "2026-06-12T00:18:09.192Z",
     "skills": {
         "agent-browser": {
             "version": "1.0.0",
             "contentHash": "0f5340637e00efcd23a9e1e51b7d32cb7ab635b5b7a47748353e760777a07f3c",
             "files": 1
         },
-        "astro-web": {
+        "elite-web": {
             "version": "1.0.0",
             "contentHash": "6ae57ed94f068393ebd8ffa2ab874088c9f00b42eafb681b3f17f4cffb74c298",
-            "files": 1
+            "files": 5
         },
         "elite-backend": {
-            "version": "2.0.0",
-            "contentHash": "68834fd2bc3a6a55171bb3be7fc7b538303f2d7ad1ba9a6c7fc0d6419903fc23",
-            "files": 7
+            "version": "3.0.0",
+            "contentHash": "1e4b360bc050aeec4987ac0aec8fcaa5f9bf7e7e5d562a7ed98322b9ba38f554",
+            "files": 12
         },
         "elite-bootstrap": {
             "version": "1.0.0",
@@ -39,8 +39,8 @@
         },
         "elite-react": {
             "version": "1.1.0",
-            "contentHash": "3f8675935d873f5905c15d1c060e8d34e55728f00e5e0c2b8624dad0c2023463",
-            "files": 17
+            "contentHash": "92878efba3e16c2464b5c016263dca307b548a3a958cba5e2c5977334822925d",
+            "files": 18
         },
         "elite-review": {
             "version": "1.0.0",
@@ -56,11 +56,6 @@
             "version": "1.0.0",
             "contentHash": "9a69078f3fa95fa541737c99791c4ae5756fc6f47db14d64cb9bfad5d6525e17",
             "files": 5
-        },
-        "hono-api": {
-            "version": "1.0.0",
-            "contentHash": "35b72549648f2756e5795ea24842dc992ee3e4f42f239fdfc1f4469f33942322",
-            "files": 1
         },
         "product-marketing-context": {
             "version": "1.0.0",

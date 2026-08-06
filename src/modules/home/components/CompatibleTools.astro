@@ -36,11 +36,11 @@ const tools: Tool[] = [
         </p>
 
         <div
-            class='reveal reveal-delay-3 flex flex-wrap items-center justify-center gap-4 sm:gap-6 md:gap-10 pt-4'
+            class='reveal reveal-delay-3 grid grid-cols-2 sm:flex sm:flex-wrap items-start sm:items-center justify-center gap-6 sm:gap-6 md:gap-10 pt-8 sm:pt-4'
         >
             {
                 tools.map((tool) => (
-                    <div class='relative flex flex-col items-center gap-3 group'>
+                    <div class='relative flex w-full sm:w-auto flex-col items-center gap-3 group'>
                         {tool.recommended && (
                             <span class='absolute -top-6 px-2.5 py-0.5 rounded-full bg-neon-cyan/10 border border-neon-cyan-dim font-mono text-[10px] text-neon-cyan tracking-wider uppercase'>
                                 Recommended
@@ -61,7 +61,7 @@ const tools: Tool[] = [
                             )}
                         </div>
                         <span
-                            class={`font-mono text-xs tracking-wider transition-colors duration-300 ${tool.recommended ? "text-neon-cyan" : "text-ghost group-hover:text-white"}`}
+                            class={`font-mono text-[11px] sm:text-xs tracking-wider text-center max-w-[8.5rem] leading-snug transition-colors duration-300 ${tool.recommended ? "text-neon-cyan" : "text-ghost group-hover:text-white"}`}
                         >
                             {tool.name}
                         </span>
@@ -70,7 +70,7 @@ const tools: Tool[] = [
             }
 
             <!-- And more -->
-            <div class='flex flex-col items-center gap-3'>
+            <div class='flex w-full sm:w-auto flex-col items-center gap-3'>
                 <div
                     class='flex items-center justify-center size-16 sm:size-20 rounded-2xl border border-dashed border-border bg-transparent'
                 >
@@ -79,7 +79,7 @@ const tools: Tool[] = [
                         aria-hidden='true'
                     />
                 </div>
-                <span class='font-mono text-xs tracking-wider text-ghost'
+                <span class='font-mono text-[11px] sm:text-xs tracking-wider text-ghost'
                     >& more</span
                 >
             </div>

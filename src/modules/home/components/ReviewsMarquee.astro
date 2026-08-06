@@ -26,13 +26,13 @@ const renderedReviews = await Promise.all(
 	</div>
 
 	<!-- Marquee container -->
-	<div class="relative">
+	<div class="relative overflow-hidden">
 		<!-- Left/right fade masks -->
-		<div class="absolute left-0 top-0 bottom-0 w-16 sm:w-32 z-10 bg-gradient-to-r from-void to-transparent pointer-events-none"></div>
-		<div class="absolute right-0 top-0 bottom-0 w-16 sm:w-32 z-10 bg-gradient-to-l from-void to-transparent pointer-events-none"></div>
+		<div class="absolute left-0 top-0 bottom-0 w-10 sm:w-32 z-10 bg-gradient-to-r from-void to-transparent pointer-events-none"></div>
+		<div class="absolute right-0 top-0 bottom-0 w-10 sm:w-32 z-10 bg-gradient-to-l from-void to-transparent pointer-events-none"></div>
 
 		<!-- Track (doubled for seamless loop) -->
-		<div class="marquee-track flex gap-6 w-max" data-marquee>
+		<div class="marquee-track flex gap-4 sm:gap-6 w-max" data-marquee>
 			{[...renderedReviews, ...renderedReviews].map((review) => (
 				<div class="flex-shrink-0 w-[min(85vw,380px)] rounded-xl border border-border bg-surface p-6 hover:border-neon-cyan-dim transition-colors">
 				<!-- Stars -->

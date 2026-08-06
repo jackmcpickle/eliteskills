@@ -51,13 +51,13 @@ const docLinks = [
 ];
 ---
 
-<section class="relative py-32 px-6">
+<section class="relative py-16 sm:py-24 lg:py-32 px-6">
 	<!-- Ambient glow -->
 	<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-[600px] rounded-full bg-neon-cyan/5 blur-[140px] pointer-events-none"></div>
 
-	<div class="relative max-w-5xl mx-auto">
+	<div class="relative max-w-5xl mx-auto min-w-0">
 		<!-- Section header -->
-		<div class="text-center mb-20">
+		<div class="text-center mb-10 sm:mb-16 lg:mb-20">
 			<p class="reveal font-mono text-xs text-neon-cyan tracking-[0.3em] uppercase mb-4">How It Works</p>
 			<h2 class="reveal reveal-delay-1 font-display text-4xl sm:text-5xl md:text-6xl font-800 text-white tracking-tight">
 				What Are Skills?
@@ -82,15 +82,15 @@ const docLinks = [
 			</div>
 
 			<!-- Terminal preview -->
-			<TerminalBlock label=".claude/skills/react/SKILL.md" class="reveal reveal-delay-2 scroll-border-trace">
-				<pre class="p-5 overflow-x-auto font-mono text-xs leading-relaxed text-cloud"><code set:text={skillSnippet} /></pre>
+			<TerminalBlock label=".claude/skills/react/SKILL.md" class="reveal reveal-delay-2 scroll-border-trace min-w-0">
+				<pre class="p-4 sm:p-5 font-mono text-[11px] sm:text-xs leading-relaxed text-cloud whitespace-pre-wrap break-words"><code set:text={skillSnippet} /></pre>
 			</TerminalBlock>
 		</div>
 
 		<!-- Doc links -->
-		<div class="reveal reveal-delay-4 flex flex-wrap justify-center gap-x-8 gap-y-3 mt-16">
+		<div class="reveal reveal-delay-4 flex flex-wrap justify-center gap-x-6 gap-y-2 mt-10 sm:mt-16">
 			{docLinks.map((link) => (
-				<a href={link.href} target="_blank" rel="noopener noreferrer" class="font-mono text-xs text-ghost hover:text-neon-cyan transition-colors">
+				<a href={link.href} target="_blank" rel="noopener noreferrer" class="inline-flex min-h-11 items-center font-mono text-xs text-ghost hover:text-neon-cyan transition-colors">
 					{link.label} &rarr;
 				</a>
 			))}

@@ -27,13 +27,12 @@ const {
 
 const pathname = Astro.url.pathname;
 const isHome = pathname === '/';
-const isLogin = pathname === '/login';
 ---
 
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 
 		<!-- Favicon -->
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -86,31 +85,13 @@ const isLogin = pathname === '/login';
 			Skip to content
 		</a>
 		{!isHome && (
-			<nav class="fixed top-0 left-0 z-40 flex items-center gap-4 px-6 py-4">
-				<a href="/" class="font-mono text-xs uppercase tracking-wide text-mist hover:text-neon-cyan transition-colors">Home</a>
+			<nav class="fixed top-0 inset-x-0 z-40 flex items-center justify-between px-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-3 sm:px-6">
+				<a href="/" class="inline-flex min-h-11 min-w-11 items-center font-mono text-xs uppercase tracking-wide text-mist hover:text-neon-cyan transition-colors">Home</a>
+				<a href="/skills" class="inline-flex min-h-11 min-w-11 items-center justify-end font-mono text-xs uppercase tracking-wide text-mist hover:text-neon-cyan transition-colors">Skills</a>
 			</nav>
 		)}
-		<nav class="fixed top-0 right-0 z-40 flex items-center gap-4 px-6 py-4">
-			<a href="/account" data-auth="session" class="hidden font-mono text-xs uppercase tracking-wide text-mist hover:text-neon-cyan transition-colors">Account</a>
-			<a href="/api/logout" data-auth="session" class="hidden font-mono text-xs uppercase tracking-wide text-mist hover:text-neon-cyan transition-colors">Logout</a>
-			{!isLogin && !isHome && <a href="/login" data-auth="guest" class="font-mono text-xs uppercase tracking-wide text-mist hover:text-neon-cyan transition-colors">Login</a>}
-		</nav>
 		<div transition:animate={neonFade}>
 			<slot />
 		</div>
-		<script is:inline>
-		(function(){
-			function updateNav() {
-				var has = document.cookie.indexOf('account_key=') !== -1;
-				document.querySelectorAll('[data-auth=session]').forEach(function(el) {
-					el.classList.toggle('hidden', !has);
-				});
-				document.querySelectorAll('[data-auth=guest]').forEach(function(el) {
-					el.classList.toggle('hidden', has);
-				});
-			}
-			document.addEventListener('astro:page-load', updateNav);
-		})();
-		</script>
 	</body>
 </html>

@@ -2,7 +2,7 @@
 
 ---
 
-<footer class="relative py-24 px-6">
+<footer class="relative py-16 sm:py-24 px-6">
     <!-- Top border -->
     <div
         class="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-neon-amber to-transparent"
@@ -18,47 +18,47 @@
         <p class="reveal reveal-delay-1 text-mist mb-8 max-w-lg mx-auto">
             Get the full skill pack and transform how your AI writes code.
         </p>
-        <a
-            href="/#pricing"
-            class="reveal reveal-delay-2 group inline-flex items-center gap-2 px-8 py-4 rounded-lg bg-neon-cyan text-void font-mono font-700 text-sm tracking-wide uppercase transition-all hover:shadow-[0_0_40px_var(--color-neon-cyan-dim)]"
+        <div
+            class="shimmer reveal reveal-delay-2 group inline-flex max-w-full items-center gap-2 px-4 sm:px-8 py-4 rounded-lg bg-neon-cyan text-void font-mono font-700 text-[11px] sm:text-sm tracking-wide transition-all overflow-x-auto overscroll-x-contain"
         >
-            <span>Get Elite Skills Now</span>
-            <span class="transition-transform group-hover:translate-x-1"
-                >&rarr;</span
+            <span class="select-all whitespace-nowrap"
+                >npx skills add jackmcpickle/eliteskills</span
             >
-        </a>
+        </div>
 
-        <div class="mt-20 pt-8 border-t border-border">
-            <div class="mb-4 flex items-center justify-center gap-6">
+        <div class="mt-12 sm:mt-20 pt-8 border-t border-border">
+            <div
+                class="mb-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 sm:gap-6"
+            >
                 <a
                     href="/"
-                    class="font-mono text-xs uppercase tracking-[0.22em] text-ghost hover:text-neon-cyan"
+                    class="inline-flex min-h-11 items-center font-mono text-xs uppercase tracking-[0.22em] text-ghost hover:text-neon-cyan"
                     >Home</a
                 >
                 <a
                     href="/skills"
-                    class="font-mono text-xs uppercase tracking-[0.22em] text-neon-cyan"
+                    class="inline-flex min-h-11 items-center font-mono text-xs uppercase tracking-[0.22em] text-neon-cyan"
                     >Skills</a
                 >
                 <a
                     href="/about"
-                    class="font-mono text-xs uppercase tracking-[0.22em] text-ghost hover:text-neon-cyan"
+                    class="inline-flex min-h-11 items-center font-mono text-xs uppercase tracking-[0.22em] text-ghost hover:text-neon-cyan"
                     >About</a
                 >
                 <a
                     href="/contact"
-                    class="font-mono text-xs uppercase tracking-[0.22em] text-ghost hover:text-neon-cyan"
+                    class="inline-flex min-h-11 items-center font-mono text-xs uppercase tracking-[0.22em] text-ghost hover:text-neon-cyan"
                     >Contact</a
                 >
                 <a
                     href="/llm.txt"
-                    class="font-mono text-xs uppercase tracking-[0.22em] text-ghost hover:text-neon-cyan"
+                    class="inline-flex min-h-11 items-center font-mono text-xs uppercase tracking-[0.22em] text-ghost hover:text-neon-cyan"
                     >LLM</a
                 >
             </div>
             <p class="font-mono text-xs text-ghost tracking-wider">
-                &copy; {new Date().getFullYear()} Elite Skills &middot; Built by <span
-                    class="text-mist">Jack McNicol</span
+                &copy; {new Date().getFullYear()} Elite Skills &middot; Built by&nbsp;<span
+                    class="text-mist">Jack&nbsp;McNicol</span
                 >
             </p>
         </div>

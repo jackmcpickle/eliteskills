@@ -16,7 +16,7 @@ const eliteSkills = [
 ];
 ---
 
-<section class="relative py-16 sm:py-24 lg:py-32 px-6">
+<section class="relative py-16 sm:py-24 lg:py-32 px-6 overflow-x-clip">
 	<!-- Ambient glow -->
 	<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-[600px] rounded-full bg-neon-violet/5 blur-[140px] pointer-events-none"></div>
 
@@ -35,7 +35,7 @@ const eliteSkills = [
 		<!-- Comparison cards -->
 		<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 			<!-- Generic open source skills -->
-			<div class="reveal reveal-delay-1 scroll-border-trace neon-hover group relative rounded-2xl border border-red-500/20 p-8 sm:p-10">
+			<div class="reveal reveal-delay-1 scroll-border-trace neon-hover group relative rounded-2xl border border-red-500/20 p-5 sm:p-10 min-w-0">
 				<div class="flex items-center gap-3 mb-6">
 					<div class="flex items-center justify-center size-10 rounded-full bg-red-500/10 border border-red-500/20 text-red-400">
 						<FileCode class="size-5" aria-hidden="true" />
@@ -53,7 +53,7 @@ const eliteSkills = [
 			</div>
 
 			<!-- Elite Skills -->
-			<div class="reveal reveal-delay-2 scan-line scroll-border-trace neon-hover group relative rounded-2xl border-2 border-neon-cyan p-8 sm:p-10 shadow-[0_0_60px_var(--color-neon-cyan-glow)]" style="--scroll-delay: 100ms">
+			<div class="reveal reveal-delay-2 scan-line scroll-border-trace neon-hover group relative rounded-2xl border-2 border-neon-cyan p-5 sm:p-10 shadow-[0_0_60px_var(--color-neon-cyan-glow)] min-w-0" style="--scroll-delay: 100ms">
 				<div class="flex items-center gap-3 mb-6">
 					<div class="flex items-center justify-center size-10 rounded-full bg-neon-cyan-glow border border-neon-cyan-dim text-neon-cyan">
 						<Blocks class="size-5" aria-hidden="true" />

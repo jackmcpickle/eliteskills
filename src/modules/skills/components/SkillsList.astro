@@ -7,8 +7,8 @@ const skills = (await getCollection("skills")).sort(
 );
 ---
 
-<section id="main-content" class="relative pb-32 px-6">
-    <div class="max-w-4xl mx-auto space-y-8">
+<section id="main-content" class="relative pb-16 sm:pb-24 lg:pb-32 px-4 sm:px-6">
+    <div class="max-w-4xl mx-auto space-y-6 sm:space-y-8 min-w-0">
         {
             skills.map((skill, i) => {
                 const slug = skill.id.replace(/\.md$/, "");

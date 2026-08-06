@@ -55,8 +55,22 @@
         background-color: var(--color-void);
         color: var(--color-cloud);
         overflow-x: hidden;
+        max-width: 100%;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
+    }
+
+    img,
+    video,
+    canvas,
+    svg {
+        max-width: 100%;
+        height: auto;
+    }
+
+    pre,
+    code {
+        max-width: 100%;
     }
 
     a:focus-visible,

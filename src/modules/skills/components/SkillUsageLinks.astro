@@ -41,12 +41,12 @@ const tools = [
                     href={tool.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="group flex flex-col items-center gap-3 rounded-2xl border border-border bg-surface p-6 transition-all hover:border-neon-cyan-dim hover:bg-surface-hover"
+                    class="group flex min-h-11 flex-col items-center gap-3 rounded-2xl border border-border bg-surface p-4 sm:p-6 transition-all hover:border-neon-cyan-dim hover:bg-surface-hover"
                 >
                     <div class="size-10 text-cloud group-hover:text-neon-cyan transition-colors">
                         <tool.Logo />
                     </div>
-                    <span class="font-mono text-xs text-ghost group-hover:text-neon-cyan transition-colors">
+                    <span class="font-mono text-[11px] sm:text-xs text-center text-ghost group-hover:text-neon-cyan transition-colors">
                         {tool.name}
                     </span>
                 </a>

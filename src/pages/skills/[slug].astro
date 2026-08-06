@@ -17,7 +17,6 @@ import {
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { skillSlug as toSkillSlug } from "@/utils/skill-command";
 import {
-    SkillInstall,
     SkillStructure,
     SkillExamples,
     SkillBestPractices,
@@ -54,7 +53,7 @@ const Icon = iconMap[icon as keyof typeof iconMap] ?? Sparkles;
 ---
 
 <BaseLayout title={`${title} — Elite Skills`} description={description} ogImage={`https://eliteskills.ai/og/${slug}.png`}>
-    <main id="main-content" class="relative pt-20 pb-16 sm:py-24 lg:py-32 px-4 sm:px-6">
+    <main id="main-content" class="relative pt-20 pb-16 sm:py-24 lg:py-32 px-4 sm:px-6 overflow-x-clip">
         <!-- Ambient glow -->
         <div
             class="absolute top-0 left-1/2 -translate-x-1/2 size-125 rounded-full bg-neon-cyan/5 blur-[140px] pointer-events-none"
@@ -134,11 +133,14 @@ const Icon = iconMap[icon as keyof typeof iconMap] ?? Sparkles;
                     <div class="rounded-lg border border-border bg-surface/50 p-4 sm:p-6 min-w-0">
                         <h3 class="font-mono text-xs text-neon-cyan tracking-[0.3em] uppercase mb-3">Install This Skill</h3>
                         <div class="mb-3 min-w-0 overflow-x-auto overscroll-x-contain rounded-lg bg-void/50 border border-border px-3 py-3 sm:px-4">
-                            <code class="block font-mono text-xs sm:text-sm text-neon-cyan whitespace-pre-wrap break-all select-all">npx skills add jackmcpickle/eliteskills --skill elite-{toSkillSlug(title)}</code>
+                            <code class="block w-max max-w-none font-mono text-xs sm:text-sm text-neon-cyan whitespace-nowrap select-all">npx skills add jackmcpickle/eliteskills --skill elite-{toSkillSlug(title)}</code>
                         </div>
-                        <p class="font-mono text-xs text-ghost break-words">
-                            Or install all skills: <span class="text-mist select-all break-all">npx skills add jackmcpickle/eliteskills</span>
+                        <p class="font-mono text-xs text-ghost">
+                            Or install all skills:
                         </p>
+                        <div class="mt-2 min-w-0 overflow-x-auto overscroll-x-contain">
+                            <code class="block w-max font-mono text-xs text-mist whitespace-nowrap select-all">npx skills add jackmcpickle/eliteskills</code>
+                        </div>
                     </div>
                 ) : (
                     <span class="inline-flex items-center gap-2 px-8 py-4 rounded-lg border border-ghost/30 text-ghost font-mono font-700 text-sm tracking-wide uppercase cursor-default">
@@ -150,7 +152,6 @@ const Icon = iconMap[icon as keyof typeof iconMap] ?? Sparkles;
             {
                 released && (
                     <>
-                        <SkillInstall slug={slug!} />
                         {structure.length > 0 && (
                             <SkillStructure
                                 slug={slug!}

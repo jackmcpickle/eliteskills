@@ -39,7 +39,7 @@ npx skills add jackmcpickle/eliteskills --skill elite-testing
 npx skills add jackmcpickle/eliteskills --list`;
 ---
 
-<section class="relative py-16 sm:py-24 lg:py-32 px-6">
+<section class="relative py-16 sm:py-24 lg:py-32 px-6 overflow-x-clip">
 	<!-- Ambient glow -->
 	<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-[600px] rounded-full bg-neon-violet/5 blur-[140px] pointer-events-none"></div>
 
@@ -71,7 +71,7 @@ npx skills add jackmcpickle/eliteskills --list`;
 
 			<!-- Code preview -->
 			<TerminalBlock label="terminal" class="reveal reveal-delay-2 scroll-border-trace min-w-0">
-				<pre class="p-4 sm:p-5 font-mono text-[11px] sm:text-xs leading-relaxed text-cloud whitespace-pre-wrap break-all"><code set:text={codeSnippet} /></pre>
+				<pre class="p-4 sm:p-5 font-mono text-[11px] sm:text-xs leading-relaxed text-cloud"><code class="whitespace-pre" set:text={codeSnippet} /></pre>
 			</TerminalBlock>
 		</div>
 

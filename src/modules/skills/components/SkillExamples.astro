@@ -21,7 +21,7 @@ const command = skillSlashCommand(title);
         {
             examples.map((example) => (
                 <TerminalBlock label={example.label}>
-                    <pre class="p-4 sm:p-5 font-mono text-xs leading-relaxed text-cloud whitespace-pre-wrap break-words"><code><span class="text-neon-cyan select-none">&gt; </span>{command} {example.command}</code></pre>
+                    <pre class="p-4 sm:p-5 font-mono text-xs leading-relaxed text-cloud"><code class="whitespace-pre-wrap break-words"><span class="text-neon-cyan select-none">&gt; </span>{command} {example.command}</code></pre>
                 </TerminalBlock>
             ))
         }

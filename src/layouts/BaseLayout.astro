@@ -85,9 +85,9 @@ const isHome = pathname === '/';
 			Skip to content
 		</a>
 		{!isHome && (
-			<nav class="fixed top-0 inset-x-0 z-40 flex items-center justify-between px-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-3 sm:px-6">
-				<a href="/" class="inline-flex min-h-11 min-w-11 items-center font-mono text-xs uppercase tracking-wide text-mist hover:text-neon-cyan transition-colors">Home</a>
-				<a href="/skills" class="inline-flex min-h-11 min-w-11 items-center justify-end font-mono text-xs uppercase tracking-wide text-mist hover:text-neon-cyan transition-colors">Skills</a>
+			<nav class="fixed top-0 inset-x-0 z-40 flex items-center justify-between gap-4 px-5 pt-[max(0.75rem,env(safe-area-inset-top))] pb-3 sm:px-6 bg-void/85 backdrop-blur-md border-b border-border/60">
+				<a href="/" class="inline-flex min-h-11 items-center px-1 font-mono text-xs uppercase tracking-wide text-mist hover:text-neon-cyan transition-colors">Home</a>
+				<a href="/skills" class="inline-flex min-h-11 items-center px-1 font-mono text-xs uppercase tracking-wide text-mist hover:text-neon-cyan transition-colors">Skills</a>
 			</nav>
 		)}
 		<div transition:animate={neonFade}>

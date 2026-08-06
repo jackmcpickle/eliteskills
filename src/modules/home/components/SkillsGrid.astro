@@ -7,7 +7,7 @@ const skills = (await getCollection('skills')).sort((a, b) => a.data.order - b.d
 const iconMap = { ClipboardCheck, Database, Layers, Palette, Rocket, ShieldCheck, Sparkles, FlaskConical, GitBranch };
 ---
 
-<section id="skills" class="relative py-16 sm:py-24 lg:py-32 px-6">
+<section id="skills" class="relative py-16 sm:py-24 lg:py-32 px-6 overflow-x-clip">
 	<div class="max-w-6xl mx-auto">
 		<div class="text-center mb-10 sm:mb-16 lg:mb-20">
 			<p class="reveal font-mono text-xs text-neon-cyan tracking-[0.3em] uppercase mb-4">The Arsenal</p>

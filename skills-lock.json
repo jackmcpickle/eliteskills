@@ -1,15 +1,20 @@
 {
     "lockVersion": 2,
-    "generatedAt": "2026-08-06T11:14:02.637Z",
+    "generatedAt": "2026-06-12T00:18:09.192Z",
     "skills": {
         "agent-browser": {
             "version": "1.0.0",
             "contentHash": "0f5340637e00efcd23a9e1e51b7d32cb7ab635b5b7a47748353e760777a07f3c",
             "files": 1
         },
+        "elite-web": {
+            "version": "1.0.0",
+            "contentHash": "6ae57ed94f068393ebd8ffa2ab874088c9f00b42eafb681b3f17f4cffb74c298",
+            "files": 5
+        },
         "elite-backend": {
             "version": "3.0.0",
-            "contentHash": "507b2a7965e0422699d1378070b824f5122ece1456aa2caa3983b93fab285176",
+            "contentHash": "1e4b360bc050aeec4987ac0aec8fcaa5f9bf7e7e5d562a7ed98322b9ba38f554",
             "files": 12
         },
         "elite-bootstrap": {
@@ -34,8 +39,8 @@
         },
         "elite-react": {
             "version": "1.1.0",
-            "contentHash": "3f8675935d873f5905c15d1c060e8d34e55728f00e5e0c2b8624dad0c2023463",
-            "files": 17
+            "contentHash": "92878efba3e16c2464b5c016263dca307b548a3a958cba5e2c5977334822925d",
+            "files": 18
         },
         "elite-review": {
             "version": "1.0.0",
@@ -50,11 +55,6 @@
         "elite-testing": {
             "version": "1.0.0",
             "contentHash": "9a69078f3fa95fa541737c99791c4ae5756fc6f47db14d64cb9bfad5d6525e17",
-            "files": 5
-        },
-        "elite-web": {
-            "version": "1.0.0",
-            "contentHash": "cdb75bc1213c3dc915b0dfc0b42c36cee4ec01f86eaa8063d151f01429c4c6bf",
             "files": 5
         },
         "product-marketing-context": {

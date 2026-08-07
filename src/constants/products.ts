@@ -10,4 +10,5 @@ export const SKILL_SLUG_TO_DIR: Record<string, string> = {
     testing: 'elite-testing',
     deploy: 'elite-deploy',
     qa: 'elite-qa',
+    validate: 'elite-validate',
 };

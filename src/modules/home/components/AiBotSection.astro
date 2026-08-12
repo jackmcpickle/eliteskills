@@ -1,6 +1,7 @@
 ---
 import FeatureCard from '@/components/FeatureCard.astro';
 import TerminalBlock from '@/components/TerminalBlock.astro';
+import { skillsAddCommand } from '@/constants/skills-install';
 import { Bot, Code, ShieldCheck } from '@lucide/astro';
 
 const features = [
@@ -29,14 +30,17 @@ const iconMap = { Code, ShieldCheck, Bot };
 const agentPrompt = `Search for elite skills that can help with my current task and install them.`;
 
 const codeSnippet = `# Install all skills
-npx skills add jackmcpickle/eliteskills
+${skillsAddCommand()}
 
 # Install specific skills
-npx skills add jackmcpickle/eliteskills --skill elite-react
-npx skills add jackmcpickle/eliteskills --skill elite-testing
+${skillsAddCommand({ skill: 'elite-react' })}
+${skillsAddCommand({ skill: 'elite-testing' })}
 
 # List available skills
-npx skills add jackmcpickle/eliteskills --list`;
+${skillsAddCommand()} --list
+
+# Or install from GitHub
+${skillsAddCommand({ source: 'github' })}`;
 ---
 
 <section class="relative py-16 sm:py-24 lg:py-32 px-6 overflow-x-clip">

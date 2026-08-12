@@ -1,5 +1,5 @@
 ---
-
+import { skillsAddCommand } from '@/constants/skills-install';
 ---
 
 <footer class="relative py-16 sm:py-24 px-6">
@@ -22,7 +22,7 @@
             class="shimmer reveal reveal-delay-2 group inline-flex max-w-full items-center gap-2 px-4 sm:px-8 py-4 rounded-lg bg-neon-cyan text-void font-mono font-700 text-[11px] sm:text-sm tracking-wide transition-all overflow-x-auto overscroll-x-contain"
         >
             <span class="select-all whitespace-nowrap"
-                >npx skills add jackmcpickle/eliteskills</span
+                >{skillsAddCommand()}</span
             >
         </div>
 

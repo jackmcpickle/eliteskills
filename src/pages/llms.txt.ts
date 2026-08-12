@@ -2,6 +2,11 @@ export const prerender = true;
 
 import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
+import {
+    SKILLS_DOMAIN_SOURCE,
+    SKILLS_GITHUB_SOURCE,
+    skillsAddCommand,
+} from '@/constants/skills-install';
 
 interface SkillEntry {
     id: string;
@@ -33,15 +38,21 @@ export const GET: APIRoute = async () => {
 
 ## Installation
 
-### Install all skills
+### Install all skills (domain)
 \`\`\`bash
-npx skills add jackmcpickle/eliteskills
+${skillsAddCommand()}
+\`\`\`
+
+### Install all skills (GitHub)
+\`\`\`bash
+${skillsAddCommand({ source: 'github' })}
 \`\`\`
 
 ### Install specific skills
 \`\`\`bash
-npx skills add jackmcpickle/eliteskills --skill elite-react
-npx skills add jackmcpickle/eliteskills --skill elite-testing --skill elite-deploy
+${skillsAddCommand({ skill: 'elite-react' })}
+${skillsAddCommand({ skill: 'elite-testing' })}
+${skillsAddCommand({ skill: 'elite-deploy' })}
 \`\`\`
 
 ## Available Skills
@@ -76,7 +87,7 @@ A: Downloadable AI instruction sets that plug into any AI coding tool. They tell
 A: Any tool that accepts custom instructions or supports skill files: Claude Code, Cursor, Windsurf, Cline, ChatGPT, GitHub Copilot, etc.
 
 **Q: How do I install skills?**
-A: Use the Vercel Skills CLI: \`npx skills add jackmcpickle/eliteskills\`. This installs all skills. For specific skills, use the \`--skill\` flag.
+A: Use the Vercel Skills CLI: \`${skillsAddCommand()}\` (first-party domain) or \`${skillsAddCommand({ source: 'github' })}\`. For specific skills, use the \`--skill\` flag.
 
 **Q: Are these really open source?**
 A: Yes! MIT licensed. The skills are hosted on GitHub and distributed via the standard Vercel Skills CLI.
@@ -89,7 +100,8 @@ A: No. Installation and usage are completely open.
 
 ## Repository
 
-Source code: https://github.com/jackmcpickle/eliteskills
+Source code: https://github.com/${SKILLS_GITHUB_SOURCE}
+Well-known discovery: ${SKILLS_DOMAIN_SOURCE}/.well-known/agent-skills/index.json
 License: MIT
 
 ## Pages
@@ -97,10 +109,12 @@ License: MIT
 - [Home](https://eliteskills.ai/): Skills overview and installation instructions
 - [Skills](https://eliteskills.ai/skills): Detailed skill descriptions and examples  
 - [Contact](https://eliteskills.ai/contact): Support and questions
+- [skills.sh](https://skills.sh/${SKILLS_GITHUB_SOURCE}): Install leaderboard page
 `;
 
     return new Response(text, {
-        status: 200,
-        headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+        headers: {
+            'Content-Type': 'text/plain; charset=utf-8',
+        },
     });
 };

@@ -1,16 +1,18 @@
 ---
 import TerminalBlock from '@/components/TerminalBlock.astro';
+import { skillsAddCommand } from '@/constants/skills-install';
 
 interface Props {
 	slug: string;
 }
 
 const { slug } = Astro.props;
+const installCmd = skillsAddCommand({ skill: `elite-${slug}` });
 ---
 
 <section class="mt-16">
 	<h2 class="font-mono text-xs text-neon-amber tracking-[0.3em] uppercase mb-5">Install</h2>
 	<TerminalBlock label="Terminal">
-		<pre class="p-4 sm:p-5 font-mono text-xs sm:text-sm text-cloud"><code class="whitespace-nowrap"><span class="text-neon-cyan">$</span> npx skills add jackmcpickle/eliteskills --skill elite-{slug}</code></pre>
+		<pre class="p-4 sm:p-5 font-mono text-xs sm:text-sm text-cloud"><code class="whitespace-nowrap"><span class="text-neon-cyan">$</span> {installCmd}</code></pre>
 	</TerminalBlock>
 </section>

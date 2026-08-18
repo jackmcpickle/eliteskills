@@ -1,7 +1,7 @@
 ---
 name: elite-react
-description: Creates production-grade React frontend features using TanStack Router/Query/Form/Table, shadcn components, Tailwind v4, and Zod validation. Use when building React components, pages, forms, tables, hooks, or CRUD interfaces.
-version: 1.1.0
+description: Creates production-grade React frontend features using TanStack Router/Query/Form/Table, shadcn components, Tailwind v4, and Zod validation. Use when building React components, pages, forms, tables, hooks, or CRUD interfaces, or when fixing re-renders, memo, and referential stability.
+version: 1.2.0
 ---
 
 # Frontend Coder Skill
@@ -130,8 +130,10 @@ export const use{Feature}Form = createFormHook({
 - `satisfies` over `as` on object literals
 - `import type` for type-only imports
 - Prefix params with underscore ONLY when truly unused (never accessed in function body)
+- Never pass inline objects, arrays, or functions to memoized children, context providers, or hook deps. See [Referential Stability](referential-stability.md)
 
 ## Reference Documentation
 
 - [Code Style](code-style.md) - React style rules and conventions
 - [API Integration](api-integration.md) - API client and data fetching patterns
+- [Referential Stability](referential-stability.md) - Type-level identity contracts for memo, effects, and context

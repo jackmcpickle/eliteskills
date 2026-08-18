@@ -1,6 +1,6 @@
 {
     "lockVersion": 2,
-    "generatedAt": "2026-08-07T10:35:14.976Z",
+    "generatedAt": "2026-08-18T11:10:31.720Z",
     "skills": {
         "agent-browser": {
             "version": "1.0.0",
@@ -33,14 +33,14 @@
             "files": 3
         },
         "elite-react": {
-            "version": "1.1.0",
-            "contentHash": "3f8675935d873f5905c15d1c060e8d34e55728f00e5e0c2b8624dad0c2023463",
-            "files": 17
+            "version": "1.2.0",
+            "contentHash": "d8575c35e73e2fbe29f0fc6111c0110f0e2f9cf0901c566b491189b3fa2ff3e4",
+            "files": 19
         },
         "elite-review": {
             "version": "1.0.0",
-            "contentHash": "9ac0e54695091cc833bf1aef26375697598199e47825a55501a1bc5008ce82d7",
-            "files": 2
+            "contentHash": "696a7d1ab2a518cdf84ce1de758f703f54cf86e7cad789ad941b4b6f6d13c125",
+            "files": 3
         },
         "elite-style": {
             "version": "2.0.0",
@@ -54,7 +54,7 @@
         },
         "elite-validate": {
             "version": "1.0.0",
-            "contentHash": "f41691ce37383d5e6c3b902d2113d14d35d632496a377bb77430ab01a25e1068",
+            "contentHash": "dd3cf3ff655827f571a608dfbb81ac0766a12b3dbf064ce54db00af07713fd36",
             "files": 4
         },
         "elite-web": {

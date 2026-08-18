@@ -57,6 +57,10 @@ function useCreateUserMutation() { ... }
 <div className="h-5 w-5" />
 ```
 
+### Referential Stability
+
+`Item[]` and function types describe shape, not identity. Do not pass inline objects, arrays, or functions to `memo` children, context `value`, or hook deps. Stabilize with `useMemo` / `useCallback`, or hoist module-scope constants. Never `as Stable<T>` to silence the compiler. See [Referential Stability](referential-stability.md).
+
 ### Component Extraction
 
 - Extract focused single-responsibility components

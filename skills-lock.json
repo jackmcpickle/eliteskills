@@ -1,6 +1,6 @@
 {
     "lockVersion": 2,
-    "generatedAt": "2026-08-18T05:05:36.376Z",
+    "generatedAt": "2026-08-18T11:10:31.720Z",
     "skills": {
         "agent-browser": {
             "version": "1.0.0",
@@ -34,7 +34,7 @@
         },
         "elite-react": {
             "version": "1.2.0",
-            "contentHash": "120af18c22e4a99d3d52cfc9fe0c8503dc547d49d2bef7c90ca4f29c987139db",
+            "contentHash": "d8575c35e73e2fbe29f0fc6111c0110f0e2f9cf0901c566b491189b3fa2ff3e4",
             "files": 19
         },
         "elite-review": {
@@ -54,7 +54,7 @@
         },
         "elite-validate": {
             "version": "1.0.0",
-            "contentHash": "f41691ce37383d5e6c3b902d2113d14d35d632496a377bb77430ab01a25e1068",
+            "contentHash": "dd3cf3ff655827f571a608dfbb81ac0766a12b3dbf064ce54db00af07713fd36",
             "files": 4
         },
         "elite-web": {

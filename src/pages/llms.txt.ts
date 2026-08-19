@@ -53,6 +53,7 @@ ${skillsAddCommand({ source: 'github' })}
 ${skillsAddCommand({ skill: 'elite-react' })}
 ${skillsAddCommand({ skill: 'elite-testing' })}
 ${skillsAddCommand({ skill: 'elite-deploy' })}
+${skillsAddCommand({ skill: 'elite-merge' })}
 \`\`\`
 
 ## Available Skills
@@ -77,6 +78,7 @@ Skills are distributed as \`SKILL.md\` files that contain precision-engineered i
 - Application scaffolding and bootstrapping
 - Comprehensive testing strategies
 - Deployment and CI/CD patterns
+- PR babysitting — reviews, green CI, then merge (never on HITL)
 
 ## FAQ
 

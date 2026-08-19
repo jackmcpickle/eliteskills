@@ -41,6 +41,10 @@ Output all files with their paths as fenced code blocks.`,
     'elite-style': `Build a pricing page for a developer tools SaaS with 3 tiers (Hobby, Pro, Enterprise).
 Include distinctive typography, color scheme, and micro-interactions.
 Output as a single HTML file with inline CSS and JS.`,
+
+    'elite-merge': `A PR is open. Greptile review is still pending. CI is green. One review comment is a typo; another asks to change the public API shape.
+Write the watch-loop plan: classify each item, what you auto-fix vs escalate as HITL, whether you merge, and which scripts you run.
+Output the cycle summary template filled in.`,
 };
 
 interface ReviewResult {

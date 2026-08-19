@@ -8,6 +8,7 @@ import {
     Database,
     FlaskConical,
     GitBranch,
+    GitMerge,
     Layers,
     MonitorPlay,
     Palette,
@@ -50,7 +51,7 @@ const {
 } = skill.data;
 
 
-const iconMap = { ClipboardCheck, Database, FlaskConical, GitBranch, Layers, MonitorPlay, Palette, Rocket, ShieldCheck, Sparkles };
+const iconMap = { ClipboardCheck, Database, FlaskConical, GitBranch, GitMerge, Layers, MonitorPlay, Palette, Rocket, ShieldCheck, Sparkles };
 const Icon = iconMap[icon as keyof typeof iconMap] ?? Sparkles;
 ---
 

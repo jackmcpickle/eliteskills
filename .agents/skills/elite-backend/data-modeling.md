@@ -1,74 +1,50 @@
-# Data Modeling
+# Data structures
 
-Persistence models for the database; DTOs at every layer boundary. Persistence never crosses the repository wall.
+Persistence describes storage. A **DTO** describes a **boundary**.
 
-## Persistence Models (repo-internal)
+## Persistence
 
-Extend the project's base persistence model for auto id, public key, timestamps:
+Inherit the project's base row when one exists:
 
 ```
 Entity
-  id          — internal primary key
-  key         — public identifier (nanoid/uuid, unique, indexed)
-  created_at  — server default
-  updated_at  — server default + on update
-  ...domain fields...
+  id          internal primary key
+  key         public identifier (unique, indexed)
+  created_at  server default
+  updated_at  server default + on update
+  …domain columns
 ```
 
-**Persistence objects never leave the repository.**
+Rows, table classes, and schema types stay in the repository.
 
-## DTO Categories
+## DTO catalog
 
-### Request DTOs (no id/key)
+Request shapes have no `id` or `key`. Response shapes expose `key` (and usually `created_at`).
 
-Input shapes for create and update. Snake_case or camelCase per project convention.
+| DTO          | Purpose                               | key? |
+| ------------ | ------------------------------------- | ---- |
+| `CreateBody` | Create input                          | No   |
+| `UpdateBody` | Partial update — every field optional | No   |
+| `Detail`     | Full single-item read                 | Yes  |
+| `ListItem`   | Collection row                        | Yes  |
 
-| DTO                  | Purpose                              | Has id/key? |
-| -------------------- | ------------------------------------ | ----------- |
-| `{Entity}CreateBody` | Create request                       | No          |
-| `{Entity}UpdateBody` | Partial update — all fields optional | No          |
+`Detail` includes `updated_at` when the entity is editable. `ListItem` usually omits it. JSON casing follows the project.
 
-### Response DTOs (with key, timestamps)
+## When to split
 
-Output shapes for API consumers. JSON casing per project convention (often camelCase).
+| Situation                   | Shapes                   |
+| --------------------------- | ------------------------ |
+| Create and update differ    | CreateBody + UpdateBody  |
+| Partial update              | UpdateBody, all optional |
+| List is thinner than detail | ListItem + Detail        |
+| Same fields, two call sites | Reuse                    |
 
-| DTO                | Purpose                   | Has key? |
-| ------------------ | ------------------------- | -------- |
-| `{Entity}Detail`   | Full single-item response | Yes      |
-| `{Entity}ListItem` | Lightweight list response | Yes      |
+## Mapping
 
-### Timestamp Guidance
+The repository maps persistence → DTO on the way out, and CreateBody/UpdateBody → persistence on the way in. Lists map each row before returning.
 
-`Detail` includes `updated_at` when the entity is editable. `ListItem` typically omits it. Both include `created_at`.
+## Fields
 
-## Persistence → DTO Conversion
-
-Happens **only in repositories**. Map persistence fields to response DTO fields before returning.
-
-For lists, convert each row before returning the collection.
-
-## Enum Fields
-
-Use named enum types in persistence models — not string unions or literal types where the ORM rejects them. DB stores as string/varchar; validation happens at the boundary.
-
-Discriminated unions with literal tags are fine in non-persistence DTOs.
-
-## Complex Column Types
-
-When the ORM lacks native support (JSON arrays, metadata blobs), use explicit column types. Keep complex validation in request DTOs, not persistence models.
-
-## Field Validation
-
-Validate input in request DTOs (schema validators) or services (business rules):
-
-- **DTO validators** — format, required fields, URL schemes
-- **Service validators** — cross-field rules, ownership, state prerequisites
-
-## When to Add DTOs
-
-| Scenario                              | Add DTO?                            |
-| ------------------------------------- | ----------------------------------- |
-| Different fields for create vs update | Yes: `CreateBody`, `UpdateBody`     |
-| Partial updates                       | Yes: `UpdateBody` with all optional |
-| Different list vs detail shapes       | Yes: `ListItem`, `Detail`           |
-| Same shape, different context         | No: reuse existing DTO              |
+- **Enums on persistence** — named enum types the store accepts (usually string columns). Literal unions belong on DTOs.
+- **Validation** — format and required fields on request DTOs; cross-field rules, ownership, and state in the service.
+- **Complex columns** — JSON/blobs get explicit column types; shape checks stay on the DTO.

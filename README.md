@@ -25,7 +25,7 @@ Browse installs on [skills.sh/jackmcpickle/eliteskills](https://skills.sh/jackmc
 | Skill           | Description                                             |
 | --------------- | ------------------------------------------------------- |
 | elite-react     | React patterns, hooks, performance, testing             |
-| elite-backend   | Python backend — FastAPI, Django, async patterns        |
+| elite-backend   | DTO-boundary domains — layers, Result, data flow        |
 | elite-style     | CSS/design systems, responsive, accessibility           |
 | elite-review    | Architecture review with DDD principles                 |
 | elite-feature   | Feature enhancement and discovery                       |

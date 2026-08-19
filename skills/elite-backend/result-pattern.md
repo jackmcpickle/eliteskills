@@ -1,107 +1,57 @@
-# Result Pattern
+# Result
 
-Use `Result[ErrorType, T]` at layer boundaries for explicit error handling.
+**Result** is the **boundary** type for expected failure.
 
-## Basic Usage
+## Where
 
-```python
-from app.core.result import Result, Ok, Err
-from app.core.errors import NotFound
+- Repository → service
+- Service → route
 
-async def get_note(session: AsyncSession, key: str) -> Result[NotFound, Note]:
-    stmt = select(Note).where(Note.key == key)
-    result = await session.execute(stmt)
-    note = result.scalars().one_or_none()
-    if note is None:
-        return Err(NotFound(entity="Note", identifier=key))
-    return Ok(note)
+Inside a layer, ordinary control flow is enough.
+
+## Shape
+
+```
+getEntity(key) → Result[NotFound, Detail]
+  found     → Ok(detail)
+  missing   → Err(NotFound(entity, key))
 ```
 
-## Where to Use Result
+## Composition
 
-Use `Result` at **layer boundaries**:
-
-- Repository -> Service
-- Service -> Route
-
-Inside services, use normal Python control flow:
-
-```python
-async def resolve_note(
-    session: AsyncSession, key: str, resolution: str
-) -> Result[NotFound | InvalidState, Note]:
-    result = await repo.get_note(session, key)
-    if result.is_err():
-        return result
-
-    note = result.ok()
-    if note.status == "archived":
-        return Err(InvalidState(entity="Note", reason="Cannot resolve archived note"))
-
-    return await repo.update_note(session, key, status="resolved")
+```
+loaded = repo.getEntity(key)
+if loaded is Err → return loaded
+if loaded.ok.status == archived → Err(InvalidState(...))
+return repo.updateEntity(key, body)
 ```
 
-## Converting Result to HTTP in Routes
+Match the project's Result API (`is_err` / `ok` / `match`).
 
-Use `or_raise()` for clean conversion:
+## Route mapping
 
-```python
-@router.get("/{key}")
-async def get_note(
-    key: str,
-    session: AsyncSession = Depends(get_session),
-) -> NoteDetail:
-    result = await repo.get_note_by_key(session, key)
-    note = result.or_raise(lambda e: HTTPException(status_code=404, detail=str(e)))
-    return NoteDetail.model_validate(note, from_attributes=True)
-```
+One table at the route **boundary**:
 
-For different error types, use `handle()`:
+| Error           | HTTP      |
+| --------------- | --------- |
+| `NotFound`      | 404       |
+| `AlreadyExists` | 409       |
+| `Forbidden`     | 403       |
+| `InvalidInput`  | 400       |
+| `InvalidState`  | 400 / 409 |
+| `QueryError`    | 500       |
 
-```python
-result = await service.create_note(session, data)
-return result.handle(
-    on_ok=lambda note: NoteDetail.model_validate(note, from_attributes=True),
-    on_err=lambda e: raise_http_error(e),
-)
-```
+Use the project's Result → HTTP helper.
 
-## Typed Errors
+## Typed errors
 
-Always use typed errors from `app.core.errors`:
+Construct values, not strings:
 
-```python
-from app.core.errors import NotFound, AlreadyExists, Forbidden, InvalidInput, InvalidState, QueryError
+- `NotFound(entity, identifier)`
+- `AlreadyExists(entity, field, value)`
+- `Forbidden(reason)`
+- `InvalidInput(errors)` — field → messages
+- `InvalidState(entity, reason)`
+- `QueryError(reason)`
 
-# Not found
-Err(NotFound(entity="Note", identifier=key))
-
-# Already exists
-Err(AlreadyExists(entity="Note", field="slug", value="my-note"))
-
-# Permission denied
-Err(Forbidden(reason="Only admins can delete notes"))
-
-# Validation errors
-Err(InvalidInput(errors={"title": ["Title is required"]}))
-
-# Invalid state
-Err(InvalidState(entity="Note", reason="Cannot edit a published note"))
-
-# Query error (for list operations that can't return NotFound)
-Err(QueryError(reason="Failed to fetch notes"))
-```
-
-## When NOT to Use Result
-
-Use exceptions for:
-
-- Programming bugs (assertions)
-- Truly exceptional cases (out of memory)
-- Framework integration points
-
-Use `Result` for:
-
-- Expected failures (not found, validation errors)
-- Business logic errors (insufficient permissions, invalid state)
-- Anything the caller should explicitly handle
+**Result** for not-found, validation, permission, and illegal state. Exceptions for bugs and infrastructure collapse.

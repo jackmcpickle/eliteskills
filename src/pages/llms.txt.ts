@@ -70,7 +70,7 @@ Elite Skills work with any AI coding assistant that supports skill files or cust
 
 Skills are distributed as \`SKILL.md\` files that contain precision-engineered instruction sets covering:
 - React patterns and performance optimization
-- Python backend development with FastAPI/Django  
+- Backend domains with DTO boundaries, layers, and Result errors 
 - CSS design systems and accessibility
 - Architecture review with DDD principles
 - Feature enhancement strategies

@@ -1,71 +1,36 @@
-# Route Handlers
+# Routes
 
-Routes are thin. They parse input, delegate, map `Result` to HTTP, return response DTOs.
+A route parses a **DTO**, calls inward, and maps **Result** to HTTP.
 
-## Responsibilities
+## Job
 
-- Parse and validate request shape (framework/schema validation)
-- Inject dependencies (session, auth context)
-- Call service or repository
-- Map `Result` errors to HTTP status + body
-- Return response DTO directly
+- Validate request shape
+- Inject session, auth, and other deps
+- Call service (writes with rules) or repository (plain reads)
+- Map Result → status + body
+- Return Detail or ListItem
 
-## Responsibilities NOT in Routes
-
-- Business rules
-- Database queries
-- Persistence → DTO conversion
-- Cross-cutting auth/CORS/rate limits (middleware handles these)
-
-## Handler Shape
+## Shape
 
 ```
-POST /{entities}
-  body: EntityCreateBody
-  → service.create(body)
-  → map Result → 201 + EntityDetail
-
-GET /{entities}/{key}
-  → repo.get_by_key(key)
-  → map NotFound → 404, else 200 + EntityDetail
-
-PATCH /{entities}/{key}
-  body: EntityUpdateBody
-  → service.update(key, body)
-  → map Result → 200 + EntityDetail
-
-DELETE /{entities}/{key}
-  → repo.delete(key)
-  → map NotFound → 404, else 204
+POST   /{entities}       CreateBody → service.create → 201 Detail
+GET    /{entities}/{key} key → repo.get → 200 Detail
+PATCH  /{entities}/{key} UpdateBody → service.update → 200 Detail
+DELETE /{entities}/{key} key → repo.delete → 204
 ```
 
-Simple reads may skip the service layer. Writes with business rules always go through services.
+## Errors
 
-## Error Handling
-
-**Never throw from route handlers** for expected failures — return typed JSON error responses.
-
-Validate early, return early:
+Expected failure is a JSON body, not a throw.
 
 ```
-if input missing or wrong type → 400 with field error
-if parse fails (URL, JSON)     → 400 with descriptive message
-if Result.is_err()             → map typed error → status + body
+missing / wrong type → 400 field error
+parse failure        → 400
+Result Err           → typed status from result-pattern.md
 ```
 
-## App Entry
+## Entry
 
-Keep the app entry thin:
+Register one route module per domain. Apply CORS, auth, and logging as middleware. Health check at `/` returns name + version.
 
-- Register route modules (one domain per module)
-- Apply global middleware (CORS, auth, logging)
-- Expose health check at `/` returning service name + version
-- Export the app/handler per project convention
-
-## Async Side Effects
-
-Fire-and-forget work (analytics, notifications) via the runtime's background task mechanism — don't block the response.
-
-## Module Export
-
-Each route module exports a router/sub-app mounted by the entry file. The entry file never accumulates handler logic.
+Fire-and-forget work uses the runtime background hook so the response is not blocked.

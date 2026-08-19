@@ -1,37 +1,31 @@
-# Feature Scaffold
+# Feature scaffold
 
-Generic domain layout — pick a binding for stack-specific code.
+One **domain**, four **DTO**s, four **layer**s.
 
-## Layout (all bindings)
+## Layout
 
 ```
 {domain}/
-├── models or db/schema   # Persistence — repo-internal
-├── types                 # CreateBody, UpdateBody, Detail, ListItem
-├── repository            # DB ops + persistence → DTO
-├── services              # Business logic — DTOs only
-└── routes                # Thin handlers — map Result → HTTP
+├── types         # CreateBody, UpdateBody, Detail, ListItem
+├── models        # Persistence — repository only
+├── repository    # DTO ↔ persistence
+├── services      # Rules — DTOs only
+└── routes        # Parse, map Result → HTTP
 ```
 
-## Binding Templates
-
-| Stack                       | Read                                        |
-| --------------------------- | ------------------------------------------- |
-| Python (FastAPI + SQLModel) | [bindings/python.md](../bindings/python.md) |
-| Hono (Workers + Drizzle)    | [bindings/hono.md](../bindings/hono.md)     |
+Use `db/schema` in place of `models` when that is the project dialect.
 
 ## Placeholders
 
-| Placeholder  | Example |
+| Token        | Example |
 | ------------ | ------- |
 | `{Entity}`   | `Note`  |
 | `{entity}`   | `note`  |
 | `{entities}` | `notes` |
 | `{domain}`   | `notes` |
 
-## End-to-End Examples
+## Stack syntax
 
-| Stack  | Example                                                 |
-| ------ | ------------------------------------------------------- |
-| Python | [examples/python-notes.md](../examples/python-notes.md) |
-| Hono   | [examples/hono-notes.md](../examples/hono-notes.md)     |
+Python (FastAPI + SQLModel) → [bindings/python.md](../bindings/python.md) and [examples/python-notes.md](../examples/python-notes.md).
+
+Hono (Workers + Drizzle) → [bindings/hono.md](../bindings/hono.md) and [examples/hono-notes.md](../examples/hono-notes.md).

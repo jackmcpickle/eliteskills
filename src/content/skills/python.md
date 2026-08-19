@@ -1,35 +1,41 @@
 ---
-title: Python
-description: API design, database queries, auth flows, server architecture. Battle-tested patterns from production systems.
+title: Backend
+description: Domain layers, DTO boundaries, Result errors, and data flow. Stack-agnostic — Python and Hono bindings included.
 icon: Database
 released: true
 order: 2
 highlights:
-    - Layered architecture with strict DTO boundaries
-    - Repository pattern with SQLModel → DTO conversion
-    - Result pattern for explicit error handling
-    - Copy-paste feature template for new domains
-    - Typed errors (NotFound, AlreadyExists, Forbidden, etc.)
+    - Layered domains with a DTO boundary
+    - Persistence stays in the repository
+    - Result for expected failure
+    - CreateBody, UpdateBody, Detail, ListItem catalog
+    - Python and Hono bindings
 structure:
     - SKILL.md
     - layered-architecture.md
     - data-modeling.md
     - repository-pattern.md
     - result-pattern.md
+    - route-handlers.md
+    - middleware-security.md
     - templates/
     - templates/feature.md
+    - bindings/
+    - bindings/python.md
+    - bindings/hono.md
     - examples/
-    - examples/notes.md
+    - examples/python-notes.md
+    - examples/hono-notes.md
 examples:
     - label: CRUD feature
-      command: 'Build a complete notes feature with models, DTOs, repository, service, and routes'
+      command: 'Build a notes domain with DTOs, repository, service, and thin routes'
     - label: New domain module
-      command: 'Create a bookmarks domain with create, list, update, and delete endpoints'
+      command: 'Create a bookmarks domain with create, list, update, and delete'
     - label: Repository function
-      command: 'Add a filtered list endpoint with pagination to the articles repository'
+      command: 'Add a filtered list with pagination to the articles repository'
 bestPractices:
-    - Define SQLModel tables and DTOs before writing repository functions
-    - Keep SQLModel objects inside repositories — only DTOs cross layer boundaries
-    - Use Result types at layer boundaries for explicit error handling
-    - Start from the feature template for new domain modules
+    - Define the four DTOs before writing queries or handlers
+    - Persistence objects stay in the repository — only DTOs cross a boundary
+    - Return Result at layer boundaries
+    - Scaffold from the feature template
 ---

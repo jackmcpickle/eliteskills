@@ -1,211 +1,56 @@
-# Layered Architecture
+# Layers
 
-Uses a layered architecture with strict DTO boundaries. SQLModel stays in repositories; everything else works with Pydantic DTOs.
+A **DTO** is the only value that crosses a **boundary**. Persistence stays in the repository.
 
-## The Layers
-
-```
-┌─────────────────────────────────────────┐
-│           Routes (FastAPI)              │
-│  Request DTO in → Response DTO out      │
-└─────────────────┬───────────────────────┘
-                  │
-┌─────────────────▼───────────────────────┐
-│              Services                    │
-│  DTOs in → Business logic → DTOs out    │
-└─────────────────┬───────────────────────┘
-                  │
-┌─────────────────▼───────────────────────┐
-│             Repositories                 │
-│  DTO → SQLModel → DB → SQLModel → DTO  │
-└─────────────────┬───────────────────────┘
-                  │
-┌─────────────────▼───────────────────────┐
-│          SQLModel Tables                 │
-│  DB schema (repo-internal only)          │
-└─────────────────────────────────────────┘
-```
-
-## Layer Rules
-
-| Layer        | Receives            | Returns              | Knows About            |
-| ------------ | ------------------- | -------------------- | ---------------------- |
-| Routes       | Request DTOs + Deps | Response DTOs        | Services, Repos, Types |
-| Services     | DTOs                | `Result[Error, DTO]` | Repos, Types           |
-| Repositories | DTOs or primitives  | `Result[Error, DTO]` | SQLModel, Types        |
-| Models       | N/A                 | N/A                  | SQLModel only          |
-| Types        | N/A                 | N/A                  | Pydantic only          |
-
-## DTO Flow
+## Stack
 
 ```
-                    Request DTO                    Response DTO
-                   (no id/key)                    (has key, timestamps)
-                        │                               ▲
-                        │                               │
-  Route ───────────────▼─── or_raise() ────────────────┘
-                        │                               ▲
-                        │                               │
-  Service ─────────────▼─── validate ──────────────────┘
-                        │                               ▲
-                        │                               │
-  Repo ────────────────▼                                │
-        DTO → SQLModel → DB → refresh → model_validate → DTO
+Route        request DTO in → response DTO out
+     │
+Service      DTOs in → rules → Result[Error, DTO]
+     │
+Repository   DTO → persistence → DB → DTO
+     │
+Persistence  schema / table / row — repo-internal
 ```
 
-**Key rule:** `model_validate(sqlmodel_obj, from_attributes=True)` happens ONLY in repositories.
+| Layer       | Receives           | Returns              | May import             |
+| ----------- | ------------------ | -------------------- | ---------------------- |
+| Route       | Request DTOs, deps | Response DTOs        | services, repos, types |
+| Service     | DTOs               | `Result[Error, DTO]` | repos, types           |
+| Repository  | DTOs or primitives | `Result[Error, DTO]` | persistence, types     |
+| Persistence | —                  | —                    | persistence only       |
+| Types       | —                  | —                    | DTO definitions        |
 
-## Example Flow: Create Note
+## Flows
 
-```python
-# types/note.py — DTOs
-class NoteCreateBody(BaseModel):
-    """Request DTO — no id, no key, no timestamps."""
-    title: str
-    content: str = ""
-    is_pinned: bool = False
+**Create** — Route parses CreateBody → service validates → repo maps to persistence, saves, returns Detail.
 
-class NoteDetail(CamelModel):
-    """Response DTO — has key and timestamps."""
-    key: str
-    title: str
-    content: str
-    is_pinned: bool
-    created_at: datetime
+**Update** — Route parses UpdateBody → service applies rules → repo loads by key, writes set fields, returns Detail.
 
+**Read** — Route passes key → repo returns Detail. Skip the service when there is no rule.
 
-# routes/notes.py — thin, just wires DTOs
-@router.post("/", status_code=201)
-async def create_note(
-    body: NoteCreateBody,
-    session: AsyncSession = Depends(get_session),
-) -> NoteDetail:
-    result = await note_service.create_note(session, body)
-    return result.or_raise(lambda e: HTTPException(status_code=400, detail=str(e)))
+**List** — Repo returns ListItem rows. Filter, sort, and page in the query.
 
-
-# services/note.py — validates, delegates, returns DTO
-async def create_note(
-    session: AsyncSession,
-    data: NoteCreateBody,
-) -> Result[InvalidInput, NoteDetail]:
-    if not data.title.strip():
-        return Err(InvalidInput(errors={"title": ["Title is required"]}))
-    return await note_repo.create_note(session, data)
-
-
-# repository/note.py — owns SQLModel, converts to DTO
-async def create_note(
-    session: AsyncSession,
-    data: NoteCreateBody,
-) -> Result[InvalidInput, NoteDetail]:
-    note = Note(
-        title=data.title,
-        content=data.content,
-        is_pinned=data.is_pinned,
-    )
-    session.add(note)
-    await session.commit()
-    await session.refresh(note)
-    return Ok(NoteDetail.model_validate(note, from_attributes=True))
-```
-
-## Example Flow: Update Note
-
-```python
-# types/note.py
-class NoteUpdateBody(BaseModel):
-    """Request DTO — all fields optional for partial update."""
-    title: str | None = None
-    content: str | None = None
-    is_pinned: bool | None = None
-
-
-# routes/notes.py
-@router.patch("/{key}")
-async def update_note(
-    key: str,
-    body: NoteUpdateBody,
-    session: AsyncSession = Depends(get_session),
-) -> NoteDetail:
-    result = await note_service.update_note(session, key, body)
-    return result.or_raise(lambda e: HTTPException(status_code=400, detail=str(e)))
-
-
-# services/note.py
-async def update_note(
-    session: AsyncSession,
-    key: str,
-    data: NoteUpdateBody,
-) -> Result[NotFound | InvalidInput, NoteDetail]:
-    if data.title is not None and not data.title.strip():
-        return Err(InvalidInput(errors={"title": ["Title cannot be empty"]}))
-    return await note_repo.update_note(session, key, data)
-
-
-# repository/note.py
-async def update_note(
-    session: AsyncSession,
-    key: str,
-    data: NoteUpdateBody,
-) -> Result[NotFound, NoteDetail]:
-    stmt = select(Note).where(Note.key == key)
-    result = await session.execute(stmt)
-    note = result.scalars().one_or_none()
-    if note is None:
-        return Err(NotFound(entity="Note", identifier=key))
-
-    updates = data.model_dump(exclude_unset=True)
-    for field, value in updates.items():
-        setattr(note, field, value)
-
-    session.add(note)
-    await session.commit()
-    await session.refresh(note)
-    return Ok(NoteDetail.model_validate(note, from_attributes=True))
-```
-
-## File Organization
+## Folder
 
 ```
-# Standard domain structure
-src/{app}/{domain}/
-├── models/
-│   ├── __init__.py
-│   └── note.py           # SQLModel — only imported by repository
-├── types/
-│   ├── __init__.py
-│   └── note.py           # DTOs — imported by all layers
-├── repository/
-│   ├── __init__.py
-│   └── note.py           # imports models + types
-├── services/
-│   └── note.py           # imports repository + types (NOT models)
-└── routes/
-    ├── __init__.py
-    └── notes.py           # imports services + types (NOT models)
+{domain}/
+├── types         # CreateBody, UpdateBody, Detail, ListItem
+├── models        # Persistence — repository only
+├── repository    # types + models
+├── services      # types + repository
+└── routes        # types + services
 ```
 
-## `__init__.py` Conventions
+Match the project's path dialect (`models/` vs `db/schema`, file-per-entity vs one module). Barrel files stay empty unless the project already uses them.
 
-`__init__.py` files are empty. Router registration happens in the app's main router which imports and includes each domain router directly.
+## Conversion
 
-## What Each Layer Should NOT Do
+The repository is the only mapper. Routes and services never see a row, table, or schema type.
 
-### Routes
+## Ownership
 
-- No business logic
-- No direct DB queries
-- No `model_validate` calls — repo already returned DTOs
-
-### Services
-
-- No direct session queries (delegate to repos)
-- No HTTP-specific concerns
-- No importing from `models/` — work with DTOs only
-
-### Repositories
-
-- No business logic
-- No HTTP concerns
-- No returning raw SQLModel objects — always convert to DTO
+- Route — parse, inject deps, map Result to HTTP
+- Service — business rules, multi-repo orchestration
+- Repository — one aggregate's persistence and DTO mapping

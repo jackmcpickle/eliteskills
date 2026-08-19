@@ -34,6 +34,7 @@ Browse installs on [skills.sh/jackmcpickle/eliteskills](https://skills.sh/jackmc
 | elite-deploy    | Deployment strategies, CI/CD, migrations                |
 | elite-qa        | Manual QA test plans for human testers                  |
 | elite-validate  | Playwright e2e, demos, and walkthroughs                 |
+| elite-merge     | Watch reviews and CI, then squash-merge when green      |
 
 ## Install specific skills
 

@@ -1,6 +1,6 @@
 {
     "lockVersion": 2,
-    "generatedAt": "2026-08-19T00:35:01.154Z",
+    "generatedAt": "2026-08-19T01:20:51.755Z",
     "skills": {
         "elite-backend": {
             "version": "4.0.0",
@@ -21,6 +21,11 @@
             "version": "1.0.0",
             "contentHash": "dc0424159d921e2ec47e1b3ad5177878dd47cd17d375cd85d11545e10bfb6144",
             "files": 3
+        },
+        "elite-merge": {
+            "version": "1.0.0",
+            "contentHash": "f37c35f9a48d96995b079fcd6a48b4dd3e086c255258ae713c07193918a37011",
+            "files": 7
         },
         "elite-qa": {
             "version": "1.0.0",

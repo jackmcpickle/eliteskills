@@ -7,16 +7,12 @@ import {
 	CompatibleTools,
 	SkillsGrid,
 	MetricsBar,
-	ReviewsMarquee,
 	BenefitsSection,
 	DifferentiatorSection,
 	AiBotSection,
 	FooterCta,
 	WhatAreSkills,
 } from '@/modules/home';
-import { getCollection } from 'astro:content';
-
-const reviews = await getCollection('reviews');
 
 const SITE_URL = 'https://eliteskills.ai';
 
@@ -27,37 +23,17 @@ const websiteJsonLd = {
 	url: SITE_URL,
 	description: 'Elite AI Skills for vibe coders, founders, and builders. 20 years of engineering distilled into precision-crafted AI instruction sets.',
 };
-
-
-
-const reviewJsonLd = {
-	'@context': 'https://schema.org',
-	'@type': 'Product',
-	name: 'Elite AI Skills',
-	aggregateRating: {
-		'@type': 'AggregateRating',
-		ratingValue: (reviews.reduce((sum, r) => sum + r.data.rating, 0) / reviews.length).toFixed(1),
-		reviewCount: reviews.length,
-		bestRating: 5,
-	},
-	review: reviews.map((r) => ({
-		'@type': 'Review',
-		author: { '@type': 'Person', name: r.data.name },
-		reviewRating: { '@type': 'Rating', ratingValue: r.data.rating, bestRating: 5 },
-	})),
-};
 ---
 
 <BaseLayout
 	title="Elite Skills — AI Skills for Builders"
 	description="Elite AI Skills for vibe coders, founders, and builders. 20 years of engineering distilled into precision-crafted AI instruction sets."
-	jsonLd={[websiteJsonLd, reviewJsonLd]}
+	jsonLd={[websiteJsonLd]}
 >
 	<HeroBanner />
 	<WhatAreSkills />
 	<SkillsGrid />
 	<MetricsBar />
-	<ReviewsMarquee />
 	<BenefitsSection />
 	<DifferentiatorSection />
 	<CompatibleTools />

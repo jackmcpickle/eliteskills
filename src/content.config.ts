@@ -23,16 +23,6 @@ const skills = defineCollection({
     }),
 });
 
-const reviews = defineCollection({
-    type: 'content',
-    schema: z.object({
-        name: z.string(),
-        role: z.string(),
-        rating: z.number().min(1).max(5),
-        order: z.number(),
-    }),
-});
-
 const benefits = defineCollection({
     type: 'content',
     schema: z.object({
@@ -57,4 +47,4 @@ const pricing = defineCollection({
     }),
 });
 
-export const collections = { skills, reviews, benefits, pricing };
+export const collections = { skills, benefits, pricing };

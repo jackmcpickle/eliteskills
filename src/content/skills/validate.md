@@ -2,7 +2,7 @@
 title: Validate
 description: Playwright e2e presentation tests — deterministic specs with step screenshots, session video, and an HTML walkthrough for local UI flows.
 icon: MonitorPlay
-order: 10
+order: 11
 released: true
 isNew: true
 highlights:

@@ -6,6 +6,8 @@ interface FormSubmitOptions {
     successMessage: string;
 }
 
+const registered = new Set<string>();
+
 export function initFormSubmit({
     formId,
     submitId,
@@ -13,41 +15,50 @@ export function initFormSubmit({
     action,
     successMessage,
 }: FormSubmitOptions): void {
-    const form = document.getElementById(formId);
-    const submitButton = document.getElementById(submitId);
-    const statusNode = document.getElementById(statusId);
+    if (registered.has(formId)) return;
+    registered.add(formId);
 
-    if (!form) return;
+    function bind(): void {
+        const form = document.getElementById(formId);
+        const submitButton = document.getElementById(submitId);
+        const statusNode = document.getElementById(statusId);
 
-    form.addEventListener('submit', (event) => {
-        event.preventDefault();
-        if (!submitButton || !statusNode) return;
+        if (!form || form.hasAttribute('data-bound')) return;
+        form.setAttribute('data-bound', '');
 
-        statusNode.textContent = 'Sending...';
-        submitButton.setAttribute('disabled', 'true');
-        submitButton.classList.add('opacity-70');
+        form.addEventListener('submit', (event) => {
+            event.preventDefault();
+            if (!submitButton || !statusNode) return;
 
-        const formData = new FormData(form as HTMLFormElement);
-        fetch(action, { method: 'POST', body: formData })
-            .then(async (response) => {
-                const result: { error?: string } = await response.json();
-                if (!response.ok) {
-                    statusNode.textContent =
-                        result.error ?? 'Something went wrong.';
+            statusNode.textContent = 'Sending...';
+            submitButton.setAttribute('disabled', 'true');
+            submitButton.classList.add('opacity-70');
+
+            const formData = new FormData(form as HTMLFormElement);
+            fetch(action, { method: 'POST', body: formData })
+                .then(async (response) => {
+                    const result: { error?: string } = await response.json();
+                    if (!response.ok) {
+                        statusNode.textContent =
+                            result.error ?? 'Something went wrong.';
+                        statusNode.className = 'min-h-5 text-sm text-red-300';
+                        return;
+                    }
+                    statusNode.textContent = successMessage;
+                    statusNode.className = 'min-h-5 text-sm text-neon-green';
+                    (form as HTMLFormElement).reset();
+                })
+                .catch(() => {
+                    statusNode.textContent = 'Network issue. Try again.';
                     statusNode.className = 'min-h-5 text-sm text-red-300';
-                    return;
-                }
-                statusNode.textContent = successMessage;
-                statusNode.className = 'min-h-5 text-sm text-neon-green';
-                (form as HTMLFormElement).reset();
-            })
-            .catch(() => {
-                statusNode.textContent = 'Network issue. Try again.';
-                statusNode.className = 'min-h-5 text-sm text-red-300';
-            })
-            .finally(() => {
-                submitButton.removeAttribute('disabled');
-                submitButton.classList.remove('opacity-70');
-            });
-    });
+                })
+                .finally(() => {
+                    submitButton.removeAttribute('disabled');
+                    submitButton.classList.remove('opacity-70');
+                });
+        });
+    }
+
+    document.addEventListener('astro:page-load', bind);
+    bind();
 }

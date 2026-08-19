@@ -23,7 +23,12 @@ function jsonOk(): Response {
 }
 
 export const POST: APIRoute = async ({ request }) => {
-    const formData = await request.formData();
+    let formData: FormData;
+    try {
+        formData = await request.formData();
+    } catch {
+        return jsonError('Invalid form data.');
+    }
 
     // Basic honeypot check
     if (formData.get('website')) return jsonOk();

@@ -6,6 +6,7 @@ import {
     FlaskConical,
     GitBranch,
     GitMerge,
+    Globe,
     Layers,
     MonitorPlay,
     Palette,
@@ -35,7 +36,7 @@ const {
     released = false,
 } = Astro.props;
 
-const iconMap = { ClipboardCheck, Database, FlaskConical, GitBranch, GitMerge, Layers, MonitorPlay, Palette, Rocket, ShieldCheck, Sparkles };
+const iconMap = { ClipboardCheck, Database, FlaskConical, GitBranch, GitMerge, Globe, Layers, MonitorPlay, Palette, Rocket, ShieldCheck, Sparkles };
 const Icon = iconMap[icon as keyof typeof iconMap] ?? Sparkles;
 ---
 

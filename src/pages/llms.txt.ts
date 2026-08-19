@@ -8,20 +8,8 @@ import {
     skillsAddCommand,
 } from '@/constants/skills-install';
 
-interface SkillEntry {
-    id: string;
-    data: {
-        title: string;
-        description: string;
-        order: number;
-        released: boolean;
-    };
-}
-
 export const GET: APIRoute = async () => {
-    const skillsCollection = (await getCollection(
-        'skills',
-    )) as unknown as SkillEntry[];
+    const skillsCollection = await getCollection('skills');
 
     const sortedSkills = [...skillsCollection].sort(
         (a, b) => a.data.order - b.data.order,

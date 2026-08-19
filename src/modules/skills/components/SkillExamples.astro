@@ -3,12 +3,12 @@ import TerminalBlock from '@/components/TerminalBlock.astro';
 import { skillSlashCommand } from "@/utils/skill-command";
 
 interface Props {
-    title: string;
+    slug: string;
     examples: { label: string; command: string }[];
 }
 
-const { examples, title } = Astro.props;
-const command = skillSlashCommand(title);
+const { examples, slug } = Astro.props;
+const command = skillSlashCommand(slug);
 ---
 
 <section class="mt-12">

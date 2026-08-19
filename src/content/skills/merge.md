@@ -2,7 +2,7 @@
 title: Merge
 description: Watch a PR for agent reviews and CI, fix auto-addressable feedback, escalate HITL, and squash-merge only when green with no human decisions open.
 icon: GitMerge
-order: 11
+order: 12
 released: true
 isNew: true
 highlights:

@@ -3,6 +3,7 @@ import { createHash } from 'node:crypto';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { SKILL_SLUG_TO_DIR } from '@/constants/products';
 import {
     SKILLS_DOMAIN_SOURCE,
     SKILLS_GITHUB_SOURCE,
@@ -86,5 +87,14 @@ describe('well-known agent-skills manifest', () => {
         expect(index.skills.map((s) => s.name).sort()).toEqual(
             published.sort(),
         );
+    });
+
+    it('publishes every mapped skill dir', () => {
+        for (const dir of Object.values(SKILL_SLUG_TO_DIR)) {
+            expect(
+                existsSync(join(ROOT, 'skills', dir, 'SKILL.md')),
+                `missing published skill: skills/${dir}/SKILL.md`,
+            ).toBe(true);
+        }
     });
 });

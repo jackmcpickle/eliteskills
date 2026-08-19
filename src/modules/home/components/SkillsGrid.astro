@@ -1,10 +1,10 @@
 ---
 import { getCollection } from 'astro:content';
-import { ClipboardCheck, Database, Layers, Palette, Rocket, ShieldCheck, Sparkles, FlaskConical, GitBranch, GitMerge, MonitorPlay } from '@lucide/astro';
+import { ClipboardCheck, Database, Layers, Palette, Rocket, ShieldCheck, Sparkles, FlaskConical, GitBranch, GitMerge, Globe, MonitorPlay } from '@lucide/astro';
 
 const skills = (await getCollection('skills')).sort((a, b) => a.data.order - b.data.order);
 
-const iconMap = { ClipboardCheck, Database, Layers, Palette, Rocket, ShieldCheck, Sparkles, FlaskConical, GitBranch, GitMerge, MonitorPlay };
+const iconMap = { ClipboardCheck, Database, Layers, Palette, Rocket, ShieldCheck, Sparkles, FlaskConical, GitBranch, GitMerge, Globe, MonitorPlay };
 ---
 
 <section id="skills" class="relative py-16 sm:py-24 lg:py-32 px-6 overflow-x-clip">

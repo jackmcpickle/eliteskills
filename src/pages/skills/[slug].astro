@@ -10,6 +10,7 @@ import {
     GitBranch,
     GitMerge,
     Layers,
+    Globe,
     MonitorPlay,
     Palette,
     Rocket,
@@ -18,7 +19,7 @@ import {
 } from "@lucide/astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { skillsAddCommand } from "@/constants/skills-install";
-import { skillSlug as toSkillSlug } from "@/utils/skill-command";
+import { skillDir } from "@/utils/skill-command";
 import {
     SkillStructure,
     SkillExamples,
@@ -51,7 +52,9 @@ const {
 } = skill.data;
 
 
-const iconMap = { ClipboardCheck, Database, FlaskConical, GitBranch, GitMerge, Layers, MonitorPlay, Palette, Rocket, ShieldCheck, Sparkles };
+const publishedDir = skillDir(slug!);
+const commandName = publishedDir.replace(/^elite-/, "");
+const iconMap = { ClipboardCheck, Database, FlaskConical, GitBranch, GitMerge, Globe, Layers, MonitorPlay, Palette, Rocket, ShieldCheck, Sparkles };
 const Icon = iconMap[icon as keyof typeof iconMap] ?? Sparkles;
 ---
 
@@ -78,7 +81,7 @@ const Icon = iconMap[icon as keyof typeof iconMap] ?? Sparkles;
                             class="font-display text-3xl sm:text-5xl font-800 tracking-tight break-words"
                             transition:name={`skill-title-${slug}`}
                         >
-                            <span class="text-white">/elite-</span><span class="text-neon-cyan">{toSkillSlug(title)}</span>
+                            <span class="text-white">/elite-</span><span class="text-neon-cyan">{commandName}</span>
                         </h1>
                         {
                             !released && (
@@ -136,7 +139,7 @@ const Icon = iconMap[icon as keyof typeof iconMap] ?? Sparkles;
                     <div class="rounded-lg border border-border bg-surface/50 p-4 sm:p-6 min-w-0">
                         <h3 class="font-mono text-xs text-neon-cyan tracking-[0.3em] uppercase mb-3">Install This Skill</h3>
                         <div class="mb-3 min-w-0 overflow-x-auto overscroll-x-contain rounded-lg bg-void/50 border border-border px-3 py-3 sm:px-4">
-                            <code class="block w-max max-w-none font-mono text-xs sm:text-sm text-neon-cyan whitespace-nowrap select-all">{skillsAddCommand({ skill: `elite-${toSkillSlug(title)}` })}</code>
+                            <code class="block w-max max-w-none font-mono text-xs sm:text-sm text-neon-cyan whitespace-nowrap select-all">{skillsAddCommand({ skill: publishedDir })}</code>
                         </div>
                         <p class="font-mono text-xs text-ghost">
                             Or install all skills:
@@ -162,7 +165,7 @@ const Icon = iconMap[icon as keyof typeof iconMap] ?? Sparkles;
                             />
                         )}
                         {examples.length > 0 && (
-                            <SkillExamples title={title} examples={examples} />
+                            <SkillExamples slug={slug!} examples={examples} />
                         )}
                         {bestPractices.length > 0 && (
                             <SkillBestPractices bestPractices={bestPractices} />

@@ -1,4 +1,6 @@
 ---
+import { skillDir } from "@/utils/skill-command";
+
 interface Props {
     slug: string;
     structure: string[];
@@ -8,7 +10,7 @@ const { slug, structure } = Astro.props;
 
 function buildTree(paths: string[]): string {
     const lines: string[] = [];
-    lines.push(`.claude/skills/${slug}/`);
+    lines.push(`.claude/skills/${skillDir(slug)}/`);
 
     for (let i = 0; i < paths.length; i += 1) {
         const path = paths[i];

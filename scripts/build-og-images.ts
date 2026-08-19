@@ -4,6 +4,8 @@
 import { readFileSync, readdirSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import sharp from 'sharp';
+import { SKILL_SLUG_TO_DIR } from '../src/constants/products.ts';
+import { parseFrontmatter } from './parse-frontmatter.ts';
 
 const ROOT = join(import.meta.dirname ?? '.', '..');
 const SKILLS_DIR = join(ROOT, 'src', 'content', 'skills');
@@ -113,6 +115,32 @@ const ICON_DATA: Record<string, Array<[string, Record<string, string>]>> = {
         ['circle', { cx: '6', cy: '18', r: '3' }],
         ['path', { d: 'M18 9a9 9 0 0 1-9 9' }],
     ],
+    GitMerge: [
+        ['circle', { cx: '18', cy: '18', r: '3' }],
+        ['circle', { cx: '6', cy: '6', r: '3' }],
+        ['path', { d: 'M6 21V9a9 9 0 0 0 9 9' }],
+    ],
+    ClipboardCheck: [
+        ['rect', { width: '8', height: '4', x: '8', y: '2', rx: '1', ry: '1' }],
+        [
+            'path',
+            {
+                d: 'M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2',
+            },
+        ],
+        ['path', { d: 'm9 14 2 2 4-4' }],
+    ],
+    MonitorPlay: [
+        [
+            'path',
+            {
+                d: 'M15.033 9.44a.647.647 0 0 1 0 1.12l-4.065 2.352a.645.645 0 0 1-.968-.56V7.648a.645.645 0 0 1 .967-.56z',
+            },
+        ],
+        ['path', { d: 'M12 17v4' }],
+        ['path', { d: 'M8 21h8' }],
+        ['rect', { x: '2', y: '3', width: '20', height: '14', rx: '2' }],
+    ],
     Globe: [
         ['circle', { cx: '12', cy: '12', r: '10' }],
         ['path', { d: 'M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20' }],
@@ -121,26 +149,6 @@ const ICON_DATA: Record<string, Array<[string, Record<string, string>]>> = {
 };
 
 // ── Helpers ─────────────────────────────────────────────────
-
-function parseFrontmatter(content: string): Record<string, string> {
-    const match = content.match(/^---\n([\s\S]*?)\n---/);
-    if (!match) return {};
-    const meta: Record<string, string> = {};
-    for (const line of match[1].split('\n')) {
-        const colonIdx = line.indexOf(':');
-        if (colonIdx === -1) continue;
-        const key = line.slice(0, colonIdx).trim();
-        let val = line.slice(colonIdx + 1).trim();
-        if (
-            (val.startsWith('"') && val.endsWith('"')) ||
-            (val.startsWith("'") && val.endsWith("'"))
-        ) {
-            val = val.slice(1, -1);
-        }
-        meta[key] = val;
-    }
-    return meta;
-}
 
 function escapeXml(str: string): string {
     return str
@@ -158,7 +166,11 @@ function renderLucideIcon(
     color: string,
 ): string {
     const nodes = ICON_DATA[iconName];
-    if (!nodes) return '';
+    if (!nodes) {
+        throw new Error(
+            `Unknown Lucide icon "${iconName}" — add SVG node data to ICON_DATA`,
+        );
+    }
     const scale = size / 24;
     const elements = nodes
         .map(([tag, attrs]) => {
@@ -242,13 +254,15 @@ function buildDefaultSvg(fontStyles: string): string {
 
 function buildSkillSvg(
     slug: string,
-    title: string,
     description: string,
     icon: string,
     order: number,
     fontStyles: string,
 ): string {
-    const skillSlug = title.toLowerCase().replace(/\s+/g, '-');
+    const commandName = (SKILL_SLUG_TO_DIR[slug] ?? `elite-${slug}`).replace(
+        /^elite-/,
+        '',
+    );
     const descLines = wrapText(description, 70);
 
     return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
@@ -259,7 +273,7 @@ function buildSkillSvg(
   <text x="80" y="230" font-family="JetBrains Mono" font-weight="500" font-size="14" fill="${GHOST}" letter-spacing="0.3em">SKILL ${String(order).padStart(2, '0')}</text>
   <!-- Title: /elite- in white, slug in cyan -->
   <text x="80" y="300" font-family="Outfit" font-weight="800" font-size="56">
-    <tspan fill="${WHITE}">/elite-</tspan><tspan fill="${CYAN}">${escapeXml(skillSlug)}</tspan>
+    <tspan fill="${WHITE}">/elite-</tspan><tspan fill="${CYAN}">${escapeXml(commandName)}</tspan>
   </text>
   <!-- Description -->
   ${descLines.map((line, i) => `<text x="80" y="${370 + i * 32}" font-family="Outfit" font-weight="400" font-size="22" fill="${MIST}">${escapeXml(line)}</text>`).join('\n  ')}
@@ -278,11 +292,6 @@ async function main() {
     const jbMonoB64 = loadFontBase64('JetBrainsMono-Medium.ttf');
 
     const fontStyles = `
-      @font-face {
-        font-family: 'Outfit';
-        font-weight: 400;
-        src: url('data:font/truetype;base64,${outfitB64}') format('truetype');
-      }
       @font-face {
         font-family: 'Outfit';
         font-weight: 800;
@@ -307,19 +316,11 @@ async function main() {
         const content = readFileSync(join(SKILLS_DIR, file), 'utf-8');
         const meta = parseFrontmatter(content);
         const slug = file.replace(/\.md$/, '');
-        const title = meta.title ?? slug;
         const description = meta.description ?? '';
         const icon = meta.icon ?? 'Sparkles';
         const order = parseInt(meta.order ?? '0', 10);
 
-        const svg = buildSkillSvg(
-            slug,
-            title,
-            description,
-            icon,
-            order,
-            fontStyles,
-        );
+        const svg = buildSkillSvg(slug, description, icon, order, fontStyles);
         const outPath = join(OUT_DIR, `${slug}.png`);
         await sharp(Buffer.from(svg)).png().toFile(outPath);
         console.log(`  ${slug}.png`);

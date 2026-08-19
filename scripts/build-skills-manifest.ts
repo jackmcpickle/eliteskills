@@ -10,6 +10,7 @@ import {
     existsSync,
 } from 'node:fs';
 import { join } from 'node:path';
+import { parseFrontmatter } from './parse-frontmatter.ts';
 
 const ROOT = join(import.meta.dirname ?? '.', '..');
 const SKILLS_DIR = join(ROOT, '.claude', 'skills');
@@ -27,27 +28,6 @@ interface SkillsLock {
     lockVersion: 2;
     generatedAt: string;
     skills: Record<string, SkillEntry>;
-}
-
-function parseFrontmatter(content: string): Record<string, string> {
-    const match = content.match(/^---\n([\s\S]*?)\n---/);
-    if (!match) return {};
-    const meta: Record<string, string> = {};
-    for (const line of match[1].split('\n')) {
-        const colonIdx = line.indexOf(':');
-        if (colonIdx === -1) continue;
-        const key = line.slice(0, colonIdx).trim();
-        let val = line.slice(colonIdx + 1).trim();
-        // strip quotes
-        if (
-            (val.startsWith('"') && val.endsWith('"')) ||
-            (val.startsWith("'") && val.endsWith("'"))
-        ) {
-            val = val.slice(1, -1);
-        }
-        meta[key] = val;
-    }
-    return meta;
 }
 
 function hashDirectory(dir: string): { hash: string; fileCount: number } {

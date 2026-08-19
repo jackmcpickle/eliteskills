@@ -9,10 +9,16 @@ import {
     existsSync,
 } from 'node:fs';
 import { join, relative } from 'node:path';
+import { SKILL_SLUG_TO_DIR } from '../src/constants/products.ts';
 
 const ROOT = join(import.meta.dirname ?? '.', '..');
 const SKILLS_SRC = join(ROOT, '.claude', 'skills');
 const CONTENT_DIR = join(ROOT, 'src', 'content', 'skills');
+
+/** skill dir name → content slug (elite-react → react) */
+const DIR_TO_SLUG: Record<string, string> = Object.fromEntries(
+    Object.entries(SKILL_SLUG_TO_DIR).map(([slug, dir]) => [dir, slug]),
+);
 
 function walkDir(dir: string, base: string): string[] {
     const entries: string[] = [];
@@ -62,21 +68,30 @@ const slugs = readdirSync(SKILLS_SRC).filter((s) =>
     statSync(join(SKILLS_SRC, s)).isDirectory(),
 );
 
-for (const slug of slugs) {
-    const contentPath = join(CONTENT_DIR, `${slug}.md`);
-    if (!existsSync(contentPath)) {
-        console.log(`No content file for "${slug}", skipping.`);
+for (const dir of slugs) {
+    const contentSlug = DIR_TO_SLUG[dir];
+    if (!contentSlug) {
         continue;
     }
 
-    const skillDir = join(SKILLS_SRC, slug);
+    const contentPath = join(CONTENT_DIR, `${contentSlug}.md`);
+    if (!existsSync(contentPath)) {
+        console.log(
+            `No content file for "${dir}" → "${contentSlug}", skipping.`,
+        );
+        continue;
+    }
+
+    const skillDir = join(SKILLS_SRC, dir);
     const structure = walkDir(skillDir, skillDir);
 
     const content = readFileSync(contentPath, 'utf-8');
     const updated = updateFrontmatter(content, structure);
     writeFileSync(contentPath, updated);
 
-    console.log(`Updated structure for "${slug}": ${structure.length} entries`);
+    console.log(
+        `Updated structure for "${dir}" → "${contentSlug}": ${structure.length} entries`,
+    );
 }
 
 console.log('Done.');

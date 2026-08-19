@@ -1,7 +1,11 @@
-export function skillSlug(title: string): string {
-    return title.toLowerCase().replace(/\s+/g, '-');
+import { SKILL_SLUG_TO_DIR } from '@/constants/products';
+
+/** Published skills/ dir for a content slug (`architecture-review` → `elite-review`). */
+export function skillDir(contentSlug: string): string {
+    return SKILL_SLUG_TO_DIR[contentSlug] ?? `elite-${contentSlug}`;
 }
 
-export function skillSlashCommand(title: string): string {
-    return `/elite-${skillSlug(title)}`;
+/** Slash command for a content slug (`architecture-review` → `/elite-review`). */
+export function skillSlashCommand(contentSlug: string): string {
+    return `/${skillDir(contentSlug)}`;
 }

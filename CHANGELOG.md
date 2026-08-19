@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.2.2](https://github.com/jackmcpickle/eliteskills/compare/v1.2.1...v1.2.2) (2026-08-19)
+
+### Bug Fixes
+
+- map skill slugs, rebind scripts, publish elite-web ([#35](https://github.com/jackmcpickle/eliteskills/issues/35)) ([03756ab](https://github.com/jackmcpickle/eliteskills/commit/03756abb3f192c80dc04adf83944aa21d41d67b0))
+
 ## [1.2.1](https://github.com/jackmcpickle/eliteskills/compare/v1.2.0...v1.2.1) (2026-08-19)
 
 ## 1.2.0 (2026-08-19)

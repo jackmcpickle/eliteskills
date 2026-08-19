@@ -41,15 +41,6 @@ Output all files with their paths as fenced code blocks.`,
     'elite-style': `Build a pricing page for a developer tools SaaS with 3 tiers (Hobby, Pro, Enterprise).
 Include distinctive typography, color scheme, and micro-interactions.
 Output as a single HTML file with inline CSS and JS.`,
-
-    'agent-browser': `Write a browser automation script that:
-1. Opens a login page
-2. Fills email and password fields
-3. Clicks submit
-4. Waits for dashboard to load
-5. Extracts the user's display name
-6. Takes a screenshot
-Output as a bash script using agent-browser commands.`,
 };
 
 interface ReviewResult {

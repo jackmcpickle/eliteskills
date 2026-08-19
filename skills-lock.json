@@ -1,15 +1,10 @@
 {
     "lockVersion": 2,
-    "generatedAt": "2026-08-19T00:30:47.489Z",
+    "generatedAt": "2026-08-19T00:35:01.154Z",
     "skills": {
-        "agent-browser": {
-            "version": "1.0.0",
-            "contentHash": "0f5340637e00efcd23a9e1e51b7d32cb7ab635b5b7a47748353e760777a07f3c",
-            "files": 1
-        },
         "elite-backend": {
             "version": "4.0.0",
-            "contentHash": "b5e0f72e928512a2a896a28da645e8b8bf25043495f6ce0d855575db35d1de2e",
+            "contentHash": "fc8056f1f153b728802b68c68a60a1fa58400a9a2b598be7d15eeaf5a0df6d33",
             "files": 12
         },
         "elite-bootstrap": {

@@ -1,65 +1,57 @@
-# Result Pattern
+# Result
 
-Use `Result[ErrorType, T]` at layer boundaries for explicit error handling.
+**Result** is the **boundary** type for expected failure.
 
-## Where to Use Result
+## Where
 
-At **layer boundaries**:
+- Repository → service
+- Service → route
 
-- Repository → Service
-- Service → Route
+Inside a layer, ordinary control flow is enough.
 
-Inside a layer, propagate Results or use normal control flow — don't wrap every internal call.
-
-## Basic Shape
+## Shape
 
 ```
-get_entity(key) → Result[NotFound, EntityDetail]
-  found     → Ok(detail_dto)
-  not found → Err(NotFound(entity="Entity", identifier=key))
+getEntity(key) → Result[NotFound, Detail]
+  found     → Ok(detail)
+  missing   → Err(NotFound(entity, key))
 ```
 
-## Service Composition
-
-Services chain repo calls by checking `is_err()` / matching on error variants before continuing:
+## Composition
 
 ```
-result = repo.get_entity(key)
-if result.is_err(): return result
-entity = result.ok()
-if entity.status == "archived":
-  return Err(InvalidState(...))
-return repo.update_entity(key, update_body)
+loaded = repo.getEntity(key)
+if loaded is Err → return loaded
+if loaded.ok.status == archived → Err(InvalidState(...))
+return repo.updateEntity(key, body)
 ```
 
-## Converting Result to HTTP in Routes
+Match the project's Result API (`is_err` / `ok` / `match`).
 
-Map typed errors to status codes at the route boundary — one place, not scattered:
+## Route mapping
 
-| Error           | Typical HTTP |
-| --------------- | ------------ |
-| `NotFound`      | 404          |
-| `AlreadyExists` | 409          |
-| `Forbidden`     | 403          |
-| `InvalidInput`  | 400          |
-| `InvalidState`  | 400 or 409   |
-| `QueryError`    | 500          |
+One table at the route **boundary**:
 
-Use the project's `or_raise()` / `match` / `handle()` helper — whatever maps `Result` → HTTP response.
+| Error           | HTTP      |
+| --------------- | --------- |
+| `NotFound`      | 404       |
+| `AlreadyExists` | 409       |
+| `Forbidden`     | 403       |
+| `InvalidInput`  | 400       |
+| `InvalidState`  | 400 / 409 |
+| `QueryError`    | 500       |
 
-## Typed Errors
+Use the project's Result → HTTP helper.
 
-Always construct typed error values — never bare strings at the boundary:
+## Typed errors
+
+Construct values, not strings:
 
 - `NotFound(entity, identifier)`
 - `AlreadyExists(entity, field, value)`
 - `Forbidden(reason)`
-- `InvalidInput(errors)` — field → message list
+- `InvalidInput(errors)` — field → messages
 - `InvalidState(entity, reason)`
 - `QueryError(reason)`
 
-## When NOT to Use Result
-
-Use exceptions for programming bugs and truly exceptional runtime failures.
-
-Use Result for expected failures the caller should handle: not found, validation, permissions, invalid state.
+**Result** for not-found, validation, permission, and illegal state. Exceptions for bugs and infrastructure collapse.

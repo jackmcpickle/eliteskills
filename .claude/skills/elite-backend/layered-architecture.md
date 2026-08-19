@@ -1,93 +1,56 @@
-# Layered Architecture
+# Layers
 
-Strict DTO boundaries. Persistence models stay in repositories; every other layer works with DTOs only.
+A **DTO** is the only value that crosses a **boundary**. Persistence stays in the repository.
 
-## The Layers
-
-```
-┌─────────────────────────────────────────┐
-│              Routes                      │
-│  Request DTO in → Response DTO out       │
-└─────────────────┬───────────────────────┘
-                  │
-┌─────────────────▼───────────────────────┐
-│              Services                    │
-│  DTOs in → business logic → DTOs out     │
-└─────────────────┬───────────────────────┘
-                  │
-┌─────────────────▼───────────────────────┐
-│             Repositories                 │
-│  DTO → persistence → DB → DTO            │
-└─────────────────┬───────────────────────┘
-                  │
-┌─────────────────▼───────────────────────┐
-│          Persistence Models              │
-│  DB schema (repo-internal only)           │
-└─────────────────────────────────────────┘
-```
-
-## Layer Rules
-
-| Layer        | Receives            | Returns              | Knows About               |
-| ------------ | ------------------- | -------------------- | ------------------------- |
-| Routes       | Request DTOs + deps | Response DTOs        | Services, repos, types    |
-| Services     | DTOs                | `Result[Error, DTO]` | Repos, types              |
-| Repositories | DTOs or primitives  | `Result[Error, DTO]` | Persistence models, types |
-| Models       | N/A                 | N/A                  | Persistence layer only    |
-| Types        | N/A                 | N/A                  | DTO definitions only      |
-
-## Conversion Rule
-
-**Persistence → DTO conversion happens only in repositories.** Routes and services receive DTOs; they never map from persistence objects.
-
-## Example Flow: Create
+## Stack
 
 ```
-types/       EntityCreateBody, EntityDetail
-routes/      parse CreateBody → call service → map Result → return Detail
-services/    validate CreateBody → call repo → return Result[Error, Detail]
-repository/  CreateBody → persistence object → save → refresh → Detail
+Route        request DTO in → response DTO out
+     │
+Service      DTOs in → rules → Result[Error, DTO]
+     │
+Repository   DTO → persistence → DB → DTO
+     │
+Persistence  schema / table / row — repo-internal
 ```
 
-## Example Flow: Update
+| Layer       | Receives           | Returns              | May import             |
+| ----------- | ------------------ | -------------------- | ---------------------- |
+| Route       | Request DTOs, deps | Response DTOs        | services, repos, types |
+| Service     | DTOs               | `Result[Error, DTO]` | repos, types           |
+| Repository  | DTOs or primitives | `Result[Error, DTO]` | persistence, types     |
+| Persistence | —                  | —                    | persistence only       |
+| Types       | —                  | —                    | DTO definitions        |
+
+## Flows
+
+**Create** — Route parses CreateBody → service validates → repo maps to persistence, saves, returns Detail.
+
+**Update** — Route parses UpdateBody → service applies rules → repo loads by key, writes set fields, returns Detail.
+
+**Read** — Route passes key → repo returns Detail. Skip the service when there is no rule.
+
+**List** — Repo returns ListItem rows. Filter, sort, and page in the query.
+
+## Folder
 
 ```
-types/       EntityUpdateBody (all fields optional)
-services/    validate partial update rules → delegate to repo
-repository/  load by key → apply only set fields → save → Detail
+{domain}/
+├── types         # CreateBody, UpdateBody, Detail, ListItem
+├── models        # Persistence — repository only
+├── repository    # types + models
+├── services      # types + repository
+└── routes        # types + services
 ```
 
-Routes call services for writes that need business rules; simple reads may call repos directly.
+Match the project's path dialect (`models/` vs `db/schema`, file-per-entity vs one module). Barrel files stay empty unless the project already uses them.
 
-## File Organization
+## Conversion
 
-```
-src/{app}/{domain}/
-├── models/       # Only imported by repository
-├── types/        # Imported by all layers
-├── repository/   # Imports models + types
-├── services/     # Imports repository + types (NOT models)
-└── routes/       # Imports services + types (NOT models)
-```
+The repository is the only mapper. Routes and services never see a row, table, or schema type.
 
-Keep `__init__` / barrel files empty unless the project convention says otherwise. Register routers in the app entry.
+## Ownership
 
-## What Each Layer Must NOT Do
-
-### Routes
-
-- No business logic
-- No direct database queries
-- No persistence → DTO conversion
-
-### Services
-
-- No direct session/query calls (delegate to repos)
-- No HTTP-specific concerns
-- No importing from `models/`
-
-### Repositories
-
-- No business logic
-- No HTTP concerns
-- No returning raw persistence objects
+- Route — parse, inject deps, map Result to HTTP
+- Service — business rules, multi-repo orchestration
+- Repository — one aggregate's persistence and DTO mapping

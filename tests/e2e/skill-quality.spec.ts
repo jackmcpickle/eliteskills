@@ -31,37 +31,16 @@ const GENERATION_TASKS: Record<string, string> = {
 Output all files with their paths as fenced code blocks.`,
 
     'elite-backend': `Build a "bookmarks" domain with:
-- SQLModel table for bookmarks (url, title, tags list, is_archived boolean)
-- Create/Update DTOs and Detail/ListItem response DTOs
-- Repository with CRUD operations returning Result types
-- Service layer with validation
-- FastAPI routes
+- Persistence model (url, title, tags, is_archived)
+- CreateBody, UpdateBody, Detail, and ListItem DTOs
+- Repository CRUD returning Result types
+- Service validation
+- Thin routes that map Result to HTTP
 Output all files with their paths as fenced code blocks.`,
 
     'elite-style': `Build a pricing page for a developer tools SaaS with 3 tiers (Hobby, Pro, Enterprise).
 Include distinctive typography, color scheme, and micro-interactions.
 Output as a single HTML file with inline CSS and JS.`,
-
-    'agent-browser': `Write a browser automation script that:
-1. Opens a login page
-2. Fills email and password fields
-3. Clicks submit
-4. Waits for dashboard to load
-5. Extracts the user's display name
-6. Takes a screenshot
-Output as a bash script using agent-browser commands.`,
-
-    'react-doctor': `Given a React component with these issues:
-- useState derived from props
-- Missing useEffect cleanup
-- Array index used as key
-- Component defined inside another component
-Show the problematic code and the fixed version.
-Output as fenced code blocks.`,
-
-    'product-marketing-context': `Create a product marketing context document for a fictional project management tool called "FlowBoard" targeting small dev teams.
-Include all sections: product overview, target audience, personas, problems, competitive landscape, differentiation, objections, switching dynamics, customer language, brand voice, proof points, and goals.
-Output as a markdown document.`,
 };
 
 interface ReviewResult {

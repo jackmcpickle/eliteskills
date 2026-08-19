@@ -1,15 +1,10 @@
 {
     "lockVersion": 2,
-    "generatedAt": "2026-08-18T11:10:31.720Z",
+    "generatedAt": "2026-08-19T00:35:01.154Z",
     "skills": {
-        "agent-browser": {
-            "version": "1.0.0",
-            "contentHash": "0f5340637e00efcd23a9e1e51b7d32cb7ab635b5b7a47748353e760777a07f3c",
-            "files": 1
-        },
         "elite-backend": {
-            "version": "3.0.0",
-            "contentHash": "507b2a7965e0422699d1378070b824f5122ece1456aa2caa3983b93fab285176",
+            "version": "4.0.0",
+            "contentHash": "fc8056f1f153b728802b68c68a60a1fa58400a9a2b598be7d15eeaf5a0df6d33",
             "files": 12
         },
         "elite-bootstrap": {
@@ -61,16 +56,6 @@
             "version": "1.0.0",
             "contentHash": "cdb75bc1213c3dc915b0dfc0b42c36cee4ec01f86eaa8063d151f01429c4c6bf",
             "files": 5
-        },
-        "product-marketing-context": {
-            "version": "1.0.0",
-            "contentHash": "5f2a1c20630b364eb8c83a7031cf4abc95df2eb5482711c5ecc114eff7672d6f",
-            "files": 1
-        },
-        "react-doctor": {
-            "version": "1.0.0",
-            "contentHash": "f2b529172abd981e81935156bca043c5783f3c0423c169ae2a5ad42d12a16eb8",
-            "files": 1
         }
     }
 }

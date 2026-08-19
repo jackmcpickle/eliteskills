@@ -46,10 +46,17 @@ jobs:
           version="$(node -p "require('./package.json').version")"
           echo "version=${version}" >> "$GITHUB_OUTPUT"
 
-      # Trusted publishing (OIDC) — no npm token; provenance is implied.
-      # Requires the Trusted Publisher config on npmjs.com for this repo/workflow.
+      # Trusted publishing (OIDC). setup-node writes `_authToken=${NODE_AUTH_TOKEN}`
+      # which blocks OIDC and 404s. Strip it and drop the env so npm uses id-token.
       - name: Publish to npm
-        run: npm publish --access public
+        run: |
+          set -euo pipefail
+          npmrc="${NPM_CONFIG_USERCONFIG:-$HOME/.npmrc}"
+          if [ -f "$npmrc" ]; then
+            sed -i '/_authToken/d' "$npmrc"
+          fi
+          unset NODE_AUTH_TOKEN
+          npm publish --access public
 
       - name: Push release commit and tag
         run: git push --follow-tags origin HEAD:main

@@ -13,14 +13,17 @@ highlights:
     - Squash-merge only when the merge gate passes
     - Never auto-merge when needs-decision / HITL is open
     - gh scripts for threads, checks, replies, and the merge gate
+    - SKILL.state — each cycle is skill spec + JSON state + latest observe only
 structure:
-    - SKILL.md
     - REFERENCE.md
-    - scripts/pr-threads.sh
-    - scripts/pr-checks.sh
-    - scripts/pr-reply.sh
+    - SKILL.md
+    - scripts/
     - scripts/mark-handled.sh
+    - scripts/pr-checks.sh
     - scripts/pr-merge.sh
+    - scripts/pr-reply.sh
+    - scripts/pr-threads.sh
+    - scripts/state.sh
 examples:
     - label: Watch this PR
       command: 'Watch this PR, address review comments, and merge when green'
@@ -37,4 +40,5 @@ bestPractices:
     - Use pr-merge.sh — do not call gh pr merge around a failed gate
     - Rebase onto main before fixing if the branch is stale or conflicted
     - Stop after three unchanged pending-check polls and escalate HITL
+    - Next cycle is SKILL.md + state.json + latest observe — do not replay dumps
 ---

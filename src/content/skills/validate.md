@@ -12,9 +12,13 @@ highlights:
     - Step screenshots, session video, and HTML presentation deliverable
     - Portable presentation helpers scaffolded when the repo lacks them
     - Package-manager agnostic run commands
+    - SKILL.state — each step is skill spec + JSON state + latest observation only
 structure:
     - SKILL.md
     - prerequisites.md
+    - scripts/
+    - scripts/state.sh
+    - templates/
     - templates/playwright-e2e.ts.md
     - templates/presentation.ts.md
 examples:
@@ -32,4 +36,5 @@ bestPractices:
     - Prefer getByRole/getByLabel locators over brittle CSS selectors
     - Never commit artifacts/ — only the .spec.ts and shared helpers
     - Reset and reseed when the project has seed scripts to avoid flaky data
+    - Next step is SKILL.md + state.json + latest observation — do not replay probe or run logs
 ---

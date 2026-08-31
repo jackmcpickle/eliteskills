@@ -16,7 +16,7 @@ state.sh summary [PR]       # cycle summary derived from Σ
 state.sh self-test          # gate checks without gh
 ```
 
-Patch is a dictionary merge with null-deletion (objects merge, arrays replace). Nulling a required object (`pending_polls`, `open`, `counts`) resets it to empty. The script rejects `ready_to_merge: true` when HITL, `needs_decision`, review-bots, failed/pending CI, or a check at ≥3 polls remains.
+Patch is a dictionary merge with null-deletion (objects merge, arrays replace). Nulling a required object (`pending_polls`, `open`, `counts`) resets it to empty. The script rejects `ready_to_merge: true` when HITL, `needs_decision`, review-bots, unhandled threads/comments, failed/pending CI, or a check at ≥3 polls remains.
 
 Schema and cycle rules live in SKILL.md — do not load this file every cycle.
 

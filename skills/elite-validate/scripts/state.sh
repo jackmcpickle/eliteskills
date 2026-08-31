@@ -131,6 +131,8 @@ validate_state() {
       ) then "phase \(.phase) blocked: prerequisites + user approval required"
     elif (.phase | IN("author","run","share","done")) and (.slug == null or .slug == "") then
       "phase \(.phase) blocked: slug required"
+    elif (.phase | IN("author","run","share","done")) and .app_ok != true then
+      "phase \(.phase) blocked: environment not verified (app_ok)"
     else empty
     end
   ')" || {
@@ -258,7 +260,15 @@ cmd_self_test() {
     fi
     grep -q "slug required" "$ERR"
 
-    echo '{"slug":"login-member","phase":"author"}' | bash "$script" patch >/dev/null
+    echo '{"slug":"login-member"}' | bash "$script" patch >/dev/null
+    if echo '{"phase":"author"}' | bash "$script" patch >/dev/null 2>"$ERR"; then
+      echo "FAIL: author before environment" >&2
+      exit 1
+    fi
+    grep -q "environment not verified" "$ERR"
+
+    echo '{"phase":"environment","app_ok":true,"start_cmd":"pnpm dev"}' | bash "$script" patch >/dev/null
+    echo '{"phase":"author"}' | bash "$script" patch >/dev/null
     [ "$(jq -r '.phase' "$path")" = "author" ]
 
     echo '{"phase":"run","story_index":0,"last_capture":"01-login"}' | bash "$script" patch >/dev/null

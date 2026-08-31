@@ -128,11 +128,13 @@ validate_state() {
         (.hitl | length) > 0
         or .needs_decision
         or (.review_bots | length) > 0
+        or (.open.threads | length) > 0
+        or (.open.comments | length) > 0
         or (.open.failed | length) > 0
         or (.open.pending | length) > 0
         or .pr_state != "OPEN"
         or .merged
-      ) then "ready_to_merge blocked: HITL, needs-decision, review-bots, or CI not green"
+      ) then "ready_to_merge blocked: HITL, needs-decision, review-bots, unhandled reviews, or CI not green"
     elif .merged and .stop_reason != "merged" then "merged requires stop_reason=merged"
     elif .ready_to_merge and (([.pending_polls | to_entries[] | .value.count] | max // 0) >= 3) then
       "ready_to_merge blocked: pending check stuck (>=3 polls)"
@@ -244,6 +246,8 @@ cmd_summary() {
         "no — HITL / needs-decision"
       elif .stop_reason == "not-open" then "no — PR \(.pr_state)"
       elif (.review_bots | length) > 0 then "no — review-bots pending"
+      elif (.open.threads | length) > 0 or (.open.comments | length) > 0 then
+        "no — unhandled reviews"
       elif (.open.failed | length) > 0 then "no — CI failed"
       elif (.open.pending | length) > 0 then "no — CI pending"
       elif .stop_reason == "stuck-ci" then "no — CI/check stuck"
@@ -313,6 +317,10 @@ cmd_self_test() {
 
     echo '{"open":{"pending":[]},"pending_polls":{"lint":{"count":3,"sha":"abc"}}}' | bash "$script" patch "$pr" >/dev/null
     echo '{"ready_to_merge":true}' | expect_fail "ready_to_merge with stuck polls"
+
+    echo '{"pending_polls":null,"open":{"threads":["PRRT_1"],"comments":[],"failed":[],"pending":[]}}' \
+      | bash "$script" patch "$pr" >/dev/null
+    echo '{"ready_to_merge":true}' | expect_fail "ready_to_merge with open threads"
 
     echo '{
       "pending_polls": null,

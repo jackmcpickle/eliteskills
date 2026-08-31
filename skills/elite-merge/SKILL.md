@@ -75,7 +75,7 @@ Handled keys stay in `pr-watch-<PR>-handled.txt` — comment/CI **dedupe only**,
 
 `open.*` holds **ids/names only** — bodies live in O and die with O. `hitl[]` is what remains after a reply is marked handled (threads vanish from the next observe).
 
-Patch: `state.sh patch [PR] <<< '{"cycle":1,…}'`. Null deletes a key (required objects reset to empty). Objects merge; arrays replace. The script **rejects** `ready_to_merge: true` when HITL, `needs_decision`, `review_bots`, failed/pending CI, or a pending check at ≥3 polls remains.
+Patch: `state.sh patch [PR] <<< '{"cycle":1,…}'`. Null deletes a key (required objects reset to empty). Objects merge; arrays replace. The script **rejects** `ready_to_merge: true` when HITL, `needs_decision`, `review_bots`, unhandled `open.threads`/`open.comments`, failed/pending CI, or a pending check at ≥3 polls remains.
 
 Print the cycle summary from `state.sh summary [PR]` — derived from Σ, not history.
 

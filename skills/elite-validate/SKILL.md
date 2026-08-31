@@ -73,6 +73,7 @@ Patch: `state.sh patch <<< '{"phase":"discovery",…}'`. Null deletes a key. Obj
 - `approved: true` without `persona.name` and at least one story
 - `environment` / `author` / `run` / `share` / `done` unless prerequisites (`pm`, `playwright_dep`, `chromium`, `e2e_root`, `artifacts_ignored`) **and** `approved` are set
 - `author` and later without `slug`
+- `author` / `run` / `share` / `done` unless `app_ok` (environment verified)
 
 Print progress from `state.sh summary` — derived from Σ, not history.
 

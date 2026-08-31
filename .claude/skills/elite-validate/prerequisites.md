@@ -2,6 +2,8 @@
 
 Run these checks in order. Surface failures to the user with a concrete fix. Do not continue past a failed required check.
 
+After each step, patch Σ (`scripts/state.sh patch`) with the finding (pm, playwright_dep, chromium, e2e_root, start_cmd, …). Drop this file and the probe output from context once the patch validates.
+
 ## 1. Detect package manager
 
 ```text
@@ -102,4 +104,4 @@ Or scope to the e2e root: `<e2e-root>/**/artifacts/`.
 - [ ] Presentation helpers available
 - [ ] `artifacts/` gitignored
 
-Only then proceed to Phase 0 discovery in SKILL.md.
+Only then proceed to Phase 0 discovery in SKILL.md. Do not re-read this file in later phases — Σ holds the findings.

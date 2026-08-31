@@ -2,6 +2,26 @@
 
 ## Scripts
 
+### `scripts/state.sh`
+
+Execution state (Σ). Path: `$(git rev-parse --git-dir)/pr-watch-<PR>-state.json` — not committed.
+
+```bash
+state.sh init [PR]          # create Σ if missing, print it
+state.sh get [PR]           # print Σ
+state.sh path [PR]          # print file path
+state.sh observe [PR]       # latest O: threads + checks + labels + review_bots
+state.sh patch [PR]         # JSON patch on stdin; validate; overwrite Σ
+state.sh summary [PR]       # cycle summary derived from Σ
+state.sh self-test          # gate checks without gh
+```
+
+Patch is a dictionary merge with null-deletion (objects merge, arrays replace). Nulling a required object (`pending_polls`, `open`, `counts`) resets it to empty. The script rejects `ready_to_merge: true` when HITL, `needs_decision`, review-bots, failed/pending CI, or a check at ≥3 polls remains.
+
+Schema and cycle rules live in SKILL.md — do not load this file every cycle.
+
+`observe` shells out to `pr-threads.sh` + `pr-checks.sh` + `gh pr view`. Those scripts still work on their own.
+
 ### `scripts/pr-threads.sh [PR]`
 
 Emits one JSON object per call:
@@ -81,13 +101,18 @@ Squash-merges and deletes the branch only when ALL hold:
 
 Exits non-zero otherwise. Do not call `gh pr merge` if this script refuses.
 
-## State file (dedupe)
+## State files
 
-Path: `$(git rev-parse --git-dir)/pr-watch-<PR>-handled.txt` — one key per line.
+Two files, both under `.git/`, never committed:
 
-- Survives across polling cycles and sessions for the same checkout.
-- To re-process a comment, remove its id from this file.
-- Inside `.git/`, never committed.
+| File                        | Role                                                              |
+| --------------------------- | ----------------------------------------------------------------- |
+| `pr-watch-<PR>-state.json`  | Σ — sufficient statistic for the next cycle (`state.sh`)          |
+| `pr-watch-<PR>-handled.txt` | Dedupe only — one key per line (`mark-handled.sh`, `pr-reply.sh`) |
+
+- Handled keys: comment ids or `ci:<name>@<sha>`. `pr-threads.sh` / `pr-checks.sh` skip them.
+- To re-process a comment, remove its id from the handled file.
+- HITL replies are marked handled (so they leave the next observe) but stay in `Σ.hitl` until the human decides. That is why Σ, not the handled file, blocks merge from the agent's side. `pr-merge.sh` still keys off the `needs-decision` label + empty threads/checks.
 
 ## Raw gh API equivalents
 

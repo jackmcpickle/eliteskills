@@ -1,6 +1,6 @@
 {
     "lockVersion": 2,
-    "generatedAt": "2026-08-19T01:20:51.755Z",
+    "generatedAt": "2026-08-31T08:31:49.376Z",
     "skills": {
         "elite-backend": {
             "version": "4.0.0",
@@ -23,9 +23,9 @@
             "files": 3
         },
         "elite-merge": {
-            "version": "1.0.0",
-            "contentHash": "f37c35f9a48d96995b079fcd6a48b4dd3e086c255258ae713c07193918a37011",
-            "files": 7
+            "version": "1.1.0",
+            "contentHash": "b99698c8caffafbf909d94877b09d41bb4edb73c76a9327652def09b4682e393",
+            "files": 8
         },
         "elite-qa": {
             "version": "1.0.0",
@@ -53,9 +53,9 @@
             "files": 5
         },
         "elite-validate": {
-            "version": "1.0.0",
-            "contentHash": "dd3cf3ff655827f571a608dfbb81ac0766a12b3dbf064ce54db00af07713fd36",
-            "files": 4
+            "version": "1.1.0",
+            "contentHash": "e0a8ad514121d96fa1a62b3af3d1a3348ad2133f4fdc3cbbd8f91d1f52e14b06",
+            "files": 5
         },
         "elite-web": {
             "version": "1.0.0",

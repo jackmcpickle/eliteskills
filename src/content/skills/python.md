@@ -28,9 +28,9 @@ structure:
     - examples/hono-notes.md
 examples:
     - label: CRUD feature
-      command: 'Build a notes domain with DTOs, repository, service, and thin routes'
+      command: 'Notes domain with create, list, update, and delete'
     - label: New domain module
-      command: 'Create a bookmarks domain with create, list, update, and delete'
+      command: 'Bookmarks domain with tags and search'
     - label: Repository function
       command: 'Add a filtered list with pagination to the articles repository'
 bestPractices:

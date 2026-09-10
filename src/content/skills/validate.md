@@ -23,13 +23,13 @@ structure:
     - templates/presentation.ts.md
 examples:
     - label: Record a login demo
-      command: 'Write a Playwright presentation test for login as a member and capture screenshots plus video'
+      command: 'Login as a member'
     - label: Validate a checkout flow
-      command: 'Create an e2e presentation for checkout with headed recording and an HTML report'
+      command: 'Checkout flow from cart to order confirmation'
     - label: Demo a feature walkthrough
-      command: 'Record step-by-step screenshots of the settings flow as an admin persona'
+      command: 'Settings flow as an admin'
     - label: Scaffold helpers
-      command: 'Set up elite-validate presentation helpers in this repo and run the smoke flow'
+      command: 'Onboarding flow for a new user'
 bestPractices:
     - Complete the prerequisites gate before authoring any specs
     - Wait for explicit approval of persona and user stories (Phase 0)

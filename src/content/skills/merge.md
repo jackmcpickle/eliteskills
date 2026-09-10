@@ -26,13 +26,13 @@ structure:
     - scripts/state.sh
 examples:
     - label: Watch this PR
-      command: 'Watch this PR, address review comments, and merge when green'
+      command: 'This PR'
     - label: Babysit reviews
-      command: 'Babysit PR 42 until agent reviews land and CI is green, then merge'
+      command: 'PR 42'
     - label: Fix failing CI
-      command: 'The PR build is red — fix what you can and keep polling'
+      command: 'PR 42, CI is currently red'
     - label: Do not merge HITL
-      command: 'Handle review feedback on this PR but do not merge if anything needs a human decision'
+      command: 'This PR, do not merge'
 bestPractices:
     - Never merge when HITL is open or the PR has the needs-decision label
     - A pending review-bot means the review has not happened yet — keep polling

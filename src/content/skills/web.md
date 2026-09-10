@@ -19,9 +19,9 @@ structure:
     - completion.md
 examples:
     - label: New page
-      command: 'Add a /about page with BaseLayout, hero section, and team grid using our module conventions'
+      command: 'Add a /about page with hero section and team grid'
     - label: Feature module
-      command: 'Create a testimonials module with a carousel component and barrel export'
+      command: 'Testimonials module with a carousel'
     - label: SEO setup
       command: 'Add robots.txt, llms.txt, and sitemap config for this Astro site'
 bestPractices:

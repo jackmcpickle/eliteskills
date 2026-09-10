@@ -1,6 +1,6 @@
 // Bumps `version:` in skills/*/SKILL.md for skills changed since the last
 // release tag, inferring the bump from conventional commit subjects:
-//   BREAKING CHANGE / `type!:` -> major, feat -> minor, anything else -> patch
+//   BREAKING CHANGE / BREAKING-CHANGE footer or `type!:` -> major, feat -> minor, anything else -> patch
 // Skills whose version line was already changed by hand are left alone.
 // Run: pnpm exec vite-node scripts/bump-skill-versions.ts [--dry-run] [--since=<ref>]
 import { execFileSync } from 'node:child_process';
@@ -13,14 +13,16 @@ import {
 } from 'node:fs';
 import { join } from 'node:path';
 import { parseFrontmatter } from './parse-frontmatter.ts';
+import {
+    applyBump,
+    highestBump,
+    versionChangedInDiff,
+} from './skill-version.ts';
 
 const ROOT = join(import.meta.dirname ?? '.', '..');
 const SKILLS_DIR = join(ROOT, 'skills');
 const DRY_RUN = process.argv.includes('--dry-run');
 const SINCE = process.argv.find((a) => a.startsWith('--since='))?.slice(8);
-
-type Bump = 'major' | 'minor' | 'patch';
-const RANK: Record<Bump, number> = { patch: 0, minor: 1, major: 2 };
 
 function git(...args: string[]): string {
     return execFileSync('git', args, { cwd: ROOT, encoding: 'utf-8' }).trim();
@@ -32,20 +34,6 @@ function lastTag(): string | null {
     } catch {
         return null;
     }
-}
-
-function bumpFor(subject: string, body: string): Bump {
-    if (/BREAKING CHANGE/.test(body) || /^\w+(\([^)]*\))?!:/.test(subject))
-        return 'major';
-    if (/^feat(\([^)]*\))?:/.test(subject)) return 'minor';
-    return 'patch';
-}
-
-function apply(version: string, bump: Bump): string {
-    const [major = 0, minor = 0, patch = 0] = version.split('.').map(Number);
-    if (bump === 'major') return `${major + 1}.0.0`;
-    if (bump === 'minor') return `${major}.${minor + 1}.0`;
-    return `${major}.${minor}.${patch + 1}`;
 }
 
 const tag = SINCE ?? lastTag();
@@ -70,19 +58,19 @@ for (const name of readdirSync(SKILLS_DIR).sort()) {
 
     if (
         tag &&
-        /^[-+]version:/m.test(git('diff', range, '--', `${rel}/SKILL.md`))
+        versionChangedInDiff(git('diff', range, '--', `${rel}/SKILL.md`))
     ) {
         console.log(`  ${name}: version already bumped manually, skipping`);
         continue;
     }
 
-    const bump = commits
-        .map(([s = '', b = '']) => bumpFor(s, b))
-        .reduce<Bump>((a, b) => (RANK[b] > RANK[a] ? b : a), 'patch');
+    const bump = highestBump(
+        commits.map(([s = '', b = '']) => [s, b] as [string, string]),
+    );
 
     const content = readFileSync(skillMd, 'utf-8');
     const current = parseFrontmatter(content).version ?? '0.0.0';
-    const next = apply(current, bump);
+    const next = applyBump(current, bump);
     console.log(
         `  ${name}: ${current} -> ${next} (${bump}, ${commits.length} commit(s))`,
     );

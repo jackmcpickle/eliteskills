@@ -23,7 +23,7 @@ examples:
     - label: Design system tokens
       command: 'Create a Tailwind design system with color tokens, spacing scale, and typography'
     - label: Component variants
-      command: 'Build a Button component with size, variant, and state variants using CVA'
+      command: 'Button component with size, variant, and state variants'
     - label: Page layout
       command: 'Create a responsive marketing page layout with hero, features, and footer'
 bestPractices:

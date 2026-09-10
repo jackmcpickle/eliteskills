@@ -1,7 +1,7 @@
 ---
 name: elite-qa
 description: Generate manual QA test plans for human testers. Use when the user says "QA plan", "test plan", "manual testing", "QA checklist", "what should I test", "how to test this", "verify changes", "QA this PR", "QA this feature", or asks what a human tester should verify.
-version: 1.0.0
+version: 1.0.1
 ---
 
 # Manual QA Test Plan Skill

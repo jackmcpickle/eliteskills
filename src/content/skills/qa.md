@@ -18,13 +18,13 @@ structure:
     - edge-cases.md
 examples:
     - label: QA a pull request
-      command: 'Generate a manual QA test plan for this PR with click-by-click steps'
+      command: 'This PR'
     - label: QA a feature area
-      command: 'Create a comprehensive QA checklist for the checkout flow'
+      command: 'The checkout flow'
     - label: Regression checklist
-      command: 'Build a regression checklist for the auth module after this refactor'
+      command: 'The auth module after this refactor'
     - label: Edge case library
-      command: 'Generate an edge case library for file upload including size limits, formats, and error states'
+      command: 'File upload'
 bestPractices:
     - Start with the happy path before covering edge cases
     - Tag each test case with priority (P0-P3) so testers know what to run first

@@ -13,7 +13,7 @@ import { join } from 'node:path';
 import { parseFrontmatter } from './parse-frontmatter.ts';
 
 const ROOT = join(import.meta.dirname ?? '.', '..');
-const SKILLS_DIR = join(ROOT, '.claude', 'skills');
+const SKILLS_DIR = join(ROOT, 'skills');
 const LOCK_PATH = join(ROOT, 'skills-lock.json');
 
 interface SkillEntry {

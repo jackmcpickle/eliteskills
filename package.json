@@ -43,6 +43,7 @@
         "build:og": "pnpm exec vite-node scripts/build-og-images.ts",
         "build": "pnpm build:well-known && pnpm build:manifest && pnpm build:og && astro build",
         "release": "commit-and-tag-version -a",
+        "skills:version": "vite-node scripts/bump-skill-versions.ts",
         "astro": "astro"
     },
     "dependencies": {
@@ -103,6 +104,9 @@
     },
     "packageManager": "pnpm@10.29.3",
     "commit-and-tag-version": {
-        "releaseCommitMessageFormat": "chore(release): {{currentTag}} [skip ci]"
+        "releaseCommitMessageFormat": "chore(release): {{currentTag}} [skip ci]",
+        "scripts": {
+            "postbump": "pnpm skills:version && pnpm build:manifest"
+        }
     }
 }

@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.2.4](https://github.com/jackmcpickle/eliteskills/compare/v1.2.3...v1.2.4) (2026-09-10)
+
+### Bug Fixes
+
+- automate skill version bumps and trim example prompts ([#37](https://github.com/jackmcpickle/eliteskills/issues/37)) ([d93e4af](https://github.com/jackmcpickle/eliteskills/commit/d93e4afd9a8b1b8bfe935e9e9708f9d95c15ee20))
+
 ## [1.2.3](https://github.com/jackmcpickle/eliteskills/compare/v1.2.2...v1.2.3) (2026-08-31)
 
 ## [1.2.2](https://github.com/jackmcpickle/eliteskills/compare/v1.2.1...v1.2.2) (2026-08-19)

@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.2.5](https://github.com/jackmcpickle/eliteskills/compare/v1.2.4...v1.2.5) (2026-10-04)
+
+### Bug Fixes
+
+- **elite-merge:** fail closed on EXPECTED checks, >100 threads, merged patch ([#38](https://github.com/jackmcpickle/eliteskills/issues/38)) ([2e61acf](https://github.com/jackmcpickle/eliteskills/commit/2e61acf4e9a4b402bb16c80e880a40f0e2af242b))
+
 ## [1.2.4](https://github.com/jackmcpickle/eliteskills/compare/v1.2.3...v1.2.4) (2026-09-10)
 
 ### Bug Fixes

@@ -35,7 +35,8 @@ query($owner:String!,$repo:String!,$num:Int!){
 }')"
 
 if [ "$(jq -r '.data.repository.pullRequest.reviewThreads.pageInfo.hasNextPage' <<<"$THREADS")" = "true" ]; then
-  echo "WARNING: PR #$PR has >100 review threads; only the first 100 are processed." >&2
+  echo "ERROR: PR #$PR has >100 review threads; refusing incomplete list so merge cannot proceed." >&2
+  exit 1
 fi
 
 ISSUE_COMMENTS="$(gh api "repos/$OWNER/$REPO/issues/$PR/comments" --paginate)"

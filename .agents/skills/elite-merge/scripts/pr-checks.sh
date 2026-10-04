@@ -24,7 +24,7 @@ gh pr view "$PR" --json statusCheckRollup \
 | jq --arg sha "$SHA" --argjson handled "$HANDLED_JSON" '
   def norm:
     { name: (.name // .context),
-      status: (.status // (if (.state == "PENDING") then "IN_PROGRESS" else "COMPLETED" end)),
+      status: (.status // (if (.state == "PENDING" or .state == "EXPECTED") then "IN_PROGRESS" else "COMPLETED" end)),
       conclusion: (.conclusion // .state),
       url: (.detailsUrl // .targetUrl // null),
       workflow: (.workflowName // null) };

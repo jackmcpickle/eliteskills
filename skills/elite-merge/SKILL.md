@@ -103,7 +103,7 @@ Create a TodoWrite item per cycle step. Run until **merged**, **HITL hand-back**
 7. **HITL** — post the breakdown, add `needs-decision`, patch `hitl` + `stop_reason: "hitl"`. Do not merge.
 8. **Commit Σ** — `state.sh patch` with ΔΣ. Discard reasoning and O.
 9. **Summary** — `state.sh summary [PR]` (from Σ).
-10. **Exit** — if the **merge** gate passes, run `pr-merge.sh`, then patch `merged: true` + `stop_reason: "merged"`. If HITL remains, hand back and stop. Otherwise sleep (`30s` after a push or while `open.pending` is non-empty; else `60s`) and go to step 1 with a **fresh** A_t.
+10. **Exit** — if the **merge** gate passes, run `pr-merge.sh`, then patch `{"ready_to_merge":false,"merged":true,"stop_reason":"merged","pr_state":"MERGED"}` (state.sh rejects `ready_to_merge: true` with `merged: true`). If HITL remains, hand back and stop. Otherwise sleep (`30s` after a push or while `open.pending` is non-empty; else `60s`) and go to step 1 with a **fresh** A_t.
 
 `threads[]` are inline review threads (resolvable). `comments[]` are general PR comments — reply, cannot resolve. `failed[]` needs a new commit, not a reply.
 

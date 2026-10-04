@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.2.6](https://github.com/jackmcpickle/eliteskills/compare/v1.2.5...v1.2.6) (2026-10-04)
+
+### Bug Fixes
+
+- **husky:** use pnpm exec for commitlint ([#39](https://github.com/jackmcpickle/eliteskills/issues/39)) ([7e5c700](https://github.com/jackmcpickle/eliteskills/commit/7e5c7004e177d6b72f59a7419ed6aac75f0c3594))
+
 ## [1.2.5](https://github.com/jackmcpickle/eliteskills/compare/v1.2.4...v1.2.5) (2026-10-04)
 
 ### Bug Fixes

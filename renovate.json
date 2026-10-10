@@ -6,13 +6,12 @@
     "automergeStrategy": "squash",
     "packageRules": [
         {
-            "matchUpdateTypes": [
-                "minor",
-                "patch",
-                "pin",
-                "digest",
-                "lockFileMaintenance"
-            ],
+            "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+            "matchCurrentVersion": "!/^0/",
+            "automerge": true
+        },
+        {
+            "matchUpdateTypes": ["lockFileMaintenance"],
             "automerge": true
         }
     ]

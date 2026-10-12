@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.2.11](https://github.com/jackmcpickle/eliteskills/compare/v1.2.10...v1.2.11) (2026-10-12)
+
 ## [1.2.10](https://github.com/jackmcpickle/eliteskills/compare/v1.2.9...v1.2.10) (2026-10-12)
 
 ## [1.2.9](https://github.com/jackmcpickle/eliteskills/compare/v1.2.8...v1.2.9) (2026-10-12)

@@ -28,7 +28,7 @@ importers:
         version: 5.18.2(@types/node@24.19.2)(jiti@2.6.1)(lightningcss@1.31.1)(rollup@4.64.6)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.9.1)
       fflate:
         specifier: ^0.8.2
-        version: 0.8.2
+        version: 0.8.3
       sharp:
         specifier: ^0.34.5
         version: 0.34.5
@@ -2789,6 +2789,9 @@ packages:
 
   fflate@0.8.2:
     resolution: {integrity: sha512-cPJU47OaAoCbg0pBvzsgpTPhmhqI5eJjh/JIu8tPj5q+T7iLvW/JAYUqmE7KOB4R1ZyEhzBaIQpQpardBF5z8A==}
+
+  fflate@0.8.3:
+    resolution: {integrity: sha512-tbZNuJrLwGUp3zshBtdy4W+ORxZuIh8a5ilyIEQDC5rY1f3U20JMry0Ll3WBzU58EZKsEuJFXhb5gwv8CsPvgA==}
 
   figures@3.2.0:
     resolution: {integrity: sha512-yaduQFRKLXYOGgEn6AZau90j3ggSOyiqXU0F9JZfeXYhNa+Jk4X+s45A2zg5jns87GAFa34BBm2kXw4XpNcbdg==}
@@ -7139,6 +7142,8 @@ snapshots:
       picomatch: 4.0.7
 
   fflate@0.8.2: {}
+
+  fflate@0.8.3: {}
 
   figures@3.2.0:
     dependencies:

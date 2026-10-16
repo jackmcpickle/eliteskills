@@ -54,7 +54,7 @@
         "@tailwindcss/vite": "^4.2.0",
         "astro": "^5.17.1",
         "fflate": "^0.8.2",
-        "sharp": "^0.34.5",
+        "sharp": "^0.35.0",
         "tailwindcss": "^4.2.0",
         "typescript": "^5.9.3",
         "zod": "^4.3.6"

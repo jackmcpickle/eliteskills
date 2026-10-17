@@ -20,7 +20,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
@@ -36,7 +36,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
@@ -50,7 +50,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
@@ -83,7 +83,7 @@ jobs:
         if: env.ANTHROPIC_API_KEY != ''
       - uses: pnpm/action-setup@v4
         if: env.ANTHROPIC_API_KEY != ''
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         if: env.ANTHROPIC_API_KEY != ''
         with:
           node-version: ${{ env.NODE_VERSION }}
@@ -129,7 +129,7 @@ jobs:
         if: env.AGENT_API_KEY != ''
       - uses: pnpm/action-setup@v4
         if: env.AGENT_API_KEY != ''
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         if: env.AGENT_API_KEY != ''
         with:
           node-version: ${{ env.NODE_VERSION }}

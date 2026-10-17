@@ -62,9 +62,9 @@
     "devDependencies": {
         "@anthropic-ai/sdk": "^0.135.0",
         "@cloudflare/workers-types": "^4.20260228.0",
-        "@commitlint/cli": "^20.4.1",
-        "@commitlint/config-conventional": "^20.4.1",
-        "@commitlint/prompt-cli": "^20.4.1",
+        "@commitlint/cli": "^21.0.0",
+        "@commitlint/config-conventional": "^21.0.0",
+        "@commitlint/prompt-cli": "^21.0.0",
         "@playwright/test": "^1.58.2",
         "@types/node": "^24.10.13",
         "@vitest/coverage-v8": "^4.0.18",

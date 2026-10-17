@@ -61,7 +61,7 @@ jobs:
         run: pnpm test:e2e
       - name: Upload Playwright report
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: playwright-report-e2e
           path: playwright-report/
@@ -100,14 +100,14 @@ jobs:
         continue-on-error: true
       - name: Upload Playwright report
         if: failure() && env.ANTHROPIC_API_KEY != ''
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: playwright-report-llm
           path: playwright-report/
           retention-days: 7
       - name: Upload skill quality report
         if: always() && env.ANTHROPIC_API_KEY != ''
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: skill-quality-report
           path: skill-quality-report.md
@@ -145,7 +145,7 @@ jobs:
         timeout-minutes: 3
       - name: Upload Playwright report
         if: failure() && env.AGENT_API_KEY != ''
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: playwright-report-live-agent
           path: playwright-report/

@@ -70,8 +70,8 @@ importers:
         specifier: ^12.6.1
         version: 12.7.3
       conventional-changelog-conventionalcommits:
-        specifier: ^9.1.0
-        version: 9.3.1
+        specifier: ^10.0.0
+        version: 10.4.1
       dotenv:
         specifier: ^17.3.1
         version: 17.4.2
@@ -2793,10 +2793,6 @@ packages:
   conventional-changelog-conventionalcommits@6.1.0:
     resolution: {integrity: sha512-3cS3GEtR78zTfMzk0AizXKKIdN4OvSh7ibNz6/DPbhWWQu7LqE/8+/GqSodV+sywUR2gpJAdP/1JFf4XtN7Zpw==}
     engines: {node: '>=14'}
-
-  conventional-changelog-conventionalcommits@9.3.1:
-    resolution: {integrity: sha512-dTYtpIacRpcZgrvBYvBfArMmK2xvIpv2TaxM0/ZI5CBtNUzvF2x0t15HsbRABWprS6UPmvj+PzHVjSx4qAVKyw==}
-    engines: {node: '>=18'}
 
   conventional-changelog-core@5.0.2:
     resolution: {integrity: sha512-RhQOcDweXNWvlRwUDCpaqXzbZemKPKncCWZG50Alth72WITVd6nhVk9MJ6w1k9PFNBcZ3YwkdkChE+8+ZwtUug==}
@@ -7419,10 +7415,6 @@ snapshots:
       '@conventional-changelog/template': 1.4.0
 
   conventional-changelog-conventionalcommits@6.1.0:
-    dependencies:
-      compare-func: 2.0.0
-
-  conventional-changelog-conventionalcommits@9.3.1:
     dependencies:
       compare-func: 2.0.0
 

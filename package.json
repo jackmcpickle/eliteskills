@@ -69,7 +69,7 @@
         "@types/node": "^24.10.13",
         "@vitest/coverage-v8": "^4.0.18",
         "commit-and-tag-version": "^13.0.0",
-        "conventional-changelog-conventionalcommits": "^9.1.0",
+        "conventional-changelog-conventionalcommits": "^10.0.0",
         "dotenv": "^17.3.1",
         "husky": "^9.1.7",
         "lint-staged": "^16.2.7",

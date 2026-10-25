@@ -18,8 +18,8 @@ importers:
         specifier: ^3.7.0
         version: 3.7.4
       '@lucide/astro':
-        specifier: ^0.577.0
-        version: 0.577.0(astro@5.18.2(@types/node@24.19.2)(jiti@2.7.0)(lightningcss@1.33.0)(rollup@4.64.6)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.9.1))
+        specifier: ^1.0.0
+        version: 1.61.0(astro@5.18.2(@types/node@24.19.2)(jiti@2.7.0)(lightningcss@1.33.0)(rollup@4.64.6)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.9.1))
       '@tailwindcss/vite':
         specifier: ^4.2.0
         version: 4.3.3(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.21.0)(yaml@2.9.1))
@@ -1645,10 +1645,10 @@ packages:
   '@jridgewell/trace-mapping@0.3.9':
     resolution: {integrity: sha512-3Belt6tdc8bPgAtbcmdtNJlirVoTmEb5e2gC94PnkwEW9jI6CAHUeoG85tjWP5WquqfavoMtMwiG4P926ZKKuQ==}
 
-  '@lucide/astro@0.577.0':
-    resolution: {integrity: sha512-xZcdx+MyYXY74cBzFxr9N49SlofbGjCVD9GxJZcJA40PJvJSLWSeJpD9bgKFcZfFxf1QXkEYaR6BnCS+0lek8Q==}
+  '@lucide/astro@1.61.0':
+    resolution: {integrity: sha512-XoFZGoHjYtnDTuOQ4b105IO+WUCh8rzitIgBIrkOcdC1PRmsvLx+fwnrCRHiZ1JfbA36r/jAMxQL/HeyRqKJjQ==}
     peerDependencies:
-      astro: ^4 || ^5
+      astro: ^4 || ^5 || ^6 || ^7
 
   '@napi-rs/lzma-linux-x64-gnu@1.5.1':
     resolution: {integrity: sha512-oTXEIha4SsuXdTA4Iyskj0kpdx2yVXdhd75c2v3xGrHFfVMsbhTPZU/nMPL4sWKo4pBHm3aucLaqGlF696dTyQ==}
@@ -6190,7 +6190,7 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.6.0
 
-  '@lucide/astro@0.577.0(astro@5.18.2(@types/node@24.19.2)(jiti@2.7.0)(lightningcss@1.33.0)(rollup@4.64.6)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.9.1))':
+  '@lucide/astro@1.61.0(astro@5.18.2(@types/node@24.19.2)(jiti@2.7.0)(lightningcss@1.33.0)(rollup@4.64.6)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.9.1))':
     dependencies:
       astro: 5.18.2(@types/node@24.19.2)(jiti@2.7.0)(lightningcss@1.33.0)(rollup@4.64.6)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.9.1)
 
